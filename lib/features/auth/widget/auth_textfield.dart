@@ -12,6 +12,7 @@ class AuthTextField extends StatelessWidget {
     this.onSubmitted,
     this.obscureText = false,
     this.errorText,
+    this.suffixIcon,
   });
 
   final String label;
@@ -22,6 +23,7 @@ class AuthTextField extends StatelessWidget {
   final void Function(String)? onSubmitted;
   final bool obscureText;
   final String? errorText;
+  final Widget? suffixIcon;
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +37,7 @@ class AuthTextField extends StatelessWidget {
       decoration: InputDecoration(
         labelText: label,
         errorText: errorText,
+        suffixIcon: suffixIcon,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(Sizes.size8),
         ),

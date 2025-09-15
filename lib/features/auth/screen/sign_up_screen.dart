@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -6,7 +7,6 @@ import 'package:mood_tracker/constants/sizes.dart';
 import 'package:mood_tracker/features/auth/widget/auth_textfield.dart';
 import 'package:mood_tracker/features/auth/widget/auth_btn.dart';
 import 'package:mood_tracker/features/auth/view_model/sign_up_view_model.dart';
-import 'package:mood_tracker/features/auth/view_model/login_view_model.dart';
 
 class SignUpScreen extends ConsumerStatefulWidget {
   static const String routeName = 'signup';
@@ -25,6 +25,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   final _emailFocus = FocusNode();
   final _passwordFocus = FocusNode();
   final _nameFocus = FocusNode();
+  bool _passwordObscured = true;
 
   String? _emailError;
   String? _passwordError;
@@ -70,22 +71,8 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
     ref.listen<AsyncValue<void>>(signUpViewModelProvider, (prev, next) {
       next.when(
         data: (_) {
-          if (context.mounted) context.go('/');
-        },
-        loading: () {},
-        error: (err, _) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(err.toString())),
-          );
-        },
-      );
-    });
-
-    // Also listen for social sign-ins handled by LoginViewModel
-    ref.listen<AsyncValue<void>>(loginViewModelProvider, (prev, next) {
-      next.when(
-        data: (_) {
-          if (context.mounted) context.go('/');
+          final user = FirebaseAuth.instance.currentUser;
+          if (user != null && context.mounted) context.go('/');
         },
         loading: () {},
         error: (err, _) {
@@ -97,7 +84,6 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
     });
 
     final isLoading = ref.watch(signUpViewModelProvider).isLoading;
-    final socialLoading = ref.watch(loginViewModelProvider).isLoading;
 
     return Scaffold(
       appBar: AppBar(title: const Text('Sign Up')),
@@ -135,7 +121,17 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                 label: 'Password',
                 controller: _passwordController,
                 focusNode: _passwordFocus,
-                obscureText: true,
+                obscureText: _passwordObscured,
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _passwordObscured ? Icons.visibility_off : Icons.visibility,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _passwordObscured = !_passwordObscured;
+                    });
+                  },
+                ),
                 textInputAction: TextInputAction.done,
                 onSubmitted: (_) => _submit(),
                 errorText: _passwordError,
@@ -151,24 +147,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                 onPressed: () => context.go('/login'),
                 child: const Text('Already have an account? Log In'),
               ),
-              Gaps.v20,
-              const Divider(),
-              Gaps.v20,
-              AuthBtn(
-                label: 'Continue with Google',
-                leading: const Icon(Icons.g_mobiledata),
-                isLoading: socialLoading,
-                onPressed: () =>
-                    ref.read(loginViewModelProvider.notifier).signInWithGoogle(),
-              ),
-              Gaps.v12,
-              AuthBtn(
-                label: 'Continue with Apple',
-                leading: const Icon(Icons.apple),
-                isLoading: socialLoading,
-                onPressed: () =>
-                    ref.read(loginViewModelProvider.notifier).signInWithApple(),
-              ),
+              // Social login is only available on the Log In screen
             ],
           ),
         ),

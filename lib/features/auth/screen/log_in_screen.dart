@@ -62,8 +62,9 @@ class _LogInScreenState extends ConsumerState<LogInScreen> {
     ref.listen<AsyncValue<void>>(loginViewModelProvider, (prev, next) {
       next.when(
         data: (_) {
-          // 성공 시 홈으로 이동
-          if (context.mounted) context.go('/');
+          // 유저가 로그인 성공했을 시에만 이동
+          final user = FirebaseAuth.instance.currentUser;
+          if (user != null && context.mounted) context.go('/');
         },
         loading: () {},
         error: (err, _) {
