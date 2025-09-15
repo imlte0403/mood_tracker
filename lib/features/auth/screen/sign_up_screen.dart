@@ -4,7 +4,9 @@ import 'package:go_router/go_router.dart';
 import 'package:mood_tracker/constants/gaps.dart';
 import 'package:mood_tracker/constants/sizes.dart';
 import 'package:mood_tracker/features/auth/widget/auth_textfield.dart';
+import 'package:mood_tracker/features/auth/widget/auth_btn.dart';
 import 'package:mood_tracker/features/auth/view_model/sign_up_view_model.dart';
+import 'package:mood_tracker/features/auth/view_model/login_view_model.dart';
 
 class SignUpScreen extends ConsumerStatefulWidget {
   static const String routeName = 'signup';
@@ -79,7 +81,23 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
       );
     });
 
+    // Also listen for social sign-ins handled by LoginViewModel
+    ref.listen<AsyncValue<void>>(loginViewModelProvider, (prev, next) {
+      next.when(
+        data: (_) {
+          if (context.mounted) context.go('/');
+        },
+        loading: () {},
+        error: (err, _) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(err.toString())),
+          );
+        },
+      );
+    });
+
     final isLoading = ref.watch(signUpViewModelProvider).isLoading;
+    final socialLoading = ref.watch(loginViewModelProvider).isLoading;
 
     return Scaffold(
       appBar: AppBar(title: const Text('Sign Up')),
@@ -123,20 +141,33 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                 errorText: _passwordError,
               ),
               Gaps.v24,
-              ElevatedButton(
-                onPressed: isLoading ? null : _submit,
-                child: isLoading
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Text('Sign Up'),
+              AuthBtn(
+                label: 'Sign Up',
+                isLoading: isLoading,
+                onPressed: _submit,
               ),
               Gaps.v12,
               TextButton(
                 onPressed: () => context.go('/login'),
                 child: const Text('Already have an account? Log In'),
+              ),
+              Gaps.v20,
+              const Divider(),
+              Gaps.v20,
+              AuthBtn(
+                label: 'Continue with Google',
+                leading: const Icon(Icons.g_mobiledata),
+                isLoading: socialLoading,
+                onPressed: () =>
+                    ref.read(loginViewModelProvider.notifier).signInWithGoogle(),
+              ),
+              Gaps.v12,
+              AuthBtn(
+                label: 'Continue with Apple',
+                leading: const Icon(Icons.apple),
+                isLoading: socialLoading,
+                onPressed: () =>
+                    ref.read(loginViewModelProvider.notifier).signInWithApple(),
               ),
             ],
           ),

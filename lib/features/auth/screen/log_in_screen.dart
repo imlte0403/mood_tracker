@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mood_tracker/constants/gaps.dart';
 import 'package:mood_tracker/constants/sizes.dart';
 import 'package:mood_tracker/features/auth/widget/auth_textfield.dart';
+import 'package:mood_tracker/features/auth/widget/auth_btn.dart';
 import 'package:mood_tracker/features/auth/view_model/login_view_model.dart';
 
 class LogInScreen extends ConsumerStatefulWidget {
@@ -115,20 +116,33 @@ class _LogInScreenState extends ConsumerState<LogInScreen> {
                 errorText: _passwordError,
               ),
               Gaps.v24,
-              ElevatedButton(
-                onPressed: isLoading ? null : _submit,
-                child: isLoading
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Text('Log In'),
+              AuthBtn(
+                label: 'Log In',
+                isLoading: isLoading,
+                onPressed: _submit,
               ),
               Gaps.v12,
               TextButton(
                 onPressed: () => context.push('/signup'),
                 child: const Text("Don't have an account? Sign Up"),
+              ),
+              Gaps.v20,
+              const Divider(),
+              Gaps.v20,
+              AuthBtn(
+                label: 'Continue with Google',
+                leading: const Icon(Icons.g_mobiledata),
+                isLoading: isLoading,
+                onPressed: () =>
+                    ref.read(loginViewModelProvider.notifier).signInWithGoogle(),
+              ),
+              Gaps.v12,
+              AuthBtn(
+                label: 'Continue with Apple',
+                leading: const Icon(Icons.apple),
+                isLoading: isLoading,
+                onPressed: () =>
+                    ref.read(loginViewModelProvider.notifier).signInWithApple(),
               ),
             ],
           ),
