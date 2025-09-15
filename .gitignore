@@ -10,7 +10,7 @@
 *.swp
 .buildlog/
 .history
-
+settings.json
 
 
 # Flutter repo-specific
