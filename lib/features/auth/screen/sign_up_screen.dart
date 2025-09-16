@@ -18,6 +18,7 @@ class SignUpScreen extends ConsumerStatefulWidget {
   ConsumerState<SignUpScreen> createState() => _SignUpScreenState();
 }
 
+//회원가입 화면
 class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
@@ -30,7 +31,6 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   @override
   void initState() {
     super.initState();
-    _initAuthListener();
   }
 
   @override
@@ -53,12 +53,6 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
           password: _passwordController.text,
           displayName: _nameController.text.trim(),
         );
-  }
-
-  void _initAuthListener() {
-    ref.listen<AsyncValue<void>>(signUpProvider, (prev, next) {
-      _onAuthStateChange(next);
-    });
   }
 
   void _onAuthStateChange(AsyncValue<void> next) {
@@ -110,6 +104,10 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen<AsyncValue<void>>(signUpProvider, (previous, next) {
+      _onAuthStateChange(next);
+    });
+
     final isLoading = ref.watch(signUpProvider).isLoading;
 
     return Scaffold(
@@ -146,7 +144,6 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                 onPressed: () => context.go('/login'),
                 child: const Text('Already have an account? Log In'),
               ),
-              // Social login is only available on the Log In screen
             ],
           ),
         ),

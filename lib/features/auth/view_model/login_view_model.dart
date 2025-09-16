@@ -7,25 +7,25 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:crypto/crypto.dart';
 
-final loginProvider = StateNotifierProvider<LoginViewModel, AsyncValue<void>>((ref) {
+final loginProvider = StateNotifierProvider<LoginViewModel, LoginState>((ref) {
   final auth = ref.watch(authProvider);
   return LoginViewModel(auth);
 });
 
-class LoginViewModel extends StateNotifier<AsyncValue<void>> {
-  LoginViewModel(this._auth) : super(const AsyncData(null));
+class LoginViewModel extends StateNotifier<LoginState> {
+  LoginViewModel(this._auth) : super(const LoginState());
 
   final FirebaseAuth _auth;
 
   Future<void> login({required String email, required String password}) async {
-    await _withLoading(() async {
+    await _withLoading(_LoginAction.email, () async {
       await _auth.signInWithEmailAndPassword(email: email, password: password);
     });
   }
 
   // 구글 로그인
   Future<void> loginWithGoogle() async {
-    await _withLoading(() async {
+    await _withLoading(_LoginAction.google, () async {
       final googleUser = await GoogleSignIn().signIn();
       if (googleUser == null) {
         throw Exception('Sign-in canceled');
@@ -41,7 +41,7 @@ class LoginViewModel extends StateNotifier<AsyncValue<void>> {
 
   // 애플 로그인
   Future<void> loginWithApple() async {
-    await _withLoading(() async {
+    await _withLoading(_LoginAction.apple, () async {
       final rawNonce = _generateNonce();
       final nonce = _sha256(rawNonce);
 
@@ -78,23 +78,68 @@ class LoginViewModel extends StateNotifier<AsyncValue<void>> {
     final digest = sha256.convert(bytes);
     return digest.toString();
   }
-  
+
   // 에러 핸들링 및 로딩 상태 관리
-  Future<void> _withLoading(Future<void> Function() run) async {
-    state = const AsyncLoading();
+  Future<void> _withLoading(
+    _LoginAction action,
+    Future<void> Function() run,
+  ) async {
+    state = LoginState.loading(
+      email: action == _LoginAction.email,
+      google: action == _LoginAction.google,
+      apple: action == _LoginAction.apple,
+    );
     try {
       await run();
-      state = const AsyncData(null);
+      state = const LoginState();
     } on SignInWithAppleAuthorizationException catch (e) {
       if (e.code == AuthorizationErrorCode.canceled) {
-        state = AsyncError(Exception('Sign-in canceled'), StackTrace.current);
+        state = LoginState.error(
+          Exception('Sign-in canceled'),
+          StackTrace.current,
+        );
       } else {
-        state = AsyncError(e, StackTrace.current);
+        state = LoginState.error(e, StackTrace.current);
       }
     } on FirebaseAuthException catch (e) {
-      state = AsyncError(e, StackTrace.current);
+      state = LoginState.error(e, StackTrace.current);
     } catch (e, st) {
-      state = AsyncError(e, st);
+      state = LoginState.error(e, st);
     }
   }
+}
+
+enum _LoginAction { email, google, apple }
+
+class LoginState {
+  const LoginState({
+    this.status = const AsyncData(null),
+    this.emailLoading = false,
+    this.googleLoading = false,
+    this.appleLoading = false,
+  });
+
+  factory LoginState.loading({
+    bool email = false,
+    bool google = false,
+    bool apple = false,
+  }) {
+    return LoginState(
+      status: const AsyncLoading(),
+      emailLoading: email,
+      googleLoading: google,
+      appleLoading: apple,
+    );
+  }
+
+  factory LoginState.error(Object error, StackTrace stackTrace) {
+    return LoginState(status: AsyncError(error, stackTrace));
+  }
+
+  final AsyncValue<void> status;
+  final bool emailLoading;
+  final bool googleLoading;
+  final bool appleLoading;
+
+  bool get isLoading => status.isLoading;
 }

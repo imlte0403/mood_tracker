@@ -28,7 +28,6 @@ class _LogInScreenState extends ConsumerState<LogInScreen> {
   @override
   void initState() {
     super.initState();
-    _initAuthListener();
   }
 
   @override
@@ -41,23 +40,21 @@ class _LogInScreenState extends ConsumerState<LogInScreen> {
   }
 
   void _submit() async {
+    if (ref.read(loginProvider).isLoading) return;
+
     final form = _formKey.currentState;
     if (form == null || !form.validate()) return;
 
-    await ref.read(loginProvider.notifier).login(
+    await ref
+        .read(loginProvider.notifier)
+        .login(
           email: _emailController.text.trim(),
           password: _passwordController.text,
         );
   }
 
-  void _initAuthListener() {
-    ref.listen<AsyncValue<void>>(loginProvider, (prev, next) {
-      _onAuthStateChange(next);
-    });
-  }
-
-  void _onAuthStateChange(AsyncValue<void> next) {
-    next.when(
+  void _onAuthStateChange(LoginState state) {
+    state.status.when(
       data: (_) {
         final user = FirebaseAuth.instance.currentUser;
         if (user != null && context.mounted) context.go('/');
@@ -70,9 +67,9 @@ class _LogInScreenState extends ConsumerState<LogInScreen> {
         }
         final message = err is Exception ? err.toString() : 'Sign-in failed.';
         if (!context.mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(message)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(message)));
       },
     );
   }
@@ -80,6 +77,7 @@ class _LogInScreenState extends ConsumerState<LogInScreen> {
   Widget _buildHeader() {
     return const Text(
       'Welcome back!',
+      textAlign: TextAlign.center,
       style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
     );
   }
@@ -101,22 +99,26 @@ class _LogInScreenState extends ConsumerState<LogInScreen> {
     );
   }
 
-  Widget _buildSocialButtons(bool isLoading) {
+  Widget _buildSocialButtons(LoginState state) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         AuthBtn.social(
           label: 'Continue with Google',
           icon: const Icon(Icons.g_mobiledata),
-          isLoading: isLoading,
-          onPressed: () => ref.read(loginProvider.notifier).loginWithGoogle(),
+          isLoading: state.googleLoading,
+          onPressed: state.isLoading
+              ? null
+              : () => ref.read(loginProvider.notifier).loginWithGoogle(),
         ),
         Gaps.v12,
         AuthBtn.social(
           label: 'Continue with Apple',
           icon: const Icon(Icons.apple),
-          isLoading: isLoading,
-          onPressed: () => ref.read(loginProvider.notifier).loginWithApple(),
+          isLoading: state.appleLoading,
+          onPressed: state.isLoading
+              ? null
+              : () => ref.read(loginProvider.notifier).loginWithApple(),
         ),
       ],
     );
@@ -124,7 +126,11 @@ class _LogInScreenState extends ConsumerState<LogInScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isLoading = ref.watch(loginProvider).isLoading;
+    ref.listen<LoginState>(loginProvider, (previous, next) {
+      _onAuthStateChange(next);
+    });
+
+    final loginState = ref.watch(loginProvider);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Log In')),
@@ -150,8 +156,8 @@ class _LogInScreenState extends ConsumerState<LogInScreen> {
               Gaps.v24,
               AuthBtn.primary(
                 label: 'Log In',
-                isLoading: isLoading,
-                onPressed: _submit,
+                isLoading: loginState.emailLoading,
+                onPressed: loginState.isLoading ? null : _submit,
               ),
               Gaps.v12,
               TextButton(
@@ -161,7 +167,7 @@ class _LogInScreenState extends ConsumerState<LogInScreen> {
               Gaps.v20,
               const Divider(),
               Gaps.v20,
-              _buildSocialButtons(isLoading),
+              _buildSocialButtons(loginState),
             ],
           ),
         ),
