@@ -19,17 +19,19 @@ class SignUpScreen extends ConsumerStatefulWidget {
 }
 
 class _SignUpScreenState extends ConsumerState<SignUpScreen> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _nameController = TextEditingController();
   final _emailFocus = FocusNode();
   final _passwordFocus = FocusNode();
   final _nameFocus = FocusNode();
-  bool _passwordObscured = true;
 
-  String? _emailError;
-  String? _passwordError;
-  String? _nameError;
+  @override
+  void initState() {
+    super.initState();
+    _initAuthListener();
+  }
 
   @override
   void dispose() {
@@ -43,47 +45,72 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   }
 
   void _submit() async {
-    final email = _emailController.text.trim();
-    final password = _passwordController.text;
-    final name = _nameController.text.trim();
+    final form = _formKey.currentState;
+    if (form == null || !form.validate()) return;
 
-    setState(() {
-      _emailError = email.isEmpty || !email.contains('@')
-          ? 'Please enter a valid email.'
-          : null;
-      _passwordError = password.length < 6
-          ? 'Please enter at least 6 characters.'
-          : null;
-      _nameError = name.isEmpty ? 'Please enter your name.' : null;
-    });
-
-    if (_emailError != null || _passwordError != null || _nameError != null) return;
-
-    await ref.read(signUpViewModelProvider.notifier).signUp(
-          email: email,
-          password: password,
-          displayName: name,
+    await ref.read(signUpProvider.notifier).signUp(
+          email: _emailController.text.trim(),
+          password: _passwordController.text,
+          displayName: _nameController.text.trim(),
         );
+  }
+
+  void _initAuthListener() {
+    ref.listen<AsyncValue<void>>(signUpProvider, (prev, next) {
+      _onAuthStateChange(next);
+    });
+  }
+
+  void _onAuthStateChange(AsyncValue<void> next) {
+    next.when(
+      data: (_) {
+        final user = FirebaseAuth.instance.currentUser;
+        if (user != null && context.mounted) context.go('/');
+      },
+      loading: () {},
+      error: (err, _) {
+        if (!context.mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(err.toString())),
+        );
+      },
+    );
+  }
+
+  Widget _buildHeader() {
+    return const Text(
+      'Create a new account',
+      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+    );
+  }
+
+  Widget _buildNameField() {
+    return AuthTextField.name(
+      controller: _nameController,
+      focusNode: _nameFocus,
+      onSubmitted: (_) => _emailFocus.requestFocus(),
+    );
+  }
+
+  Widget _buildEmailField() {
+    return AuthTextField.email(
+      controller: _emailController,
+      focusNode: _emailFocus,
+      onSubmitted: (_) => _passwordFocus.requestFocus(),
+    );
+  }
+
+  Widget _buildPasswordField() {
+    return AuthTextField.password(
+      controller: _passwordController,
+      focusNode: _passwordFocus,
+      onSubmitted: (_) => _submit(),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    ref.listen<AsyncValue<void>>(signUpViewModelProvider, (prev, next) {
-      next.when(
-        data: (_) {
-          final user = FirebaseAuth.instance.currentUser;
-          if (user != null && context.mounted) context.go('/');
-        },
-        loading: () {},
-        error: (err, _) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(err.toString())),
-          );
-        },
-      );
-    });
-
-    final isLoading = ref.watch(signUpViewModelProvider).isLoading;
+    final isLoading = ref.watch(signUpProvider).isLoading;
 
     return Scaffold(
       appBar: AppBar(title: const Text('Sign Up')),
@@ -93,51 +120,23 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Text(
-                'Create a new account',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
+              _buildHeader(),
               Gaps.v20,
-              AuthTextField(
-                label: 'Name',
-                controller: _nameController,
-                focusNode: _nameFocus,
-                textInputAction: TextInputAction.next,
-                onSubmitted: (_) => _emailFocus.requestFocus(),
-                errorText: _nameError,
-              ),
-              Gaps.v16,
-              AuthTextField(
-                label: 'Email',
-                controller: _emailController,
-                focusNode: _emailFocus,
-                keyboardType: TextInputType.emailAddress,
-                textInputAction: TextInputAction.next,
-                onSubmitted: (_) => _passwordFocus.requestFocus(),
-                errorText: _emailError,
-              ),
-              Gaps.v16,
-              AuthTextField(
-                label: 'Password',
-                controller: _passwordController,
-                focusNode: _passwordFocus,
-                obscureText: _passwordObscured,
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _passwordObscured ? Icons.visibility_off : Icons.visibility,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      _passwordObscured = !_passwordObscured;
-                    });
-                  },
+              Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _buildNameField(),
+                    Gaps.v16,
+                    _buildEmailField(),
+                    Gaps.v16,
+                    _buildPasswordField(),
+                  ],
                 ),
-                textInputAction: TextInputAction.done,
-                onSubmitted: (_) => _submit(),
-                errorText: _passwordError,
               ),
               Gaps.v24,
-              AuthBtn(
+              AuthBtn.primary(
                 label: 'Sign Up',
                 isLoading: isLoading,
                 onPressed: _submit,

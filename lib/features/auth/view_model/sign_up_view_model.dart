@@ -3,9 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mood_tracker/services/firebase_service.dart';
 
-final signUpViewModelProvider =
-    StateNotifierProvider<SignUpViewModel, AsyncValue<void>>((ref) {
-  final auth = ref.watch(firebaseAuthProvider);
+final signUpProvider = StateNotifierProvider<SignUpViewModel, AsyncValue<void>>((ref) {
+  final auth = ref.watch(authProvider);
   final db = ref.watch(firestoreProvider);
   return SignUpViewModel(auth: auth, db: db);
 });

@@ -19,70 +19,112 @@ class LogInScreen extends ConsumerStatefulWidget {
 }
 
 class _LogInScreenState extends ConsumerState<LogInScreen> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final FocusNode _emailFocusNode = FocusNode();
-  final FocusNode _passwordFocusNode = FocusNode();
+  final FocusNode _emailFocus = FocusNode();
+  final FocusNode _passwordFocus = FocusNode();
 
-  String? _emailError;
-  String? _passwordError;
+  @override
+  void initState() {
+    super.initState();
+    _initAuthListener();
+  }
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
-    _emailFocusNode.dispose();
-    _passwordFocusNode.dispose();
+    _emailFocus.dispose();
+    _passwordFocus.dispose();
     super.dispose();
   }
 
   void _submit() async {
-    final email = _emailController.text.trim();
-    final password = _passwordController.text;
+    final form = _formKey.currentState;
+    if (form == null || !form.validate()) return;
 
-    setState(() {
-      _emailError = email.isEmpty || !email.contains('@')
-          ? 'Please enter a valid email.'
-          : null;
-      _passwordError = password.length < 6
-          ? 'Please enter at least 6 characters.'
-          : null;
-    });
-
-    if (_emailError != null || _passwordError != null) return;
-
-    await ref.read(loginViewModelProvider.notifier).signIn(
-          email: email,
-          password: password,
+    await ref.read(loginProvider.notifier).login(
+          email: _emailController.text.trim(),
+          password: _passwordController.text,
         );
+  }
+
+  void _initAuthListener() {
+    ref.listen<AsyncValue<void>>(loginProvider, (prev, next) {
+      _onAuthStateChange(next);
+    });
+  }
+
+  void _onAuthStateChange(AsyncValue<void> next) {
+    next.when(
+      data: (_) {
+        final user = FirebaseAuth.instance.currentUser;
+        if (user != null && context.mounted) context.go('/');
+      },
+      loading: () {},
+      error: (err, _) {
+        if (err is FirebaseAuthException && err.code == 'user-not-found') {
+          if (context.mounted) context.push('/signup');
+          return;
+        }
+        final message = err is Exception ? err.toString() : 'Sign-in failed.';
+        if (!context.mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(message)),
+        );
+      },
+    );
+  }
+
+  Widget _buildHeader() {
+    return const Text(
+      'Welcome back!',
+      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+    );
+  }
+
+  Widget _buildEmailField() {
+    return AuthTextField.email(
+      controller: _emailController,
+      focusNode: _emailFocus,
+      onSubmitted: (_) => _passwordFocus.requestFocus(),
+    );
+  }
+
+  Widget _buildPasswordField() {
+    return AuthTextField.password(
+      controller: _passwordController,
+      focusNode: _passwordFocus,
+      onSubmitted: (_) => _submit(),
+      enableVisibilityToggle: false,
+    );
+  }
+
+  Widget _buildSocialButtons(bool isLoading) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        AuthBtn.social(
+          label: 'Continue with Google',
+          icon: const Icon(Icons.g_mobiledata),
+          isLoading: isLoading,
+          onPressed: () => ref.read(loginProvider.notifier).loginWithGoogle(),
+        ),
+        Gaps.v12,
+        AuthBtn.social(
+          label: 'Continue with Apple',
+          icon: const Icon(Icons.apple),
+          isLoading: isLoading,
+          onPressed: () => ref.read(loginProvider.notifier).loginWithApple(),
+        ),
+      ],
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    ref.listen<AsyncValue<void>>(loginViewModelProvider, (prev, next) {
-      next.when(
-        data: (_) {
-          // 유저가 로그인 성공했을 시에만 이동
-          final user = FirebaseAuth.instance.currentUser;
-          if (user != null && context.mounted) context.go('/');
-        },
-        loading: () {},
-        error: (err, _) {
-          if (err is FirebaseAuthException && err.code == 'user-not-found') {
-            // 계정이 없으면 회원가입 화면으로 이동
-            if (context.mounted) context.push('/signup');
-            return;
-          }
-          final message =
-              err is Exception ? err.toString() : 'Sign-in failed.';
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(message)),
-          );
-        },
-      );
-    });
-
-    final isLoading = ref.watch(loginViewModelProvider).isLoading;
+    final isLoading = ref.watch(loginProvider).isLoading;
 
     return Scaffold(
       appBar: AppBar(title: const Text('Log In')),
@@ -92,32 +134,21 @@ class _LogInScreenState extends ConsumerState<LogInScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Text(
-                'Welcome back!',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
+              _buildHeader(),
               Gaps.v20,
-              AuthTextField(
-                label: 'Email',
-                controller: _emailController,
-                focusNode: _emailFocusNode,
-                keyboardType: TextInputType.emailAddress,
-                textInputAction: TextInputAction.next,
-                onSubmitted: (_) => _passwordFocusNode.requestFocus(),
-                errorText: _emailError,
-              ),
-              Gaps.v16,
-              AuthTextField(
-                label: 'Password',
-                controller: _passwordController,
-                focusNode: _passwordFocusNode,
-                obscureText: true,
-                textInputAction: TextInputAction.done,
-                onSubmitted: (_) => _submit(),
-                errorText: _passwordError,
+              Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _buildEmailField(),
+                    Gaps.v16,
+                    _buildPasswordField(),
+                  ],
+                ),
               ),
               Gaps.v24,
-              AuthBtn(
+              AuthBtn.primary(
                 label: 'Log In',
                 isLoading: isLoading,
                 onPressed: _submit,
@@ -130,21 +161,7 @@ class _LogInScreenState extends ConsumerState<LogInScreen> {
               Gaps.v20,
               const Divider(),
               Gaps.v20,
-              AuthBtn(
-                label: 'Continue with Google',
-                leading: const Icon(Icons.g_mobiledata),
-                isLoading: isLoading,
-                onPressed: () =>
-                    ref.read(loginViewModelProvider.notifier).signInWithGoogle(),
-              ),
-              Gaps.v12,
-              AuthBtn(
-                label: 'Continue with Apple',
-                leading: const Icon(Icons.apple),
-                isLoading: isLoading,
-                onPressed: () =>
-                    ref.read(loginViewModelProvider.notifier).signInWithApple(),
-              ),
+              _buildSocialButtons(isLoading),
             ],
           ),
         ),
