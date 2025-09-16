@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:mood_tracker/constants/app_color.dart';
+import 'package:mood_tracker/constants/app_images.dart';
 import 'package:mood_tracker/constants/app_typography.dart';
 import 'package:mood_tracker/constants/gaps.dart';
 import 'package:mood_tracker/constants/sizes.dart';
@@ -25,19 +26,22 @@ class HomeScreen extends ConsumerWidget {
     final greetingName = state.displayName ?? 'Username';
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.bgBeige,
       appBar: const HomeAppBar(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: CustomScrollView(
         slivers: [
           SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 2),
             sliver: SliverToBoxAdapter(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  GreetingSection(name: greetingName),
-                  Gaps.v16,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    child: GreetingSection(name: greetingName),
+                  ),
+                  Gaps.v8,
                   WeeklyCalendar(
                     weekDates: state.weekDates,
                     selectedDate: state.selectedDate,
@@ -58,7 +62,7 @@ class HomeScreen extends ConsumerWidget {
                     },
                     onSelectDate: notifier.selectDate,
                   ),
-                  Gaps.v24,
+                  Gaps.v16,
                 ],
               ),
             ),
@@ -78,15 +82,13 @@ class HomeScreen extends ConsumerWidget {
       ),
       floatingActionButton: PostBtn(
         onPressed: () {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(
+          ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
                 '새 감정 기록 기능은 준비 중입니다.',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontFamily: AppFonts.playfair,
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(fontFamily: AppFonts.playfair),
               ),
             ),
           );
@@ -106,13 +108,14 @@ class GreetingSection extends StatelessWidget {
     final theme = Theme.of(context);
     final helloStyle = theme.textTheme.headlineMedium?.copyWith(
       fontFamily: AppFonts.playfair,
-      fontWeight: FontWeight.w600,
+      fontWeight: FontWeight.w800,
       color: AppColors.text,
     );
-    final nameStyle = theme.textTheme.headlineMedium?.copyWith(
+    final nameStyle = theme.textTheme.headlineLarge?.copyWith(
       fontFamily: AppFonts.playfair,
-      fontWeight: FontWeight.w700,
+      fontWeight: FontWeight.w900,
       color: AppColors.point,
+      fontSize: Sizes.size40,
     );
     final punctuationStyle = theme.textTheme.headlineMedium?.copyWith(
       fontFamily: AppFonts.playfair,
@@ -120,20 +123,31 @@ class GreetingSection extends StatelessWidget {
       color: AppColors.text,
     );
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Text('Hello,', style: helloStyle),
-        Gaps.v4,
-        Text.rich(
-          TextSpan(
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TextSpan(text: name, style: nameStyle),
-              TextSpan(text: '!', style: punctuationStyle),
+              Text('Hello,', style: helloStyle),
+              Gaps.v4,
+              Transform.translate(
+                offset: const Offset(0, -8),
+                child: Text.rich(
+                  TextSpan(
+                    children: [
+                      TextSpan(text: name, style: nameStyle),
+                      TextSpan(text: '!', style: punctuationStyle),
+                    ],
+                  ),
+                ),
+              ),
             ],
           ),
-          style: punctuationStyle?.copyWith(fontSize: Sizes.size36),
         ),
+        Gaps.h4,
+        //Image.asset(AppImages.handDrawing, height: 90, fit: BoxFit.contain),
       ],
     );
   }

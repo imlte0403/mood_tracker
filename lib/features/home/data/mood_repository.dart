@@ -1,0 +1,72 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:mood_tracker/core/models/emotion_type.dart';
+import 'package:mood_tracker/core/models/timeline_entry.dart';
+import 'package:mood_tracker/services/firebase_service.dart';
+
+final moodRepositoryProvider = Provider<MoodRepository>((ref) {
+  final firestore = ref.watch(firestoreProvider);
+  return MoodRepository(firestore);
+});
+
+class MoodRepository {
+  MoodRepository(this._firestore);
+
+  final FirebaseFirestore _firestore;
+
+  CollectionReference<Map<String, dynamic>> _entriesRef(String userId) {
+    return _firestore
+        .collection('users')
+        .doc(userId)
+        .collection('timelineEntries');
+  }
+
+  Stream<List<TimelineEntry>> watchEntries({
+    required String userId,
+    required DateTime date,
+  }) {
+    final start = DateTime(date.year, date.month, date.day);
+    final end = start.add(const Duration(days: 1));
+
+    final startTimestamp = Timestamp.fromDate(start.toUtc());
+    final endTimestamp = Timestamp.fromDate(end.toUtc());
+
+    return _entriesRef(userId)
+        .where('timestamp', isGreaterThanOrEqualTo: startTimestamp)
+        .where('timestamp', isLessThan: endTimestamp)
+        .orderBy('timestamp')
+        .snapshots()
+        .map(
+          (snapshot) => snapshot.docs
+              .map((doc) => TimelineEntry.fromMap(doc.id, doc.data()))
+              .toList(),
+        );
+  }
+
+  Future<TimelineEntry> createEntry({
+    required String userId,
+    required DateTime timestamp,
+    required EmotionType emotion,
+    String? message,
+  }) async {
+    final doc = _entriesRef(userId).doc();
+    final entry = TimelineEntry(
+      id: doc.id,
+      timestamp: timestamp,
+      emotion: emotion,
+      message: message,
+      userId: userId,
+    );
+    await doc.set(entry.toMap());
+    return entry;
+  }
+
+  Future<void> updateEntry(TimelineEntry entry) {
+    return _entriesRef(entry.userId).doc(entry.id).update(entry.toMap());
+  }
+
+  Future<void> deleteEntry({required String userId, required String entryId}) {
+    return _entriesRef(userId).doc(entryId).delete();
+  }
+}

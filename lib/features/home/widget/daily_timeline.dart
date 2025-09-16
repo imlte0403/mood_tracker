@@ -42,7 +42,7 @@ class DailyTimeline extends StatelessWidget {
 
     return Card(
       elevation: 3,
-      color: AppColors.background,
+      color: AppColors.bgWhite,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
         padding: const EdgeInsets.all(14),
@@ -113,10 +113,10 @@ class DailyTimeline extends StatelessWidget {
                                       (entry) => Padding(
                                         padding: const EdgeInsets.only(top: 8),
                                         child: Container(
+                                          width: double.infinity,
                                           padding: const EdgeInsets.all(12),
                                           decoration: BoxDecoration(
-                                            color: entry.emotion.color
-                                                .withOpacity(0.12),
+                                            color: AppColors.bgBeige,
                                             borderRadius: BorderRadius.circular(
                                               12,
                                             ),
@@ -134,7 +134,7 @@ class DailyTimeline extends StatelessWidget {
                                                 Padding(
                                                   padding:
                                                       const EdgeInsets.only(
-                                                        top: 8,
+                                                        top: 18,
                                                       ),
                                                   child: Text(
                                                     entry.message!,

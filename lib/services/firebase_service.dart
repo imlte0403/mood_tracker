@@ -8,6 +8,10 @@ final authProvider = Provider<FirebaseAuth>((ref) {
   return FirebaseAuth.instance;
 });
 
+final authStateChangesProvider = StreamProvider<User?>((ref) {
+  return ref.watch(authProvider).authStateChanges();
+});
+
 // Firestore
 final firestoreProvider = Provider<FirebaseFirestore>((ref) {
   return FirebaseFirestore.instance;
@@ -18,7 +22,7 @@ final storageProvider = Provider<FirebaseStorage>((ref) {
   return FirebaseStorage.instance;
 });
 
-// FirebaseAuth 오류를 한국어 메시지로 매핑
+// FirebaseAuth 오류
 String authErrorToKorean(Object error) {
   if (error is FirebaseAuthException) {
     switch (error.code) {
