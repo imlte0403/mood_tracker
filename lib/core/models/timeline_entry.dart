@@ -54,7 +54,7 @@ class TimelineEntry {
       timestamp: _parseTimestamp(rawTimestamp),
       emotion: rawEmotion is String
           ? emotionTypeFromId(rawEmotion)
-          : EmotionType.happy,
+          : EmotionType.normal,
       message: map['message'] as String?,
       userId: map['userId'] as String? ?? '',
     );

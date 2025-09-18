@@ -5,7 +5,7 @@ enum EmotionType {
   lucky,
   happy,
   excited,
-  confused,
+  normal,
   depressed,
   anxious,
   angry,
@@ -22,8 +22,8 @@ extension EmotionTypeX on EmotionType {
         return 'happy';
       case EmotionType.excited:
         return 'excited';
-      case EmotionType.confused:
-        return 'confused';
+      case EmotionType.normal:
+        return 'normal';
       case EmotionType.depressed:
         return 'depressed';
       case EmotionType.anxious:
@@ -43,8 +43,8 @@ extension EmotionTypeX on EmotionType {
         return '행복';
       case EmotionType.excited:
         return '설렘';
-      case EmotionType.confused:
-        return '혼란';
+      case EmotionType.normal:
+        return '보통';
       case EmotionType.depressed:
         return '우울';
       case EmotionType.anxious:
@@ -64,8 +64,8 @@ extension EmotionTypeX on EmotionType {
         return 'Happy';
       case EmotionType.excited:
         return 'Excited';
-      case EmotionType.confused:
-        return 'Confused';
+      case EmotionType.normal:
+        return 'Normal';
       case EmotionType.depressed:
         return 'Depressed';
       case EmotionType.anxious:
@@ -85,8 +85,8 @@ extension EmotionTypeX on EmotionType {
         return '😊';
       case EmotionType.excited:
         return '🥰';
-      case EmotionType.confused:
-        return '🤔';
+      case EmotionType.normal:
+        return '🙂';
       case EmotionType.depressed:
         return '😞';
       case EmotionType.anxious:
@@ -107,7 +107,7 @@ extension EmotionTypeX on EmotionType {
         return const Color(0xFF66BB6A);
       case EmotionType.excited:
         return const Color(0xFF81C784);
-      case EmotionType.confused:
+      case EmotionType.normal:
         return const Color(0xFF9E9E9E);
       case EmotionType.depressed:
         return const Color(0xFF757575);
@@ -123,7 +123,7 @@ extension EmotionTypeX on EmotionType {
 
 EmotionType emotionTypeFromId(
   String id, {
-  EmotionType fallback = EmotionType.happy,
+  EmotionType fallback = EmotionType.normal,
 }) {
   return EmotionType.values.firstWhere(
     (type) => type.id == id,

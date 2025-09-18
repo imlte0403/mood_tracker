@@ -7,12 +7,12 @@ class AppColors {
   static const text = Color(0xFF000000);
   static const placeholder = Color(0xFF9E9E9E);
 
-  static const moodHappy = Color(0xFF255C2D);
-  static const moodExcited = Color(0xFF3E9A4B);
+  static const moodAngry = Color(0xFFFF4B4B);
+  static const moodSad = Color(0xFFFF8A3D);
+  static const moodAnxious = Color(0xFFFFD95C);
+  static const moodNormal = Color(0xFFB0BEC5);
+  static const moodDepressed = Color(0xFF90A4AE);
   static const moodLucky = Color(0xFF81C784);
-  static const moodConfused = Color(0xFF9E9E9E);
-  static const moodDepressed = Color(0xFF757575);
-  static const moodAnxious = Color(0xFFFFB74D);
-  static const moodSad = Color(0xFFFF9800);
-  static const moodAngry = Color(0xFFFF5722);
+  static const moodExcited = Color(0xFF4CAF50);
+  static const moodHappy = Color(0xFF1B5E20);
 }
