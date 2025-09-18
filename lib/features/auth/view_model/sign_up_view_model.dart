@@ -1,12 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mood_tracker/services/firebase_service.dart';
 
 final signUpProvider = StateNotifierProvider<SignUpViewModel, AsyncValue<void>>((ref) {
-  final auth = ref.watch(authProvider);
-  final db = ref.watch(firestoreProvider);
-  return SignUpViewModel(auth: auth, db: db);
+  return SignUpViewModel(
+    auth: FirebaseAuth.instance,
+    db: FirebaseFirestore.instance,
+  );
 });
 
 class SignUpViewModel extends StateNotifier<AsyncValue<void>> {

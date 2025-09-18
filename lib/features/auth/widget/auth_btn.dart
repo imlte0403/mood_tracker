@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mood_tracker/constants/sizes.dart';
+import 'package:mood_tracker/core/constants/sizes.dart';
 
 enum _AuthBtnVariant { primary, social }
 

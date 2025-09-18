@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mood_tracker/core/constants/app_color.dart';
 
 // 감정 타입
 enum EmotionType {
@@ -102,21 +103,21 @@ extension EmotionTypeX on EmotionType {
   Color get color {
     switch (this) {
       case EmotionType.lucky:
-        return const Color(0xFF4CAF50);
+        return AppColors.moodLucky;
       case EmotionType.happy:
-        return const Color(0xFF66BB6A);
+        return AppColors.moodHappy;
       case EmotionType.excited:
-        return const Color(0xFF81C784);
+        return AppColors.moodExcited;
       case EmotionType.normal:
-        return const Color(0xFF9E9E9E);
+        return AppColors.moodNormal;
       case EmotionType.depressed:
-        return const Color(0xFF757575);
+        return AppColors.moodDepressed;
       case EmotionType.anxious:
-        return const Color(0xFFFFB74D);
+        return AppColors.moodAnxious;
       case EmotionType.angry:
-        return const Color(0xFFFF5722);
+        return AppColors.moodAngry;
       case EmotionType.sad:
-        return const Color(0xFFFF9800);
+        return AppColors.moodSad;
     }
   }
 }

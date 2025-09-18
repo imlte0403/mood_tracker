@@ -3,11 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:mood_tracker/core/models/emotion_type.dart';
 import 'package:mood_tracker/core/models/timeline_entry.dart';
-import 'package:mood_tracker/services/firebase_service.dart';
-
 final moodRepositoryProvider = Provider<MoodRepository>((ref) {
-  final firestore = ref.watch(firestoreProvider);
-  return MoodRepository(firestore);
+  return MoodRepository(FirebaseFirestore.instance);
 });
 
 class MoodRepository {

@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:mood_tracker/constants/app_color.dart';
-//import 'package:mood_tracker/constants/app_images.dart';
-import 'package:mood_tracker/constants/app_typography.dart';
-import 'package:mood_tracker/constants/gaps.dart';
-import 'package:mood_tracker/constants/sizes.dart';
+import 'package:mood_tracker/core/constants/app_color.dart';
+import 'package:mood_tracker/core/constants/app_text_styles.dart';
+import 'package:mood_tracker/core/constants/gaps.dart';
 import 'package:mood_tracker/features/home/home_viewmodel.dart';
 import 'package:mood_tracker/features/home/widget/daily_timeline.dart';
 import 'package:mood_tracker/features/home/widget/home_appbar.dart';
@@ -97,22 +95,9 @@ class GreetingSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final helloStyle = theme.textTheme.headlineMedium?.copyWith(
-      fontFamily: AppFonts.playfair,
-      fontWeight: FontWeight.w800,
-      color: AppColors.text,
-    );
-    final nameStyle = theme.textTheme.headlineLarge?.copyWith(
-      fontFamily: AppFonts.playfair,
-      fontWeight: FontWeight.w900,
-      color: AppColors.point,
-      fontSize: Sizes.size40,
-    );
-    final punctuationStyle = theme.textTheme.headlineMedium?.copyWith(
-      fontFamily: AppFonts.playfair,
-      fontWeight: FontWeight.w600,
-      color: AppColors.text,
-    );
+    final textTheme = theme.textTheme;
+    final helloStyle = AppTextStyles.greetingHello(textTheme);
+    final nameStyle = AppTextStyles.greetingName(textTheme);
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -129,7 +114,7 @@ class GreetingSection extends StatelessWidget {
                   TextSpan(
                     children: [
                       TextSpan(text: name, style: nameStyle),
-                      TextSpan(text: '!', style: punctuationStyle),
+                      TextSpan(text: '!', style: helloStyle),
                     ],
                   ),
                 ),
@@ -138,7 +123,6 @@ class GreetingSection extends StatelessWidget {
           ),
         ),
         Gaps.h4,
-        //Image.asset(AppImages.handDrawing, height: 90, fit: BoxFit.contain),
       ],
     );
   }

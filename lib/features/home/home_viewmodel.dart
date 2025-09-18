@@ -6,7 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mood_tracker/core/models/emotion_type.dart';
 import 'package:mood_tracker/core/models/timeline_entry.dart';
 import 'package:mood_tracker/features/home/data/mood_repository.dart';
-import 'package:mood_tracker/services/firebase_service.dart';
+import 'package:mood_tracker/core/utils/firebase_error_handler.dart';
 
 final homeViewModelProvider = StateNotifierProvider<HomeViewModel, HomeState>((
   ref,
@@ -14,18 +14,8 @@ final homeViewModelProvider = StateNotifierProvider<HomeViewModel, HomeState>((
   final repository = ref.watch(moodRepositoryProvider);
   final notifier = HomeViewModel(repository: repository);
 
-  ref.listen<AsyncValue<User?>>(authStateChangesProvider, (previous, next) {
-    next.when(
-      data: notifier.setUser,
-      loading: () {},
-      error: notifier.setAuthError,
-    );
-  });
-
-  final initialUser = ref
-      .read(authStateChangesProvider)
-      .maybeWhen(data: (user) => user, orElse: () => null);
-  notifier.setUser(initialUser);
+  final currentUser = FirebaseAuth.instance.currentUser;
+  notifier.setUser(currentUser);
 
   return notifier;
 });
@@ -73,10 +63,11 @@ class HomeViewModel extends StateNotifier<HomeState> {
   void setAuthError(Object error, StackTrace stackTrace) {
     _entriesSubscription?.cancel();
     _userId = null;
+    final message = FirebaseErrorHandler.getErrorMessage(error);
     state = state.copyWith(
       userId: null,
       displayName: 'Username',
-      entries: AsyncData(_buildDemoEntries(state.selectedDate)),
+      entries: AsyncError<List<TimelineEntry>>(message, stackTrace),
       weeklyDemoMoods: _generateDemoWeekData(state.weekDates),
     );
   }
@@ -137,8 +128,9 @@ class HomeViewModel extends StateNotifier<HomeState> {
             state = state.copyWith(entries: AsyncData(entries));
           },
           onError: (error, stackTrace) {
+            final message = FirebaseErrorHandler.getErrorMessage(error);
             state = state.copyWith(
-              entries: AsyncData(_buildDemoEntries(state.selectedDate)),
+              entries: AsyncError<List<TimelineEntry>>(message, stackTrace),
             );
           },
         );
@@ -176,6 +168,7 @@ class HomeViewModel extends StateNotifier<HomeState> {
     );
   }
 
+//데모 데이터 
   static Map<DateTime, EmotionType> _generateDemoWeekData(
     List<DateTime> weekDates,
   ) {

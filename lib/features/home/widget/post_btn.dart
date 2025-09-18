@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:mood_tracker/constants/app_color.dart';
-import 'package:mood_tracker/constants/sizes.dart';
+import 'package:mood_tracker/core/constants/app_color.dart';
+import 'package:mood_tracker/core/constants/sizes.dart';
 
 class PostBtn extends StatelessWidget {
   const PostBtn({super.key, this.onPressed});

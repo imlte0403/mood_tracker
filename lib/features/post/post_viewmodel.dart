@@ -5,29 +5,26 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:mood_tracker/constants/app_color.dart';
 import 'package:mood_tracker/core/models/emotion_type.dart';
 import 'package:mood_tracker/features/home/data/mood_repository.dart';
-import 'package:mood_tracker/services/firebase_service.dart';
+import 'package:mood_tracker/core/utils/firebase_error_handler.dart';
 
 const double _maxSliderValue = 8.0;
 const int _segmentCount = 60;
 
-final moodSliderValueProvider =
-    StateProvider.autoDispose<double>((ref) => 3.5);
+final moodSliderValueProvider = StateProvider.autoDispose<double>((ref) => 3.5);
 
-final currentMoodDataProvider =
-    Provider.autoDispose<MoodSliderData>((ref) {
+final currentMoodDataProvider = Provider.autoDispose<MoodSliderData>((ref) {
   final value = ref.watch(moodSliderValueProvider);
   return MoodSliderData.fromSliderValue(value);
 });
 
 final moodEntryFormProvider =
-    StateNotifierProvider.autoDispose<MoodEntryFormNotifier, MoodEntryForm>(
-  (ref) {
-    return MoodEntryFormNotifier(ref);
-  },
-);
+    StateNotifierProvider.autoDispose<MoodEntryFormNotifier, MoodEntryForm>((
+      ref,
+    ) {
+      return MoodEntryFormNotifier(ref);
+    });
 
 class MoodSliderData {
   const MoodSliderData({
@@ -44,10 +41,7 @@ class MoodSliderData {
 
   static MoodSliderData fromSliderValue(double rawValue) {
     final clamped = rawValue.clamp(0.0, _maxSliderValue);
-    final int lowerIndex = math.min(
-      _morphStages.length - 1,
-      clamped.floor(),
-    );
+    final int lowerIndex = math.min(_morphStages.length - 1, clamped.floor());
 
     final _MorphStage lowerStage = _morphStages[lowerIndex];
     final bool isLastStage = lowerIndex == _morphStages.length - 1;
@@ -62,12 +56,8 @@ class MoodSliderData {
         ? 0
         : ((clamped - lowerStage.start) / span).clamp(0.0, 1.0);
 
-    final Color blendedColor = Color.lerp(
-          lowerStage.color,
-          upperStage.color,
-          t,
-        ) ??
-        lowerStage.color;
+    final Color blendedColor =
+        Color.lerp(lowerStage.color, upperStage.color, t) ?? lowerStage.color;
 
     final List<double> interpolatedRadii = List<double>.generate(
       _segmentCount,
@@ -79,8 +69,9 @@ class MoodSliderData {
       growable: false,
     );
 
-    final EmotionType displayEmotion =
-        (isLastStage || t <= 0.5) ? lowerStage.emotion : upperStage.emotion;
+    final EmotionType displayEmotion = (isLastStage || t <= 0.5)
+        ? lowerStage.emotion
+        : upperStage.emotion;
 
     return MoodSliderData(
       value: clamped,
@@ -92,7 +83,7 @@ class MoodSliderData {
 
   static Color colorForEmotion(EmotionType emotion) {
     final stage = _stageByEmotion[emotion];
-    return stage?.color ?? AppColors.moodHappy;
+    return stage?.color ?? EmotionType.happy.color;
   }
 }
 
@@ -161,11 +152,7 @@ const Object _noValue = Object();
 
 class MoodEntryFormNotifier extends StateNotifier<MoodEntryForm> {
   MoodEntryFormNotifier(this.ref)
-      : super(
-          MoodEntryForm.initial(
-            ref.read(currentMoodDataProvider).emotion,
-          ),
-        );
+    : super(MoodEntryForm.initial(ref.read(currentMoodDataProvider).emotion));
 
   final Ref ref;
 
@@ -196,17 +183,15 @@ class MoodEntryFormNotifier extends StateNotifier<MoodEntryForm> {
 
   Future<bool> submit() async {
     if (!state.isValid) {
-      state = state.copyWith(
-        errorMessage: '감정을 선택하거나 메시지를 다시 확인해주세요.',
-      );
+      state = state.copyWith(errorMessage: '감정을 선택하거나 메시지를 다시 확인해주세요.');
       return false;
     }
 
-    final user = ref.read(authProvider).currentUser;
-    if (user == null) {
-      state = state.copyWith(errorMessage: '로그인이 필요합니다.');
-      return false;
-    }
+  final currentUser = FirebaseAuth.instance.currentUser;
+  if (currentUser == null) {
+    state = state.copyWith(errorMessage: '로그인이 필요합니다.');
+    return false;
+  }
 
     state = state.copyWith(
       isSubmitting: true,
@@ -215,8 +200,10 @@ class MoodEntryFormNotifier extends StateNotifier<MoodEntryForm> {
     );
 
     try {
-      await ref.read(moodRepositoryProvider).createEntry(
-            userId: user.uid,
+      await ref
+          .read(moodRepositoryProvider)
+          .createEntry(
+            userId: currentUser.uid,
             timestamp: state.timestamp,
             emotion: state.emotion,
             message: state.message.isEmpty ? null : state.message,
@@ -224,22 +211,16 @@ class MoodEntryFormNotifier extends StateNotifier<MoodEntryForm> {
 
       state = MoodEntryForm.initial(state.emotion).copyWith(isSuccess: true);
       return true;
-    } on FirebaseAuthException {
-      state = state.copyWith(
-        isSubmitting: false,
-        errorMessage: '로그인이 필요합니다.',
-      );
-      return false;
     } on FirebaseException catch (error) {
       state = state.copyWith(
         isSubmitting: false,
-        errorMessage: _firebaseErrorToMessage(error),
+        errorMessage: FirebaseErrorHandler.getErrorMessage(error),
       );
       return false;
-    } catch (_) {
+    } catch (error) {
       state = state.copyWith(
         isSubmitting: false,
-        errorMessage: '잠시 후 다시 시도해주세요.',
+        errorMessage: FirebaseErrorHandler.getErrorMessage(error),
       );
       return false;
     }
@@ -319,56 +300,57 @@ final List<_MorphStage> _morphStages = <_MorphStage>[
   _MorphStage(
     start: 0.0,
     emotion: EmotionType.angry,
-    color: AppColors.moodAngry,
+    color: EmotionType.angry.color,
     radii: _spikyStarRadii,
   ),
   _MorphStage(
     start: 1.0,
     emotion: EmotionType.sad,
-    color: AppColors.moodSad,
+    color: EmotionType.sad.color,
     radii: _ninePointStarRadii,
   ),
   _MorphStage(
     start: 2.0,
     emotion: EmotionType.anxious,
-    color: AppColors.moodAnxious,
+    color: EmotionType.anxious.color,
     radii: _sevenPointStarRadii,
   ),
   _MorphStage(
     start: 3.0,
     emotion: EmotionType.normal,
-    color: AppColors.moodNormal,
+    color: EmotionType.normal.color,
     radii: _classicStarRadii,
   ),
   _MorphStage(
     start: 4.0,
     emotion: EmotionType.depressed,
-    color: AppColors.moodDepressed,
+    color: EmotionType.depressed.color,
     radii: _triangleRadii,
   ),
   _MorphStage(
     start: 5.0,
     emotion: EmotionType.lucky,
-    color: AppColors.moodLucky,
+    color: EmotionType.lucky.color,
     radii: _blobThreeRadii,
   ),
   _MorphStage(
     start: 6.0,
     emotion: EmotionType.excited,
-    color: AppColors.moodExcited,
+    color: EmotionType.excited.color,
     radii: _blobFiveRadii,
   ),
   _MorphStage(
     start: 7.0,
     emotion: EmotionType.happy,
-    color: AppColors.moodHappy,
+    color: EmotionType.happy.color,
     radii: _circleRadii,
   ),
 ];
 
-final Map<EmotionType, _MorphStage> _stageByEmotion = <EmotionType, _MorphStage>{
-  for (final stage in _morphStages) stage.emotion: stage,
-};
+final Map<EmotionType, _MorphStage> _stageByEmotion =
+    <EmotionType, _MorphStage>{
+      for (final stage in _morphStages) stage.emotion: stage,
+    };
 
 List<double> _generateStarRadii({
   required int spikes,
@@ -377,17 +359,13 @@ List<double> _generateStarRadii({
   double sharpness = 1.0,
 }) {
   final double amplitude = outer - inner;
-  return List<double>.generate(
-    _segmentCount,
-    (int index) {
-      final double angle = (2 * math.pi * index) / _segmentCount;
-      final double cosValue = (math.cos(spikes * angle) + 1) / 2;
-      final double shaped = math.pow(cosValue, sharpness).toDouble();
-      final double radius = inner + amplitude * shaped;
-      return radius.clamp(0.3, 1.15);
-    },
-    growable: false,
-  );
+  return List<double>.generate(_segmentCount, (int index) {
+    final double angle = (2 * math.pi * index) / _segmentCount;
+    final double cosValue = (math.cos(spikes * angle) + 1) / 2;
+    final double shaped = math.pow(cosValue, sharpness).toDouble();
+    final double radius = inner + amplitude * shaped;
+    return radius.clamp(0.3, 1.15);
+  }, growable: false);
 }
 
 List<double> _generateBlobRadii({
@@ -396,25 +374,14 @@ List<double> _generateBlobRadii({
   required double amplitude,
   required double secondary,
 }) {
-  return List<double>.generate(
-    _segmentCount,
-    (int index) {
-      final double angle = (2 * math.pi * index) / _segmentCount;
-      final double primary = math.sin(lobes * angle);
-      final double secondaryWave = math.sin((lobes * 2) * angle + math.pi / lobes);
-      final double radius = base + amplitude * primary + secondary * secondaryWave;
-      return radius.clamp(0.65, 1.08);
-    },
-    growable: false,
-  );
-}
-
-String _firebaseErrorToMessage(FirebaseException error) {
-  if (error.code == 'permission-denied') {
-    return '로그인이 필요합니다.';
-  }
-  if (error.code == 'unavailable' || error.code == 'network-error') {
-    return '잠시 후 다시 시도해주세요.';
-  }
-  return '잠시 후 다시 시도해주세요.';
+  return List<double>.generate(_segmentCount, (int index) {
+    final double angle = (2 * math.pi * index) / _segmentCount;
+    final double primary = math.sin(lobes * angle);
+    final double secondaryWave = math.sin(
+      (lobes * 2) * angle + math.pi / lobes,
+    );
+    final double radius =
+        base + amplitude * primary + secondary * secondaryWave;
+    return radius.clamp(0.65, 1.08);
+  }, growable: false);
 }

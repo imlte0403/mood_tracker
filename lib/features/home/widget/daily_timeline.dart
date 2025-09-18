@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mood_tracker/constants/app_color.dart';
-import 'package:mood_tracker/constants/app_typography.dart';
-import 'package:mood_tracker/constants/gaps.dart';
+import 'package:mood_tracker/core/constants/app_color.dart';
+import 'package:mood_tracker/core/constants/app_text_styles.dart';
+import 'package:mood_tracker/core/constants/gaps.dart';
 import 'package:mood_tracker/core/models/emotion_type.dart';
 
 import 'package:mood_tracker/core/models/timeline_entry.dart';

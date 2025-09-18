@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:mood_tracker/constants/app_color.dart';
-import 'package:mood_tracker/constants/gaps.dart';
-import 'package:mood_tracker/constants/sizes.dart';
-import 'package:mood_tracker/core/models/emotion_type.dart';
+//import 'package:mood_tracker/core/constants/app_color.dart';
+import 'package:mood_tracker/core/constants/gaps.dart';
+import 'package:mood_tracker/core/constants/sizes.dart';
+//import 'package:mood_tracker/core/models/emotion_type.dart';
 import 'package:mood_tracker/features/post/post_viewmodel.dart';
 
 class MoodSlider extends ConsumerWidget {
@@ -53,27 +53,6 @@ class MoodSlider extends ConsumerWidget {
         ),
         Gaps.v8,
       ],
-    );
-  }
-}
-
-class _SliderLabel extends StatefulWidget {
-  const _SliderLabel({required this.text});
-
-  final String text;
-
-  @override
-  State<_SliderLabel> createState() => _SliderLabelState();
-}
-
-class _SliderLabelState extends State<_SliderLabel> {
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      widget.text,
-      style: Theme.of(
-        context,
-      ).textTheme.labelMedium?.copyWith(color: AppColors.placeholder),
     );
   }
 }

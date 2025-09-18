@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mood_tracker/constants/sizes.dart';
+import 'package:mood_tracker/core/constants/sizes.dart';
 
 class Gaps {
   static const v1 = SizedBox(height: Sizes.size1);

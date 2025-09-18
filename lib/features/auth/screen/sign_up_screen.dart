@@ -1,12 +1,16 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mood_tracker/constants/gaps.dart';
-import 'package:mood_tracker/constants/sizes.dart';
+import 'package:mood_tracker/core/constants/gaps.dart';
+import 'package:mood_tracker/core/constants/sizes.dart';
+import 'package:mood_tracker/features/auth/mixins/auth_form_mixin.dart';
+import 'package:mood_tracker/core/utils/auth_utils.dart';
 import 'package:mood_tracker/features/auth/widget/auth_textfield.dart';
 import 'package:mood_tracker/features/auth/widget/auth_btn.dart';
+import 'package:mood_tracker/features/auth/widget/auth_header.dart';
 import 'package:mood_tracker/features/auth/view_model/sign_up_view_model.dart';
+import 'package:mood_tracker/features/home/home_screen.dart';
+import 'package:mood_tracker/features/auth/screen/log_in_screen.dart';
 
 class SignUpScreen extends ConsumerStatefulWidget {
   static const String routeName = 'signup';
@@ -19,85 +23,51 @@ class SignUpScreen extends ConsumerStatefulWidget {
 }
 
 //회원가입 화면
-class _SignUpScreenState extends ConsumerState<SignUpScreen> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
+class _SignUpScreenState extends ConsumerState<SignUpScreen>
+    with AuthFormMixin<SignUpScreen> {
   final _nameController = TextEditingController();
-  final _emailFocus = FocusNode();
-  final _passwordFocus = FocusNode();
   final _nameFocus = FocusNode();
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
     _nameController.dispose();
-    _emailFocus.dispose();
-    _passwordFocus.dispose();
     _nameFocus.dispose();
     super.dispose();
   }
 
   void _submit() async {
-    final form = _formKey.currentState;
+    final form = formKey.currentState;
     if (form == null || !form.validate()) return;
 
-    await ref.read(signUpProvider.notifier).signUp(
-          email: _emailController.text.trim(),
-          password: _passwordController.text,
+    await ref
+        .read(signUpProvider.notifier)
+        .signUp(
+          email: emailController.text.trim(),
+          password: passwordController.text,
           displayName: _nameController.text.trim(),
         );
-  }
-
-  void _onAuthStateChange(AsyncValue<void> next) {
-    next.when(
-      data: (_) {
-        final user = FirebaseAuth.instance.currentUser;
-        if (user != null && context.mounted) context.go('/');
-      },
-      loading: () {},
-      error: (err, _) {
-        if (!context.mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(err.toString())),
-        );
-      },
-    );
-  }
-
-  Widget _buildHeader() {
-    return const Text(
-      'Create a new account',
-      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-    );
   }
 
   Widget _buildNameField() {
     return AuthTextField.name(
       controller: _nameController,
       focusNode: _nameFocus,
-      onSubmitted: (_) => _emailFocus.requestFocus(),
+      onSubmitted: (_) => emailFocus.requestFocus(),
     );
   }
 
   Widget _buildEmailField() {
     return AuthTextField.email(
-      controller: _emailController,
-      focusNode: _emailFocus,
-      onSubmitted: (_) => _passwordFocus.requestFocus(),
+      controller: emailController,
+      focusNode: emailFocus,
+      onSubmitted: (_) => passwordFocus.requestFocus(),
     );
   }
 
   Widget _buildPasswordField() {
     return AuthTextField.password(
-      controller: _passwordController,
-      focusNode: _passwordFocus,
+      controller: passwordController,
+      focusNode: passwordFocus,
       onSubmitted: (_) => _submit(),
     );
   }
@@ -105,7 +75,12 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     ref.listen<AsyncValue<void>>(signUpProvider, (previous, next) {
-      _onAuthStateChange(next);
+      AuthUtils.handleAuthStateChange(
+        context,
+        next,
+        onSuccess: () => context.go(HomeScreen.routeURL),
+        fallbackErrorMessage: 'Sign-up failed.',
+      );
     });
 
     final isLoading = ref.watch(signUpProvider).isLoading;
@@ -118,10 +93,10 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              _buildHeader(),
+              const AuthHeader(title: 'Create a new account'),
               Gaps.v20,
               Form(
-                key: _formKey,
+                key: formKey,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
@@ -141,7 +116,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
               ),
               Gaps.v12,
               TextButton(
-                onPressed: () => context.go('/login'),
+                onPressed: () => context.go(LogInScreen.routeURL),
                 child: const Text('Already have an account? Log In'),
               ),
             ],

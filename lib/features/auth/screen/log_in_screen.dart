@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mood_tracker/constants/gaps.dart';
-import 'package:mood_tracker/constants/sizes.dart';
+import 'package:mood_tracker/core/constants/gaps.dart';
+import 'package:mood_tracker/core/constants/sizes.dart';
+import 'package:mood_tracker/features/auth/mixins/auth_form_mixin.dart';
+import 'package:mood_tracker/core/utils/auth_utils.dart';
 import 'package:mood_tracker/features/auth/widget/auth_textfield.dart';
 import 'package:mood_tracker/features/auth/widget/auth_btn.dart';
+import 'package:mood_tracker/features/auth/widget/auth_header.dart';
 import 'package:mood_tracker/features/auth/view_model/login_view_model.dart';
+import 'package:mood_tracker/features/home/home_screen.dart';
+import 'package:mood_tracker/features/auth/screen/sign_up_screen.dart';
 
 class LogInScreen extends ConsumerStatefulWidget {
-  static const String routeName = 'login';
-  static const String routeURL = '/login';
+  static const routeName = 'login';
+  static const routeURL = '/login';
 
   const LogInScreen({super.key});
 
@@ -18,82 +22,34 @@ class LogInScreen extends ConsumerStatefulWidget {
   ConsumerState<LogInScreen> createState() => _LogInScreenState();
 }
 
-class _LogInScreenState extends ConsumerState<LogInScreen> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final FocusNode _emailFocus = FocusNode();
-  final FocusNode _passwordFocus = FocusNode();
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    _emailFocus.dispose();
-    _passwordFocus.dispose();
-    super.dispose();
-  }
-
+class _LogInScreenState extends ConsumerState<LogInScreen>
+    with AuthFormMixin<LogInScreen> {
   void _submit() async {
     if (ref.read(loginProvider).isLoading) return;
 
-    final form = _formKey.currentState;
+    final form = formKey.currentState;
     if (form == null || !form.validate()) return;
 
     await ref
         .read(loginProvider.notifier)
         .login(
-          email: _emailController.text.trim(),
-          password: _passwordController.text,
+          email: emailController.text.trim(),
+          password: passwordController.text,
         );
-  }
-
-  void _onAuthStateChange(LoginState state) {
-    state.status.when(
-      data: (_) {
-        final user = FirebaseAuth.instance.currentUser;
-        if (user != null && context.mounted) context.go('/');
-      },
-      loading: () {},
-      error: (err, _) {
-        if (err is FirebaseAuthException && err.code == 'user-not-found') {
-          if (context.mounted) context.push('/signup');
-          return;
-        }
-        final message = err is Exception ? err.toString() : 'Sign-in failed.';
-        if (!context.mounted) return;
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(message)));
-      },
-    );
-  }
-
-  Widget _buildHeader() {
-    return const Text(
-      'Welcome back!',
-      textAlign: TextAlign.center,
-      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-    );
   }
 
   Widget _buildEmailField() {
     return AuthTextField.email(
-      controller: _emailController,
-      focusNode: _emailFocus,
-      onSubmitted: (_) => _passwordFocus.requestFocus(),
+      controller: emailController,
+      focusNode: emailFocus,
+      onSubmitted: (_) => passwordFocus.requestFocus(),
     );
   }
 
   Widget _buildPasswordField() {
     return AuthTextField.password(
-      controller: _passwordController,
-      focusNode: _passwordFocus,
+      controller: passwordController,
+      focusNode: passwordFocus,
       onSubmitted: (_) => _submit(),
       enableVisibilityToggle: false,
     );
@@ -127,7 +83,13 @@ class _LogInScreenState extends ConsumerState<LogInScreen> {
   @override
   Widget build(BuildContext context) {
     ref.listen<LoginState>(loginProvider, (previous, next) {
-      _onAuthStateChange(next);
+      AuthUtils.handleAuthStateChange(
+        context,
+        next.status,
+        onSuccess: () => context.go(HomeScreen.routeURL),
+        onUserNotFound: () => context.go(SignUpScreen.routeURL),
+        fallbackErrorMessage: 'Sign-in failed.',
+      );
     });
 
     final loginState = ref.watch(loginProvider);
@@ -140,10 +102,10 @@ class _LogInScreenState extends ConsumerState<LogInScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              _buildHeader(),
+              const AuthHeader(title: 'Welcome back!'),
               Gaps.v20,
               Form(
-                key: _formKey,
+                key: formKey,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
@@ -161,7 +123,7 @@ class _LogInScreenState extends ConsumerState<LogInScreen> {
               ),
               Gaps.v12,
               TextButton(
-                onPressed: () => context.push('/signup'),
+                onPressed: () => context.go(SignUpScreen.routeURL),
                 child: const Text("Don't have an account? Sign Up"),
               ),
               Gaps.v20,

@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:mood_tracker/constants/app_color.dart';
-import 'package:mood_tracker/constants/gaps.dart';
-import 'package:mood_tracker/constants/sizes.dart';
+import 'package:mood_tracker/core/constants/app_color.dart';
+import 'package:mood_tracker/core/constants/gaps.dart';
+import 'package:mood_tracker/core/constants/sizes.dart';
 import 'package:mood_tracker/features/post/post_viewmodel.dart';
 import 'package:mood_tracker/features/post/widget/mood_shape_display.dart';
 import 'package:mood_tracker/features/post/widget/mood_slider.dart';
 import 'package:mood_tracker/features/post/widget/mood_textfield.dart';
+import 'package:mood_tracker/features/home/home_screen.dart';
+
 
 class PostScreen extends ConsumerWidget {
   static const String routeName = 'post';
@@ -30,7 +32,7 @@ class PostScreen extends ConsumerWidget {
 
       if (success) {
         ref.read(moodSliderValueProvider.notifier).state = _initialSliderValue;
-        context.pop();
+        context.go(HomeScreen.routeURL);
         return;
       }
 

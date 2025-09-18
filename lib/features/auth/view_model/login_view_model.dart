@@ -1,15 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:mood_tracker/services/firebase_service.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'dart:convert';
 import 'dart:math';
 import 'package:crypto/crypto.dart';
 
 final loginProvider = StateNotifierProvider<LoginViewModel, LoginState>((ref) {
-  final auth = ref.watch(authProvider);
-  return LoginViewModel(auth);
+  return LoginViewModel(FirebaseAuth.instance);
 });
 
 class LoginViewModel extends StateNotifier<LoginState> {

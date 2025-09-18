@@ -4,8 +4,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:mood_tracker/constants/gaps.dart';
-import 'package:mood_tracker/constants/sizes.dart';
+import 'package:mood_tracker/core/constants/gaps.dart';
+import 'package:mood_tracker/core/constants/sizes.dart';
 import 'package:mood_tracker/core/models/emotion_type.dart';
 import 'package:mood_tracker/features/post/post_viewmodel.dart';
 

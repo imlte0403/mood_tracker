@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:mood_tracker/constants/app_color.dart';
-import 'package:mood_tracker/constants/app_typography.dart';
-import 'package:mood_tracker/constants/gaps.dart';
+import 'package:mood_tracker/core/constants/app_color.dart';
+import 'package:mood_tracker/core/constants/app_text_styles.dart';
+import 'package:mood_tracker/core/constants/gaps.dart';
 
 import 'package:mood_tracker/core/models/emotion_type.dart';
 
@@ -27,20 +27,11 @@ class WeeklyCalendar extends StatelessWidget {
   Widget build(BuildContext context) {
     const weekdayLabels = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
     final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
 
-    final titleStyle = theme.textTheme.titleMedium?.copyWith(
-      fontFamily: AppFonts.playfair,
-      fontWeight: FontWeight.w700,
-    );
-    final labelStyle = theme.textTheme.labelLarge?.copyWith(
-      fontFamily: AppFonts.playfair,
-      fontWeight: FontWeight.w400,
-    );
-    final dayNumberStyle = theme.textTheme.labelLarge?.copyWith(
-      //fontFamily: AppFonts.playfair,
-      fontWeight: FontWeight.w600,
-      color: Colors.white,
-    );
+    final titleStyle = AppTextStyles.weeklyCalendarTitle(textTheme);
+    final labelStyle = AppTextStyles.weeklyCalendarLabel(textTheme);
+    final dayNumberStyle = AppTextStyles.weeklyCalendarDayNumber(textTheme);
 
     return Card(
       elevation: 2,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:mood_tracker/constants/app_typography.dart';
-import 'package:mood_tracker/constants/app_color.dart';
+import 'package:mood_tracker/core/constants/app_text_styles.dart';
+import 'package:mood_tracker/core/constants/app_color.dart';
 
 class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   const HomeAppBar({super.key});
