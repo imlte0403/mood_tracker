@@ -113,6 +113,19 @@ class MoodShapeEngine {
     return colorForMood(MoodTypeX.fromEmotion(emotion));
   }
 
+  static double sliderAnchorForMood(MoodType mood) {
+    final definition = _definitionsByType[mood];
+    if (definition == null) return kMoodSliderMin;
+    final index = _definitions.indexOf(definition);
+    final bool isLast = index == _definitions.length - 1;
+    final double anchor = definition.sliderStart + (isLast ? 0.0 : 0.5);
+    return anchor.clamp(kMoodSliderMin, kMoodSliderMax);
+  }
+
+  static double sliderAnchorForEmotion(EmotionType emotion) {
+    return sliderAnchorForMood(MoodTypeX.fromEmotion(emotion));
+  }
+
   static MoodShapeSnapshot resolve(double sliderValue) {
     final double clamped = sliderValue.clamp(kMoodSliderMin, kMoodSliderMax);
     final int lowerIndex = math.min(_definitions.length - 1, clamped.floor());
@@ -152,7 +165,6 @@ class MoodShapeEngine {
       upperMood: upper.type,
     );
   }
-
 }
 
 final List<MoodShapeDefinition> _definitions = <MoodShapeDefinition>[
@@ -160,67 +172,43 @@ final List<MoodShapeDefinition> _definitions = <MoodShapeDefinition>[
     type: MoodType.angry,
     sliderStart: 0,
     color: MoodType.angry.emotion.color,
-    shape: StarBorder(
-      points: 12,
-      innerRadiusRatio: 0.4,
-      pointRounding: 0.05,
-    ),
+    shape: StarBorder(points: 12, innerRadiusRatio: 0.4, pointRounding: 0.05),
   ),
   MoodShapeDefinition(
     type: MoodType.sad,
     sliderStart: 1,
     color: MoodType.sad.emotion.color,
-    shape: StarBorder(
-      points: 9,
-      innerRadiusRatio: 0.5,
-      pointRounding: 0.1,
-    ),
+    shape: StarBorder(points: 9, innerRadiusRatio: 0.5, pointRounding: 0.1),
   ),
   MoodShapeDefinition(
     type: MoodType.anxious,
     sliderStart: 2,
     color: MoodType.anxious.emotion.color,
-    shape: StarBorder(
-      points: 7,
-      innerRadiusRatio: 0.6,
-      pointRounding: 0.2,
-    ),
+    shape: StarBorder(points: 7, innerRadiusRatio: 0.6, pointRounding: 0.2),
   ),
   MoodShapeDefinition(
     type: MoodType.confused,
     sliderStart: 3,
     color: MoodType.confused.emotion.color,
-    shape: StarBorder(
-      points: 5,
-      innerRadiusRatio: 0.7,
-      pointRounding: 0.3,
-    ),
+    shape: StarBorder(points: 5, innerRadiusRatio: 0.7, pointRounding: 0.3),
   ),
   MoodShapeDefinition(
     type: MoodType.depressed,
     sliderStart: 4,
     color: MoodType.depressed.emotion.color,
-    shape: StarBorder(
-      points: 3,
-      innerRadiusRatio: 0.6,
-      pointRounding: 0.4,
-    ),
+    shape: StarBorder(points: 3, innerRadiusRatio: 0.6, pointRounding: 0.4),
   ),
   MoodShapeDefinition(
     type: MoodType.lucky,
     sliderStart: 5,
     color: MoodType.lucky.emotion.color,
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(50.0),
-    ),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50.0)),
   ),
   MoodShapeDefinition(
     type: MoodType.excited,
     sliderStart: 6,
     color: MoodType.excited.emotion.color,
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(70.0),
-    ),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(70.0)),
   ),
   MoodShapeDefinition(
     type: MoodType.happy,
