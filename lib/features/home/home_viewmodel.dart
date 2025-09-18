@@ -182,7 +182,7 @@ class HomeViewModel extends StateNotifier<HomeState> {
     const emotions = <EmotionType>[
       EmotionType.happy,
       EmotionType.excited,
-      EmotionType.anxious,
+      EmotionType.normal,
       EmotionType.angry,
       EmotionType.sad,
       EmotionType.lucky,

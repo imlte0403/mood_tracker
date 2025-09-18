@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:mood_tracker/constants/app_color.dart';
-import 'package:mood_tracker/constants/app_images.dart';
+//import 'package:mood_tracker/constants/app_images.dart';
 import 'package:mood_tracker/constants/app_typography.dart';
 import 'package:mood_tracker/constants/gaps.dart';
 import 'package:mood_tracker/constants/sizes.dart';
@@ -11,6 +12,7 @@ import 'package:mood_tracker/features/home/widget/daily_timeline.dart';
 import 'package:mood_tracker/features/home/widget/home_appbar.dart';
 import 'package:mood_tracker/features/home/widget/post_btn.dart';
 import 'package:mood_tracker/features/home/widget/weekly_calendar.dart';
+import 'package:mood_tracker/features/post/post_screen.dart';
 
 class HomeScreen extends ConsumerWidget {
   static const String routeName = 'home';
@@ -81,18 +83,7 @@ class HomeScreen extends ConsumerWidget {
         ],
       ),
       floatingActionButton: PostBtn(
-        onPressed: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                '새 감정 기록 기능은 준비 중입니다.',
-                style: Theme.of(
-                  context,
-                ).textTheme.bodyMedium?.copyWith(fontFamily: AppFonts.playfair),
-              ),
-            ),
-          );
-        },
+        onPressed: () => context.push(PostScreen.routeURL),
       ),
     );
   }

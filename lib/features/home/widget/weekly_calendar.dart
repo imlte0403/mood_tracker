@@ -96,7 +96,7 @@ class WeeklyCalendar extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(vertical: 6),
                     decoration: BoxDecoration(
                       color: isSelected
-                          ? color.withOpacity(0.18)
+                          ? color.withValues(alpha: 0.18)
                           : Colors.transparent,
                       borderRadius: BorderRadius.circular(12),
                     ),
