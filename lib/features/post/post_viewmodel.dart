@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:mood_tracker/core/models/emotion_type.dart';
+import 'package:mood_tracker/core/models/timeline_entry.dart';
 import 'package:mood_tracker/features/home/data/mood_repository.dart';
 import 'package:mood_tracker/core/utils/firebase_error_handler.dart';
 import 'package:mood_tracker/features/post/model/mood_shape.dart';
@@ -28,6 +29,8 @@ class MoodEntryForm {
     required this.isSubmitting,
     required this.isSuccess,
     required this.isValid,
+    this.entryId,
+    this.userId,
     this.errorMessage,
   });
 
@@ -37,7 +40,11 @@ class MoodEntryForm {
   final bool isSubmitting;
   final bool isSuccess;
   final bool isValid;
+  final String? entryId;
+  final String? userId;
   final String? errorMessage;
+
+  bool get isEditing => entryId != null;
 
   factory MoodEntryForm.initial(EmotionType emotion) {
     return MoodEntryForm(
@@ -47,6 +54,8 @@ class MoodEntryForm {
       isSubmitting: false,
       isSuccess: false,
       isValid: true,
+      entryId: null,
+      userId: null,
       errorMessage: null,
     );
   }
@@ -58,6 +67,8 @@ class MoodEntryForm {
     bool? isSubmitting,
     bool? isSuccess,
     bool? isValid,
+    String? entryId,
+    String? userId,
     Object? errorMessage = _noValue,
   }) {
     final nextEmotion = emotion ?? this.emotion;
@@ -70,6 +81,8 @@ class MoodEntryForm {
       isSubmitting: isSubmitting ?? this.isSubmitting,
       isSuccess: isSuccess ?? this.isSuccess,
       isValid: computedIsValid,
+      entryId: entryId ?? this.entryId,
+      userId: userId ?? this.userId,
       errorMessage: errorMessage == _noValue
           ? this.errorMessage
           : errorMessage as String?,
@@ -90,6 +103,25 @@ class MoodEntryFormNotifier extends StateNotifier<MoodEntryForm> {
       );
 
   final Ref ref;
+
+  void startNew() {
+    final currentEmotion = ref.read(currentMoodDataProvider).displayEmotion;
+    state = MoodEntryForm.initial(currentEmotion);
+  }
+
+  void startEditing(TimelineEntry entry) {
+    state = MoodEntryForm(
+      timestamp: entry.timestamp,
+      emotion: entry.emotion,
+      message: entry.message ?? '',
+      isSubmitting: false,
+      isSuccess: false,
+      isValid: true,
+      entryId: entry.id,
+      userId: entry.userId,
+      errorMessage: null,
+    );
+  }
 
   void updateEmotion(EmotionType emotion) {
     state = state.copyWith(
@@ -128,23 +160,50 @@ class MoodEntryFormNotifier extends StateNotifier<MoodEntryForm> {
       return false;
     }
 
+    final String resolvedUserId =
+        (state.userId != null && state.userId!.isNotEmpty)
+        ? state.userId!
+        : currentUser.uid;
+
+    final bool editing = state.entryId != null;
+    final DateTime timestamp = editing ? state.timestamp : DateTime.now();
+
     state = state.copyWith(
       isSubmitting: true,
       errorMessage: null,
-      timestamp: DateTime.now(),
+      timestamp: timestamp,
     );
 
     try {
-      await ref
-          .read(moodRepositoryProvider)
-          .createEntry(
-            userId: currentUser.uid,
-            timestamp: state.timestamp,
-            emotion: state.emotion,
-            message: state.message.isEmpty ? null : state.message,
-          );
+      final repository = ref.read(moodRepositoryProvider);
 
-      state = MoodEntryForm.initial(state.emotion).copyWith(isSuccess: true);
+      if (state.entryId != null) {
+        final updatedEntry = TimelineEntry(
+          id: state.entryId!,
+          timestamp: state.timestamp,
+          emotion: state.emotion,
+          message: state.message.isEmpty ? null : state.message,
+          userId: resolvedUserId,
+        );
+        await repository.updateEntry(updatedEntry);
+        state = state.copyWith(
+          isSubmitting: false,
+          isSuccess: true,
+          userId: resolvedUserId,
+        );
+      } else {
+        await repository.createEntry(
+          userId: resolvedUserId,
+          timestamp: state.timestamp,
+          emotion: state.emotion,
+          message: state.message.isEmpty ? null : state.message,
+        );
+
+        state = MoodEntryForm.initial(
+          state.emotion,
+        ).copyWith(isSuccess: true, userId: resolvedUserId);
+      }
+
       return true;
     } on FirebaseException catch (error) {
       state = state.copyWith(

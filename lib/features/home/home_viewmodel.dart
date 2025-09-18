@@ -56,7 +56,10 @@ class HomeViewModel extends StateNotifier<HomeState> {
       return;
     }
 
-    state = state.copyWith(userId: userId, displayName: user?.displayName);
+    state = state.copyWith(
+      userId: userId,
+      displayName: user?.displayName ?? 'User',
+    );
     _listenEntries();
   }
 
@@ -120,9 +123,8 @@ class HomeViewModel extends StateNotifier<HomeState> {
     }
 
     state = state.copyWith(entries: const AsyncLoading());
-    final targetDate = state.selectedDate;
     _entriesSubscription = _repository
-        .watchEntries(userId: userId, date: targetDate)
+        .watchEntries(userId: userId, date: state.selectedDate)
         .listen(
           (entries) {
             state = state.copyWith(entries: AsyncData(entries));
@@ -168,7 +170,7 @@ class HomeViewModel extends StateNotifier<HomeState> {
     );
   }
 
-//데모 데이터 
+  //데모 데이터
   static Map<DateTime, EmotionType> _generateDemoWeekData(
     List<DateTime> weekDates,
   ) {

@@ -47,4 +47,52 @@ class AppTextStyles {
       color: Colors.white,
     );
   }
+
+  static TextStyle? timelineHeader(TextTheme textTheme) {
+    return textTheme.labelMedium?.copyWith(
+      fontFamily: AppFonts.playfair,
+      fontWeight: FontWeight.w600,
+    );
+  }
+
+  static TextStyle? timelineTime(TextTheme textTheme) {
+    return textTheme.bodySmall?.copyWith(
+      fontFamily: AppFonts.playfair,
+      fontWeight: FontWeight.w600,
+    );
+  }
+
+  static TextStyle? timelineSlotLabel(TextTheme textTheme) {
+    return textTheme.bodySmall?.copyWith(
+      fontFamily: AppFonts.playfair,
+      color: AppColors.placeholder,
+    );
+  }
+
+  static TextStyle? timelineMoodTitle(TextTheme textTheme) {
+    return textTheme.titleSmall?.copyWith(
+      fontFamily: AppFonts.playfair,
+      fontWeight: FontWeight.w600,
+    );
+  }
+
+  static TextStyle? timelineMessage(TextTheme textTheme) {
+    return textTheme.bodyMedium?.copyWith(fontFamily: AppFonts.playfair);
+  }
+
+  static TextStyle? timelineStackLabel(TextTheme textTheme) {
+    return textTheme.bodySmall?.copyWith(
+      fontFamily: AppFonts.playfair,
+      color: AppColors.placeholder,
+      fontStyle: FontStyle.italic,
+    );
+  }
+
+  static TextStyle? timelineStackHint(TextTheme textTheme) {
+    return textTheme.bodySmall?.copyWith(
+      fontFamily: AppFonts.playfair,
+      color: AppColors.placeholder.withOpacity(0.7),
+      fontStyle: FontStyle.italic,
+    );
+  }
 }

@@ -5,23 +5,53 @@ import 'package:go_router/go_router.dart';
 import 'package:mood_tracker/core/constants/app_color.dart';
 import 'package:mood_tracker/core/constants/gaps.dart';
 import 'package:mood_tracker/core/constants/sizes.dart';
+import 'package:mood_tracker/core/models/timeline_entry.dart';
+import 'package:mood_tracker/features/home/home_screen.dart';
+import 'package:mood_tracker/features/post/model/mood_shape.dart';
 import 'package:mood_tracker/features/post/post_viewmodel.dart';
 import 'package:mood_tracker/features/post/widget/mood_shape_display.dart';
 import 'package:mood_tracker/features/post/widget/mood_slider.dart';
 import 'package:mood_tracker/features/post/widget/mood_textfield.dart';
-import 'package:mood_tracker/features/home/home_screen.dart';
 
-
-class PostScreen extends ConsumerWidget {
+class PostScreen extends ConsumerStatefulWidget {
   static const String routeName = 'post';
   static const String routeURL = '/post';
 
-  const PostScreen({super.key});
+  const PostScreen({super.key, this.entry});
+
+  final TimelineEntry? entry;
 
   static const double _initialSliderValue = 3.5;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<PostScreen> createState() => _PostScreenState();
+}
+
+class _PostScreenState extends ConsumerState<PostScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+
+      final sliderNotifier = ref.read(moodSliderValueProvider.notifier);
+      final formNotifier = ref.read(moodEntryFormProvider.notifier);
+
+      if (widget.entry != null) {
+        final entry = widget.entry!;
+        sliderNotifier.state = MoodShapeEngine.sliderAnchorForEmotion(
+          entry.emotion,
+        );
+        formNotifier.startEditing(entry);
+      } else {
+        sliderNotifier.state = PostScreen._initialSliderValue;
+        formNotifier.startNew();
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final form = ref.watch(moodEntryFormProvider);
 
     Future<void> handleSubmit() async {
@@ -31,8 +61,11 @@ class PostScreen extends ConsumerWidget {
       if (!context.mounted) return;
 
       if (success) {
-        ref.read(moodSliderValueProvider.notifier).state = _initialSliderValue;
-        context.go(HomeScreen.routeURL);
+        if (context.canPop()) {
+          context.pop();
+        } else {
+          context.go(HomeScreen.routeURL);
+        }
         return;
       }
 
@@ -42,6 +75,8 @@ class PostScreen extends ConsumerWidget {
         context,
       ).showSnackBar(SnackBar(content: Text(error)));
     }
+
+    final isEditing = form.isEditing;
 
     return Scaffold(
       backgroundColor: AppColors.bgBeige,
@@ -70,9 +105,9 @@ class PostScreen extends ConsumerWidget {
                   valueColor: AlwaysStoppedAnimation<Color>(AppColors.bgWhite),
                 ),
               )
-            : const Text(
-                'Post',
-                style: TextStyle(
+            : Text(
+                isEditing ? 'Update' : 'Post',
+                style: const TextStyle(
                   fontWeight: FontWeight.w600,
                   color: AppColors.bgWhite,
                 ),
@@ -87,9 +122,11 @@ class PostScreen extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Text(
-                'How do you feel Right Now?',
-                style: TextStyle(
+              Text(
+                isEditing
+                    ? 'Write about your mood'
+                    : 'How do you feel Right Now?',
+                style: const TextStyle(
                   fontFamily: 'PlayfairDisplay',
                   fontSize: Sizes.size24,
                   fontWeight: FontWeight.w600,
