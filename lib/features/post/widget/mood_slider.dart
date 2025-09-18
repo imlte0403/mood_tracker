@@ -1,24 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-//import 'package:mood_tracker/core/constants/app_color.dart';
 import 'package:mood_tracker/core/constants/gaps.dart';
 import 'package:mood_tracker/core/constants/sizes.dart';
-//import 'package:mood_tracker/core/models/emotion_type.dart';
+import 'package:mood_tracker/features/post/model/mood_shape.dart';
 import 'package:mood_tracker/features/post/post_viewmodel.dart';
 
 class MoodSlider extends ConsumerWidget {
   const MoodSlider({super.key});
 
-  static const double _min = 0.0;
-  static const double _max = 8.0;
+  static const double _min = kMoodSliderMin;
+  static const double _max = kMoodSliderMax;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final sliderValue = ref.watch(moodSliderValueProvider);
     final moodData = ref.watch(currentMoodDataProvider);
 
-    final activeColor = moodData.currentColor;
+    final activeColor = moodData.color;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -44,10 +43,10 @@ class MoodSlider extends ConsumerWidget {
             label: "Rating: ${sliderValue.toStringAsFixed(1)}",
             onChanged: (value) {
               ref.read(moodSliderValueProvider.notifier).state = value;
-              final updatedMood = MoodSliderData.fromSliderValue(value);
+              final moodType = MoodShapeEngine.getMoodFromSlider(value);
               ref
                   .read(moodEntryFormProvider.notifier)
-                  .updateEmotion(updatedMood.emotion);
+                  .updateEmotion(moodType.emotion);
             },
           ),
         ),

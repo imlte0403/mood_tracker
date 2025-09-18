@@ -44,7 +44,7 @@ class _MoodTextFieldState extends ConsumerState<MoodTextField> {
       );
     }
 
-    final placeholder = _placeholderForEmotion(mood.emotion);
+    final placeholder = _placeholderForEmotion(mood.displayEmotion);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

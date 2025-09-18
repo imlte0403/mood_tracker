@@ -1,22 +1,16 @@
-import 'dart:math' as math;
-import 'dart:ui' show lerpDouble;
-
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:mood_tracker/core/models/emotion_type.dart';
 import 'package:mood_tracker/features/home/data/mood_repository.dart';
 import 'package:mood_tracker/core/utils/firebase_error_handler.dart';
-
-const double _maxSliderValue = 8.0;
-const int _segmentCount = 60;
+import 'package:mood_tracker/features/post/model/mood_shape.dart';
 
 final moodSliderValueProvider = StateProvider.autoDispose<double>((ref) => 3.5);
 
-final currentMoodDataProvider = Provider.autoDispose<MoodSliderData>((ref) {
+final currentMoodDataProvider = Provider.autoDispose<MoodShapeSnapshot>((ref) {
   final value = ref.watch(moodSliderValueProvider);
-  return MoodSliderData.fromSliderValue(value);
+  return MoodShapeEngine.resolve(value);
 });
 
 final moodEntryFormProvider =
@@ -25,67 +19,6 @@ final moodEntryFormProvider =
     ) {
       return MoodEntryFormNotifier(ref);
     });
-
-class MoodSliderData {
-  const MoodSliderData({
-    required this.value,
-    required this.emotion,
-    required this.currentColor,
-    required this.radii,
-  });
-
-  final double value;
-  final EmotionType emotion;
-  final Color currentColor;
-  final List<double> radii;
-
-  static MoodSliderData fromSliderValue(double rawValue) {
-    final clamped = rawValue.clamp(0.0, _maxSliderValue);
-    final int lowerIndex = math.min(_morphStages.length - 1, clamped.floor());
-
-    final _MorphStage lowerStage = _morphStages[lowerIndex];
-    final bool isLastStage = lowerIndex == _morphStages.length - 1;
-    final _MorphStage upperStage = isLastStage
-        ? lowerStage
-        : _morphStages[lowerIndex + 1];
-
-    final double span = isLastStage
-        ? 1
-        : (upperStage.start - lowerStage.start).clamp(0.001, 1.0);
-    final double t = isLastStage
-        ? 0
-        : ((clamped - lowerStage.start) / span).clamp(0.0, 1.0);
-
-    final Color blendedColor =
-        Color.lerp(lowerStage.color, upperStage.color, t) ?? lowerStage.color;
-
-    final List<double> interpolatedRadii = List<double>.generate(
-      _segmentCount,
-      (index) {
-        final double a = lowerStage.radii[index];
-        final double b = upperStage.radii[index];
-        return lerpDouble(a, b, t)!;
-      },
-      growable: false,
-    );
-
-    final EmotionType displayEmotion = (isLastStage || t <= 0.5)
-        ? lowerStage.emotion
-        : upperStage.emotion;
-
-    return MoodSliderData(
-      value: clamped,
-      emotion: displayEmotion,
-      currentColor: blendedColor,
-      radii: interpolatedRadii,
-    );
-  }
-
-  static Color colorForEmotion(EmotionType emotion) {
-    final stage = _stageByEmotion[emotion];
-    return stage?.color ?? EmotionType.happy.color;
-  }
-}
 
 class MoodEntryForm {
   const MoodEntryForm({
@@ -152,7 +85,9 @@ const Object _noValue = Object();
 
 class MoodEntryFormNotifier extends StateNotifier<MoodEntryForm> {
   MoodEntryFormNotifier(this.ref)
-    : super(MoodEntryForm.initial(ref.read(currentMoodDataProvider).emotion));
+    : super(
+        MoodEntryForm.initial(ref.read(currentMoodDataProvider).displayEmotion),
+      );
 
   final Ref ref;
 
@@ -187,11 +122,11 @@ class MoodEntryFormNotifier extends StateNotifier<MoodEntryForm> {
       return false;
     }
 
-  final currentUser = FirebaseAuth.instance.currentUser;
-  if (currentUser == null) {
-    state = state.copyWith(errorMessage: '로그인이 필요합니다.');
-    return false;
-  }
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser == null) {
+      state = state.copyWith(errorMessage: '로그인이 필요합니다.');
+      return false;
+    }
 
     state = state.copyWith(
       isSubmitting: true,
@@ -225,163 +160,4 @@ class MoodEntryFormNotifier extends StateNotifier<MoodEntryForm> {
       return false;
     }
   }
-}
-
-class _MorphStage {
-  _MorphStage({
-    required this.start,
-    required this.emotion,
-    required this.color,
-    required this.radii,
-  });
-
-  final double start;
-  final EmotionType emotion;
-  final Color color;
-  final List<double> radii;
-}
-
-final List<double> _spikyStarRadii = _generateStarRadii(
-  spikes: 12,
-  outer: 1.08,
-  inner: 0.28,
-  sharpness: 3.2,
-);
-
-final List<double> _ninePointStarRadii = _generateStarRadii(
-  spikes: 9,
-  outer: 1.02,
-  inner: 0.54,
-  sharpness: 1.6,
-);
-
-final List<double> _sevenPointStarRadii = _generateStarRadii(
-  spikes: 7,
-  outer: 1.0,
-  inner: 0.6,
-  sharpness: 1.4,
-);
-
-final List<double> _classicStarRadii = _generateStarRadii(
-  spikes: 5,
-  outer: 0.98,
-  inner: 0.74,
-  sharpness: 1.2,
-);
-
-final List<double> _triangleRadii = _generateStarRadii(
-  spikes: 3,
-  outer: 1.05,
-  inner: 0.46,
-  sharpness: 3.5,
-);
-
-final List<double> _blobThreeRadii = _generateBlobRadii(
-  lobes: 3,
-  base: 0.94,
-  amplitude: 0.08,
-  secondary: 0.035,
-);
-
-final List<double> _blobFiveRadii = _generateBlobRadii(
-  lobes: 5,
-  base: 0.96,
-  amplitude: 0.06,
-  secondary: 0.028,
-);
-
-final List<double> _circleRadii = List<double>.filled(
-  _segmentCount,
-  0.95,
-  growable: false,
-);
-
-final List<_MorphStage> _morphStages = <_MorphStage>[
-  _MorphStage(
-    start: 0.0,
-    emotion: EmotionType.angry,
-    color: EmotionType.angry.color,
-    radii: _spikyStarRadii,
-  ),
-  _MorphStage(
-    start: 1.0,
-    emotion: EmotionType.sad,
-    color: EmotionType.sad.color,
-    radii: _ninePointStarRadii,
-  ),
-  _MorphStage(
-    start: 2.0,
-    emotion: EmotionType.anxious,
-    color: EmotionType.anxious.color,
-    radii: _sevenPointStarRadii,
-  ),
-  _MorphStage(
-    start: 3.0,
-    emotion: EmotionType.normal,
-    color: EmotionType.normal.color,
-    radii: _classicStarRadii,
-  ),
-  _MorphStage(
-    start: 4.0,
-    emotion: EmotionType.depressed,
-    color: EmotionType.depressed.color,
-    radii: _triangleRadii,
-  ),
-  _MorphStage(
-    start: 5.0,
-    emotion: EmotionType.lucky,
-    color: EmotionType.lucky.color,
-    radii: _blobThreeRadii,
-  ),
-  _MorphStage(
-    start: 6.0,
-    emotion: EmotionType.excited,
-    color: EmotionType.excited.color,
-    radii: _blobFiveRadii,
-  ),
-  _MorphStage(
-    start: 7.0,
-    emotion: EmotionType.happy,
-    color: EmotionType.happy.color,
-    radii: _circleRadii,
-  ),
-];
-
-final Map<EmotionType, _MorphStage> _stageByEmotion =
-    <EmotionType, _MorphStage>{
-      for (final stage in _morphStages) stage.emotion: stage,
-    };
-
-List<double> _generateStarRadii({
-  required int spikes,
-  required double outer,
-  required double inner,
-  double sharpness = 1.0,
-}) {
-  final double amplitude = outer - inner;
-  return List<double>.generate(_segmentCount, (int index) {
-    final double angle = (2 * math.pi * index) / _segmentCount;
-    final double cosValue = (math.cos(spikes * angle) + 1) / 2;
-    final double shaped = math.pow(cosValue, sharpness).toDouble();
-    final double radius = inner + amplitude * shaped;
-    return radius.clamp(0.3, 1.15);
-  }, growable: false);
-}
-
-List<double> _generateBlobRadii({
-  required int lobes,
-  required double base,
-  required double amplitude,
-  required double secondary,
-}) {
-  return List<double>.generate(_segmentCount, (int index) {
-    final double angle = (2 * math.pi * index) / _segmentCount;
-    final double primary = math.sin(lobes * angle);
-    final double secondaryWave = math.sin(
-      (lobes * 2) * angle + math.pi / lobes,
-    );
-    final double radius =
-        base + amplitude * primary + secondary * secondaryWave;
-    return radius.clamp(0.65, 1.08);
-  }, growable: false);
 }

@@ -1,12 +1,10 @@
-import 'dart:math' as math;
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:mood_tracker/core/constants/gaps.dart';
 import 'package:mood_tracker/core/constants/sizes.dart';
 import 'package:mood_tracker/core/models/emotion_type.dart';
+import 'package:mood_tracker/features/post/model/mood_shape.dart';
 import 'package:mood_tracker/features/post/post_viewmodel.dart';
 
 class MoodShapeDisplay extends ConsumerStatefulWidget {
@@ -29,11 +27,11 @@ class _MoodShapeDisplayState extends ConsumerState<MoodShapeDisplay>
     super.initState();
     _scaleController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 320),
+      duration: const Duration(milliseconds: 450),
     );
     _scaleAnimation = CurvedAnimation(
       parent: _scaleController,
-      curve: Curves.easeOutBack,
+      curve: Curves.elasticOut,
     );
   }
 
@@ -49,9 +47,9 @@ class _MoodShapeDisplayState extends ConsumerState<MoodShapeDisplay>
     final mood = ref.watch(currentMoodDataProvider);
 
     if (_previousEmotion == null) {
-      _previousEmotion = mood.emotion;
-    } else if (_previousEmotion != mood.emotion) {
-      _previousEmotion = mood.emotion;
+      _previousEmotion = mood.displayEmotion;
+    } else if (_previousEmotion != mood.displayEmotion) {
+      _previousEmotion = mood.displayEmotion;
       _scaleController.forward(from: 0);
     }
 
@@ -59,8 +57,8 @@ class _MoodShapeDisplayState extends ConsumerState<MoodShapeDisplay>
       mainAxisSize: MainAxisSize.min,
       children: [
         AnimatedContainer(
-          duration: const Duration(milliseconds: 260),
-          curve: Curves.easeInOut,
+          duration: const Duration(milliseconds: 400),
+          curve: Curves.easeInOutCubic,
           padding: const EdgeInsets.all(Sizes.size24),
           child: AnimatedBuilder(
             animation: _scaleAnimation,
@@ -68,18 +66,35 @@ class _MoodShapeDisplayState extends ConsumerState<MoodShapeDisplay>
               final double scale = 0.9 + (0.1 * _scaleAnimation.value);
               return Transform.scale(scale: scale, child: child);
             },
-            child: CustomPaint(
-              size: Size.square(widget.size),
-              painter: _MorphingMoodPainter(
-                color: mood.currentColor,
-                radii: mood.radii,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 400),
+              curve: Curves.easeInOutCubic,
+              child: Container(
+                width: widget.size,
+                height: widget.size,
+                decoration: ShapeDecoration(
+                  color: mood.color,
+                  shape: mood.shape,
+                  shadows: [
+                    BoxShadow(
+                      color: mood.color.withValues(alpha: 0.25),
+                      offset: const Offset(0, 6),
+                      blurRadius: 12,
+                    ),
+                    BoxShadow(
+                      color: mood.color.withValues(alpha: 0.1),
+                      offset: const Offset(0, 2),
+                      blurRadius: 4,
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
         ),
         Gaps.v24,
         Text(
-          _emotionMessage(mood.emotion),
+          _emotionMessage(mood.displayEmotion),
           style: theme.textTheme.headlineSmall?.copyWith(
             fontFamily: 'PlayfairDisplay',
             fontWeight: FontWeight.w600,
@@ -88,9 +103,9 @@ class _MoodShapeDisplayState extends ConsumerState<MoodShapeDisplay>
         ),
         Gaps.v12,
         Text(
-          mood.emotion.displayNameEn,
+          mood.displayEmotion.displayNameEn,
           style: theme.textTheme.titleMedium?.copyWith(
-            color: mood.currentColor,
+            color: mood.color,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -138,7 +153,7 @@ class _MoodColorIndicator extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final activeEmotion = ref.watch(currentMoodDataProvider).emotion;
+    final activeEmotion = ref.watch(currentMoodDataProvider).displayEmotion;
 
     // 색상 인디케이터
     return Row(
@@ -153,7 +168,7 @@ class _MoodColorIndicator extends ConsumerWidget {
               width: emotion == activeEmotion ? Sizes.size18 : Sizes.size12,
               height: emotion == activeEmotion ? Sizes.size18 : Sizes.size12,
               decoration: BoxDecoration(
-                color: MoodSliderData.colorForEmotion(emotion),
+                color: MoodShapeEngine.colorForEmotion(emotion),
                 shape: BoxShape.circle,
                 border: emotion == activeEmotion
                     ? Border.all(color: Colors.white, width: Sizes.size2)
@@ -175,73 +190,3 @@ class _MoodColorIndicator extends ConsumerWidget {
   }
 }
 
-class _MorphingMoodPainter extends CustomPainter {
-  const _MorphingMoodPainter({required this.color, required this.radii});
-
-  final Color color;
-  final List<double> radii;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.fill
-      ..isAntiAlias = true;
-
-    final Path path = _createPath(size);
-    canvas.drawPath(path, paint);
-  }
-
-  Path _createPath(Size size) {
-    final Path path = Path();
-    if (radii.isEmpty) {
-      return path;
-    }
-    final Offset center = size.center(Offset.zero);
-    final double base = size.shortestSide / 2 * 0.92;
-    final int count = radii.length;
-
-    final List<Offset> points = List<Offset>.generate(count, (int i) {
-      final double angle = (2 * math.pi * i) / count;
-      final double distance = base * radii[i];
-      return Offset(
-        center.dx + math.cos(angle) * distance,
-        center.dy + math.sin(angle) * distance,
-      );
-    });
-
-    path.moveTo(points.first.dx, points.first.dy);
-    const double tension = 0.6;
-
-    for (int i = 0; i < count; i++) {
-      final Offset p0 = points[i];
-      final Offset p1 = points[(i + 1) % count];
-      final Offset pm1 = points[(i - 1 + count) % count];
-      final Offset p2 = points[(i + 2) % count];
-
-      final Offset control1 = p0 + _scaleOffset(p1 - pm1, tension / 6);
-      final Offset control2 = p1 - _scaleOffset(p2 - p0, tension / 6);
-
-      path.cubicTo(
-        control1.dx,
-        control1.dy,
-        control2.dx,
-        control2.dy,
-        p1.dx,
-        p1.dy,
-      );
-    }
-
-    path.close();
-    return path;
-  }
-
-  Offset _scaleOffset(Offset offset, double factor) {
-    return Offset(offset.dx * factor, offset.dy * factor);
-  }
-
-  @override
-  bool shouldRepaint(covariant _MorphingMoodPainter oldDelegate) {
-    return oldDelegate.color != color || !listEquals(oldDelegate.radii, radii);
-  }
-}

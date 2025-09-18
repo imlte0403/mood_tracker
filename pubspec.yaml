@@ -19,6 +19,7 @@ dependencies:
   google_sign_in: ^6.2.1
   sign_in_with_apple: ^6.1.0
   crypto: ^3.0.3
+  morphable_shape: ^2.0.0
 
   cupertino_icons: ^1.0.8
 
