@@ -25,9 +25,19 @@ class MoodRepository {
   }) {
     final start = DateTime(date.year, date.month, date.day);
     final end = start.add(const Duration(days: 1));
+    return watchEntriesInRange(userId: userId, start: start, end: end);
+  }
 
-    final startTimestamp = Timestamp.fromDate(start.toUtc());
-    final endTimestamp = Timestamp.fromDate(end.toUtc());
+  Stream<List<TimelineEntry>> watchEntriesInRange({
+    required String userId,
+    required DateTime start,
+    required DateTime end,
+  }) {
+    final normalizedStart = DateTime(start.year, start.month, start.day);
+    final normalizedEnd = DateTime(end.year, end.month, end.day);
+
+    final startTimestamp = Timestamp.fromDate(normalizedStart.toUtc());
+    final endTimestamp = Timestamp.fromDate(normalizedEnd.toUtc());
 
     return _entriesRef(userId)
         .where('timestamp', isGreaterThanOrEqualTo: startTimestamp)

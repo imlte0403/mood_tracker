@@ -31,47 +31,59 @@ class HomeViewModel extends StateNotifier<HomeState> {
           entries: const AsyncLoading(),
           weekDates: week,
           displayName: 'Username',
-          weeklyDemoMoods: _generateDemoWeekData(week),
+          weeklyMoods: _generateDemoWeekData(week),
         );
       }());
 
   final MoodRepository _repository;
   String? _userId;
-  StreamSubscription<List<TimelineEntry>>? _entriesSubscription;
+  StreamSubscription<List<TimelineEntry>>? _weekEntriesSubscription;
+  DateTime? _currentWeekStart;
+  Map<DateTime, List<TimelineEntry>> _cachedWeekEntries =
+      <DateTime, List<TimelineEntry>>{};
 
   void setUser(User? user) {
     final userId = user?.uid;
-    if (_userId == userId && state.displayName == user?.displayName) {
+    final displayName = user?.displayName ?? 'User';
+    if (_userId == userId && state.displayName == displayName) {
       return;
     }
     _userId = userId;
     if (userId == null) {
-      _entriesSubscription?.cancel();
+      _weekEntriesSubscription?.cancel();
+      _currentWeekStart = null;
+      _cachedWeekEntries = <DateTime, List<TimelineEntry>>{};
       state = state.copyWith(
         userId: null,
         displayName: 'Username',
         entries: AsyncData(_buildDemoEntries(state.selectedDate)),
-        weeklyDemoMoods: _generateDemoWeekData(state.weekDates),
+        weeklyMoods: _generateDemoWeekData(state.weekDates),
       );
       return;
     }
 
     state = state.copyWith(
       userId: userId,
-      displayName: user?.displayName ?? 'User',
+      displayName: displayName,
+      entries: const AsyncLoading(),
+      weeklyMoods: const <DateTime, EmotionType>{},
     );
-    _listenEntries();
+    _cachedWeekEntries = <DateTime, List<TimelineEntry>>{};
+    _currentWeekStart = null;
+    _listenWeekEntries(forceReload: true);
   }
 
   void setAuthError(Object error, StackTrace stackTrace) {
-    _entriesSubscription?.cancel();
+    _weekEntriesSubscription?.cancel();
     _userId = null;
+    _currentWeekStart = null;
+    _cachedWeekEntries = <DateTime, List<TimelineEntry>>{};
     final message = FirebaseErrorHandler.getErrorMessage(error);
     state = state.copyWith(
       userId: null,
       displayName: 'Username',
       entries: AsyncError<List<TimelineEntry>>(message, stackTrace),
-      weeklyDemoMoods: _generateDemoWeekData(state.weekDates),
+      weeklyMoods: _generateDemoWeekData(state.weekDates),
     );
   }
 
@@ -84,9 +96,22 @@ class HomeViewModel extends StateNotifier<HomeState> {
     state = state.copyWith(
       selectedDate: normalized,
       weekDates: week,
-      weeklyDemoMoods: _generateDemoWeekData(week),
     );
-    _listenEntries();
+    if (_userId == null) {
+      state = state.copyWith(
+        weeklyMoods: _generateDemoWeekData(week),
+        entries: AsyncData(_buildDemoEntries(normalized)),
+      );
+      return;
+    }
+
+    final weekStart = week.first;
+    if (_currentWeekStart != null && _currentWeekStart == weekStart) {
+      _emitWeekState();
+    } else {
+      _cachedWeekEntries = <DateTime, List<TimelineEntry>>{};
+      _listenWeekEntries(forceReload: true);
+    }
   }
 
   Future<TimelineEntry> createEntry({
@@ -112,30 +137,83 @@ class HomeViewModel extends StateNotifier<HomeState> {
     return _repository.deleteEntry(userId: userId, entryId: entryId);
   }
 
-  void _listenEntries() {
-    _entriesSubscription?.cancel();
+  void _listenWeekEntries({bool forceReload = false}) {
     final userId = _userId;
     if (userId == null) {
       state = state.copyWith(
         entries: AsyncData(_buildDemoEntries(state.selectedDate)),
+        weeklyMoods: _generateDemoWeekData(state.weekDates),
       );
       return;
     }
 
-    state = state.copyWith(entries: const AsyncLoading());
-    _entriesSubscription = _repository
-        .watchEntries(userId: userId, date: state.selectedDate)
+    if (state.weekDates.isEmpty) {
+      return;
+    }
+
+    final weekStart = state.weekDates.first;
+    if (!forceReload && _currentWeekStart != null && _currentWeekStart == weekStart) {
+      _emitWeekState();
+      return;
+    }
+
+    _weekEntriesSubscription?.cancel();
+    _currentWeekStart = weekStart;
+    _cachedWeekEntries = <DateTime, List<TimelineEntry>>{};
+    state = state.copyWith(
+      entries: const AsyncLoading(),
+      weeklyMoods: const <DateTime, EmotionType>{},
+    );
+
+    final weekEnd = weekStart.add(const Duration(days: DateTime.daysPerWeek));
+    _weekEntriesSubscription = _repository
+        .watchEntriesInRange(userId: userId, start: weekStart, end: weekEnd)
         .listen(
           (entries) {
-            state = state.copyWith(entries: AsyncData(entries));
+            _cachedWeekEntries = _groupEntriesByDate(entries);
+            _emitWeekState();
           },
           onError: (error, stackTrace) {
             final message = FirebaseErrorHandler.getErrorMessage(error);
             state = state.copyWith(
               entries: AsyncError<List<TimelineEntry>>(message, stackTrace),
+              weeklyMoods: const <DateTime, EmotionType>{},
             );
           },
         );
+  }
+
+  void _emitWeekState() {
+    final normalizedSelected = _normalizeDate(state.selectedDate);
+    final selectedEntries = List<TimelineEntry>.unmodifiable(
+      _cachedWeekEntries[normalizedSelected] ?? const <TimelineEntry>[],
+    );
+
+    final moods = <DateTime, EmotionType>{};
+    _cachedWeekEntries.forEach((date, entries) {
+      if (entries.isEmpty) return;
+      moods[date] = entries.last.emotion;
+    });
+
+    state = state.copyWith(
+      entries: AsyncData(selectedEntries),
+      weeklyMoods: moods,
+    );
+  }
+
+  Map<DateTime, List<TimelineEntry>> _groupEntriesByDate(
+    List<TimelineEntry> entries,
+  ) {
+    final map = <DateTime, List<TimelineEntry>>{};
+    for (final entry in entries) {
+      final key = _normalizeDate(entry.timestamp);
+      final list = map.putIfAbsent(key, () => <TimelineEntry>[]);
+      list.add(entry);
+    }
+    for (final list in map.values) {
+      list.sort((a, b) => a.timestamp.compareTo(b.timestamp));
+    }
+    return map;
   }
 
   String _requireUserId() {
@@ -148,7 +226,7 @@ class HomeViewModel extends StateNotifier<HomeState> {
 
   @override
   void dispose() {
-    _entriesSubscription?.cancel();
+    _weekEntriesSubscription?.cancel();
     super.dispose();
   }
 
@@ -209,7 +287,7 @@ class HomeState {
     required this.selectedDate,
     required this.entries,
     required this.weekDates,
-    required this.weeklyDemoMoods,
+    required this.weeklyMoods,
     this.userId,
     this.displayName,
   });
@@ -217,7 +295,7 @@ class HomeState {
   final DateTime selectedDate;
   final AsyncValue<List<TimelineEntry>> entries;
   final List<DateTime> weekDates;
-  final Map<DateTime, EmotionType> weeklyDemoMoods;
+  final Map<DateTime, EmotionType> weeklyMoods;
   final String? userId;
   final String? displayName;
 
@@ -225,7 +303,7 @@ class HomeState {
     DateTime? selectedDate,
     AsyncValue<List<TimelineEntry>>? entries,
     List<DateTime>? weekDates,
-    Map<DateTime, EmotionType>? weeklyDemoMoods,
+    Map<DateTime, EmotionType>? weeklyMoods,
     String? userId,
     String? displayName,
   }) {
@@ -233,7 +311,7 @@ class HomeState {
       selectedDate: selectedDate ?? this.selectedDate,
       entries: entries ?? this.entries,
       weekDates: weekDates ?? this.weekDates,
-      weeklyDemoMoods: weeklyDemoMoods ?? this.weeklyDemoMoods,
+      weeklyMoods: weeklyMoods ?? this.weeklyMoods,
       userId: userId ?? this.userId,
       displayName: displayName ?? this.displayName,
     );
