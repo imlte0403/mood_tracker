@@ -50,6 +50,13 @@ class AppTextStyles {
     );
   }
 
+  static TextStyle? authBody(TextTheme textTheme) {
+    return textTheme.bodyMedium?.copyWith(
+      fontFamily: AppFonts.playfair,
+      color: AppColors.text,
+    );
+  }
+
   static TextStyle? greetingName(TextTheme textTheme) {
     return textTheme.headlineLarge?.copyWith(
       fontFamily: AppFonts.playfair,

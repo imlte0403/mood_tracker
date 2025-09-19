@@ -156,9 +156,19 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen>
                       Center(
                         child: TextButton(
                           onPressed: () => context.go(LogInScreen.routeURL),
-                          child: Text(
-                            'Already have an account? Log In',
-                            style: AppTextStyles.authLink(textTheme),
+                          child: RichText(
+                            text: TextSpan(
+                              text: 'Already have an account? ',
+                              style: AppTextStyles.authBody(textTheme),
+                              children: [
+                                TextSpan(
+                                  text: 'Log In',
+                                  style: AppTextStyles.authLink(
+                                    textTheme,
+                                  )?.copyWith(fontWeight: FontWeight.w800),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
