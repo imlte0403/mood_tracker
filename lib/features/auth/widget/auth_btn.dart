@@ -62,13 +62,17 @@ class AuthBtn extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final effectiveOnPressed = isLoading ? null : onPressed;
+    final Color resolvedBackground = backgroundColor ?? Colors.black;
+    final Color resolvedForeground = foregroundColor ?? Colors.white;
     final style = ElevatedButton.styleFrom(
       minimumSize: const Size.fromHeight(Sizes.size48),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(Sizes.size8),
       ),
-      backgroundColor: backgroundColor,
-      foregroundColor: foregroundColor,
+      backgroundColor: resolvedBackground,
+      foregroundColor: resolvedForeground,
+      disabledBackgroundColor: resolvedBackground.withOpacity(0.6),
+      disabledForegroundColor: resolvedForeground.withOpacity(0.7),
     );
 
     return SizedBox(

@@ -1,16 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:mood_tracker/core/constants/app_text_styles.dart';
 
 class AuthHeader extends StatelessWidget {
-  const AuthHeader({super.key, required this.title});
+  const AuthHeader({
+    super.key,
+    required this.title,
+    this.subtitle,
+  });
 
   final String title;
+  final String? subtitle;
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      title,
-      textAlign: TextAlign.center,
-      style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+    final textTheme = Theme.of(context).textTheme;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: AppTextStyles.authTitle(textTheme),
+        ),
+        if (subtitle != null) ...[
+          const SizedBox(height: 8),
+          Text(
+            subtitle!,
+            style: AppTextStyles.authSubtitle(textTheme),
+          ),
+        ],
+      ],
     );
   }
 }

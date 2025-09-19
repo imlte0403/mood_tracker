@@ -8,7 +8,7 @@ import 'package:mood_tracker/features/post/post_screen.dart';
 final router = GoRouter(
   debugLogDiagnostics: true,
   // TODO: 개발 끝나고 로그인 홈으로 되돌려 놓기...
-  initialLocation: HomeScreen.routeURL,
+  initialLocation: LogInScreen.routeURL,
   routes: [
     GoRoute(
       path: LogInScreen.routeURL,

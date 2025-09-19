@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
+import 'package:mood_tracker/core/constants/app_color.dart';
 import 'package:mood_tracker/core/constants/gaps.dart';
 import 'package:mood_tracker/core/constants/sizes.dart';
+import 'package:mood_tracker/core/constants/app_text_styles.dart';
+
 import 'package:mood_tracker/features/auth/mixins/auth_form_mixin.dart';
 import 'package:mood_tracker/core/utils/auth_utils.dart';
 import 'package:mood_tracker/features/auth/widget/auth_textfield.dart';
@@ -93,45 +97,107 @@ class _LogInScreenState extends ConsumerState<LogInScreen>
     });
 
     final loginState = ref.watch(loginProvider);
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Log In')),
+      backgroundColor: AppColors.bgWhite,
+      appBar: AppBar(
+        backgroundColor: AppColors.bgWhite,
+        surfaceTintColor: AppColors.bgWhite,
+        elevation: 0,
+        titleSpacing: 0,
+        title: Text(
+          'Log In',
+          style: AppTextStyles.authAppBar(textTheme),
+        ),
+      ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(Sizes.size20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const AuthHeader(title: 'Welcome back!'),
-              Gaps.v20,
-              Form(
-                key: formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    _buildEmailField(),
-                    Gaps.v16,
-                    _buildPasswordField(),
-                  ],
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final horizontalPadding = constraints.maxWidth > 520
+                ? Sizes.size40
+                : Sizes.size20;
+            return SingleChildScrollView(
+              padding: EdgeInsets.symmetric(
+                horizontal: horizontalPadding,
+                vertical: Sizes.size28,
+              ),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 420),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      AuthHeader(
+                        title: 'Welcome back',
+                        subtitle: 'Log in to continue tracking your mood journey.',
+                      ),
+                      Gaps.v28,
+                      DecoratedBox(
+                        decoration: BoxDecoration(
+                          color: AppColors.bgWhite,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: Sizes.size20,
+                            vertical: Sizes.size24,
+                          ),
+                          child: Form(
+                            key: formKey,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                _buildEmailField(),
+                                Gaps.v16,
+                                _buildPasswordField(),
+                                Gaps.v24,
+                                AuthBtn.primary(
+                                  label: 'Log In',
+                                  isLoading: loginState.emailLoading,
+                                  onPressed:
+                                      loginState.isLoading ? null : _submit,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      Gaps.v20,
+                      Row(
+                        children: [
+                          const Expanded(child: Divider()),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: Sizes.size12,
+                            ),
+                            child: Text(
+                              'or continue with',
+                              style: AppTextStyles.authSubtitle(textTheme),
+                            ),
+                          ),
+                          const Expanded(child: Divider()),
+                        ],
+                      ),
+                      Gaps.v16,
+                      _buildSocialButtons(loginState),
+                      Gaps.v24,
+                      Center(
+                        child: TextButton(
+                          onPressed: () => context.go(SignUpScreen.routeURL),
+                          child: Text(
+                            "Don't have an account? Sign Up",
+                            style: AppTextStyles.authLink(textTheme),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              Gaps.v24,
-              AuthBtn.primary(
-                label: 'Log In',
-                isLoading: loginState.emailLoading,
-                onPressed: loginState.isLoading ? null : _submit,
-              ),
-              Gaps.v12,
-              TextButton(
-                onPressed: () => context.go(SignUpScreen.routeURL),
-                child: const Text("Don't have an account? Sign Up"),
-              ),
-              Gaps.v20,
-              const Divider(),
-              Gaps.v20,
-              _buildSocialButtons(loginState),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );

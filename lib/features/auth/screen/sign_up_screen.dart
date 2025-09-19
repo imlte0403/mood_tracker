@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mood_tracker/core/constants/app_color.dart';
+import 'package:mood_tracker/core/constants/app_text_styles.dart';
 import 'package:mood_tracker/core/constants/gaps.dart';
 import 'package:mood_tracker/core/constants/sizes.dart';
 import 'package:mood_tracker/features/auth/mixins/auth_form_mixin.dart';
@@ -84,43 +86,88 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen>
     });
 
     final isLoading = ref.watch(signUpProvider).isLoading;
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Sign Up')),
+      backgroundColor: AppColors.bgWhite,
+      appBar: AppBar(
+        backgroundColor: AppColors.bgWhite,
+        surfaceTintColor: AppColors.bgWhite,
+        elevation: 0,
+        titleSpacing: 0,
+        title: Text('Sign Up', style: AppTextStyles.authAppBar(textTheme)),
+      ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(Sizes.size20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const AuthHeader(title: 'Create a new account'),
-              Gaps.v20,
-              Form(
-                key: formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    _buildNameField(),
-                    Gaps.v16,
-                    _buildEmailField(),
-                    Gaps.v16,
-                    _buildPasswordField(),
-                  ],
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final horizontalPadding = constraints.maxWidth > 520
+                ? Sizes.size40
+                : Sizes.size20;
+            return SingleChildScrollView(
+              padding: EdgeInsets.symmetric(
+                horizontal: horizontalPadding,
+                vertical: Sizes.size28,
+              ),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 420),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const AuthHeader(
+                        title: 'Create a new account',
+                        subtitle:
+                            'Sign up to start logging your emotional patterns.',
+                      ),
+                      Gaps.v28,
+                      DecoratedBox(
+                        decoration: BoxDecoration(
+                          color: AppColors.bgWhite,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: Sizes.size20,
+                            vertical: Sizes.size24,
+                          ),
+                          child: Form(
+                            key: formKey,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                _buildNameField(),
+                                Gaps.v16,
+                                _buildEmailField(),
+                                Gaps.v16,
+                                _buildPasswordField(),
+                                Gaps.v24,
+                                AuthBtn.primary(
+                                  label: 'Sign Up',
+                                  isLoading: isLoading,
+                                  onPressed: _submit,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      Gaps.v24,
+                      Center(
+                        child: TextButton(
+                          onPressed: () => context.go(LogInScreen.routeURL),
+                          child: Text(
+                            'Already have an account? Log In',
+                            style: AppTextStyles.authLink(textTheme),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              Gaps.v24,
-              AuthBtn.primary(
-                label: 'Sign Up',
-                isLoading: isLoading,
-                onPressed: _submit,
-              ),
-              Gaps.v12,
-              TextButton(
-                onPressed: () => context.go(LogInScreen.routeURL),
-                child: const Text('Already have an account? Log In'),
-              ),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );
