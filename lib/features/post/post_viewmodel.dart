@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -154,7 +156,7 @@ class MoodEntryFormNotifier extends StateNotifier<MoodEntryForm> {
       return false;
     }
 
-    final currentUser = FirebaseAuth.instance.currentUser;
+    final currentUser = await _ensureCurrentUser();
     if (currentUser == null) {
       state = state.copyWith(errorMessage: '로그인이 필요합니다.');
       return false;
@@ -217,6 +219,26 @@ class MoodEntryFormNotifier extends StateNotifier<MoodEntryForm> {
         errorMessage: FirebaseErrorHandler.getErrorMessage(error),
       );
       return false;
+    }
+  }
+
+  Future<User?> _ensureCurrentUser() async {
+    final cachedUser = FirebaseAuth.instance.currentUser;
+    if (cachedUser != null) {
+      return cachedUser;
+    }
+
+    try {
+      return await FirebaseAuth.instance
+          .authStateChanges()
+          .where((user) => user != null)
+          .map((user) => user!)
+          .first
+          .timeout(const Duration(seconds: 3));
+    } on TimeoutException {
+      return null;
+    } catch (_) {
+      return null;
     }
   }
 }

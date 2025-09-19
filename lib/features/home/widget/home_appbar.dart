@@ -13,8 +13,8 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return AppBar(
-      backgroundColor: AppColors.bgBeige,
-      surfaceTintColor: AppColors.bgBeige,
+      backgroundColor: AppColors.bgWhite,
+      surfaceTintColor: AppColors.bgWhite,
       elevation: 0,
       automaticallyImplyLeading: false,
       title: Text(

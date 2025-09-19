@@ -26,7 +26,7 @@ class HomeScreen extends ConsumerWidget {
     final greetingName = state.displayName ?? 'Username';
 
     return Scaffold(
-      backgroundColor: AppColors.bgBeige,
+      backgroundColor: AppColors.bgWhite,
       appBar: const HomeAppBar(),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: CustomScrollView(
@@ -45,7 +45,7 @@ class HomeScreen extends ConsumerWidget {
                   WeeklyCalendar(
                     weekDates: state.weekDates,
                     selectedDate: state.selectedDate,
-                    moodByDate: state.weeklyDemoMoods,
+                    moodByDate: state.weeklyMoods,
                     onPrevWeek: () {
                       notifier.selectDate(
                         state.selectedDate.subtract(

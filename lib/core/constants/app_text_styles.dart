@@ -18,6 +18,38 @@ class AppTextStyles {
     );
   }
 
+  static TextStyle? authAppBar(TextTheme textTheme) {
+    return textTheme.titleLarge?.copyWith(
+      fontFamily: AppFonts.playfair,
+      fontWeight: FontWeight.w700,
+      color: AppColors.text,
+    );
+  }
+
+  static TextStyle? authTitle(TextTheme textTheme) {
+    return textTheme.headlineSmall?.copyWith(
+      fontFamily: AppFonts.playfair,
+      fontWeight: FontWeight.w700,
+      color: AppColors.text,
+      letterSpacing: -0.4,
+    );
+  }
+
+  static TextStyle? authSubtitle(TextTheme textTheme) {
+    return textTheme.bodyMedium?.copyWith(
+      fontFamily: AppFonts.playfair,
+      color: AppColors.placeholder,
+    );
+  }
+
+  static TextStyle? authLink(TextTheme textTheme) {
+    return textTheme.bodyMedium?.copyWith(
+      fontFamily: AppFonts.playfair,
+      fontWeight: FontWeight.w600,
+      color: AppColors.point,
+    );
+  }
+
   static TextStyle? greetingName(TextTheme textTheme) {
     return textTheme.headlineLarge?.copyWith(
       fontFamily: AppFonts.playfair,

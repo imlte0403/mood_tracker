@@ -79,7 +79,7 @@ class _PostScreenState extends ConsumerState<PostScreen> {
     final isEditing = form.isEditing;
 
     return Scaffold(
-      backgroundColor: AppColors.bgBeige,
+      backgroundColor: AppColors.bgWhite,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
