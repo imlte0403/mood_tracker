@@ -6,6 +6,7 @@ import 'package:mood_tracker/core/models/timeline_entry.dart';
 import 'package:mood_tracker/features/post/post_edit.dart';
 import 'package:mood_tracker/features/post/post_screen.dart';
 import 'package:mood_tracker/features/settings/settings_screen.dart';
+import 'package:mood_tracker/features/settings/account/account_screen.dart';
 import 'package:mood_tracker/features/settings/about/about_screen.dart';
 import 'package:mood_tracker/features/settings/help/help_screen.dart';
 import 'package:mood_tracker/features/settings/privacy_screen.dart';
@@ -39,6 +40,11 @@ final router = GoRouter(
           path: '/about',
           name: AboutScreen.routeName,
           builder: (context, state) => const AboutScreen(),
+        ),
+        GoRoute(
+          path: '/account',
+          name: AccountScreen.routeName,
+          builder: (context, state) => const AccountScreen(),
         ),
         GoRoute(
           path: '/help',

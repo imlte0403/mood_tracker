@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mood_tracker/core/constants/app_text_styles.dart';
 import 'package:mood_tracker/core/constants/app_color.dart';
+import 'package:mood_tracker/core/constants/gaps.dart';
 import 'package:mood_tracker/core/constants/sizes.dart';
 
 class UpdatesScreen extends StatelessWidget {
@@ -29,13 +30,21 @@ class UpdatesScreen extends StatelessWidget {
             padding: const EdgeInsets.only(left: 16),
             child: Row(
               mainAxisSize: MainAxisSize.min,
-              children: [Icon(Icons.arrow_back_ios, color: Theme.of(context).colorScheme.onSurface)],
+              children: [
+                Icon(
+                  Icons.arrow_back_ios,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ],
             ),
           ),
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1.0),
-          child: Container(color: Theme.of(context).colorScheme.onSurfaceVariant, height: 1.0),
+          child: Container(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+            height: 1.0,
+          ),
         ),
       ),
       body: Container(
@@ -46,7 +55,7 @@ class UpdatesScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildCurrentVersion(context),
-              const SizedBox(height: Sizes.size32),
+              Gaps.v24,
 
               _buildUpdateCard(
                 context,
@@ -65,7 +74,7 @@ class UpdatesScreen extends StatelessWidget {
                 isLatest: true,
               ),
 
-              const SizedBox(height: Sizes.size24),
+              Gaps.v24,
 
               _buildUpcomingFeatures(context),
             ],
@@ -86,15 +95,16 @@ class UpdatesScreen extends StatelessWidget {
       child: Row(
         children: [
           Icon(Icons.check_circle, color: AppColors.point, size: 24),
-          const SizedBox(width: Sizes.size12),
+          Gaps.h12,
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 "현재 버전",
-                style: AppTextStyles.settings(
-                  context,
-                ).copyWith(fontSize: 14, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                style: AppTextStyles.settings(context).copyWith(
+                  fontSize: 14,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
               Text(
                 "Version 1.0.0",
@@ -141,7 +151,9 @@ class UpdatesScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Theme.of(context).colorScheme.onSurfaceVariant),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -154,7 +166,7 @@ class UpdatesScreen extends StatelessWidget {
                   Theme.of(context).textTheme,
                 )?.copyWith(fontSize: 18, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(width: Sizes.size8),
+              Gaps.h8,
               if (isLatest)
                 Container(
                   padding: const EdgeInsets.symmetric(
@@ -176,21 +188,22 @@ class UpdatesScreen extends StatelessWidget {
                 ),
             ],
           ),
-          const SizedBox(height: Sizes.size4),
+          Gaps.v4,
           Text(
             title,
             style: AppTextStyles.authAppBar(
               Theme.of(context).textTheme,
             )?.copyWith(fontSize: 16, fontWeight: FontWeight.w600),
           ),
-          const SizedBox(height: Sizes.size8),
+          Gaps.v8,
           Text(
             "${date.year}.${date.month.toString().padLeft(2, '0')}.${date.day.toString().padLeft(2, '0')}",
-            style: AppTextStyles.settings(
-              context,
-            ).copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 14),
+            style: AppTextStyles.settings(context).copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              fontSize: 14,
+            ),
           ),
-          const SizedBox(height: Sizes.size16),
+          Gaps.v16,
           ...features.map(
             (feature) => Padding(
               padding: const EdgeInsets.only(bottom: Sizes.size8),
@@ -206,7 +219,7 @@ class UpdatesScreen extends StatelessWidget {
                       shape: BoxShape.circle,
                     ),
                   ),
-                  const SizedBox(width: Sizes.size12),
+                  Gaps.h12,
                   Expanded(
                     child: Text(
                       feature,
@@ -234,13 +247,17 @@ class UpdatesScreen extends StatelessWidget {
             Theme.of(context).textTheme,
           )?.copyWith(fontSize: 20, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: Sizes.size16),
+        Gaps.v16,
         Container(
           padding: const EdgeInsets.all(Sizes.size20),
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.05),
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurfaceVariant.withOpacity(0.05),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Theme.of(context).colorScheme.onSurfaceVariant),
+            border: Border.all(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -252,7 +269,7 @@ class UpdatesScreen extends StatelessWidget {
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                     size: 20,
                   ),
-                  const SizedBox(width: Sizes.size8),
+                  Gaps.h8,
                   Text(
                     "Version 1.1.0 (예정)",
                     style: AppTextStyles.authAppBar(
@@ -261,7 +278,7 @@ class UpdatesScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: Sizes.size12),
+              Gaps.v12,
               ...[
                 "감정 통계 및 인사이트",
                 "월간/연간 감정 리포트",
@@ -282,14 +299,16 @@ class UpdatesScreen extends StatelessWidget {
                           shape: BoxShape.circle,
                         ),
                       ),
-                      const SizedBox(width: Sizes.size12),
+                      Gaps.h12,
                       Expanded(
                         child: Text(
                           feature,
                           style: AppTextStyles.settings(context).copyWith(
                             fontSize: 15,
                             height: 1.4,
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
                           ),
                         ),
                       ),

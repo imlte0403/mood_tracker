@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mood_tracker/core/constants/gaps.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:mood_tracker/core/constants/app_color.dart';
 import 'package:mood_tracker/core/constants/app_text_styles.dart';
@@ -30,13 +31,21 @@ class HelpScreen extends StatelessWidget {
             padding: const EdgeInsets.only(left: 16),
             child: Row(
               mainAxisSize: MainAxisSize.min,
-              children: [Icon(Icons.arrow_back_ios, color: Theme.of(context).colorScheme.onSurface)],
+              children: [
+                Icon(
+                  Icons.arrow_back_ios,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ],
             ),
           ),
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1.0),
-          child: Container(color: Theme.of(context).colorScheme.onSurfaceVariant, height: 1.0),
+          child: Container(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+            height: 1.0,
+          ),
         ),
       ),
       body: Container(
@@ -63,14 +72,14 @@ class HelpScreen extends StatelessWidget {
                         color: Colors.white,
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    Gaps.v16,
                     Text(
                       'How can we help you?',
                       style: AppTextStyles.settings(
                         context,
                       ).copyWith(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
-                    const SizedBox(height: 8),
+                    Gaps.v8,
                     Text(
                       'Find answers to common questions below',
                       style: AppTextStyles.settings(context).copyWith(
@@ -81,14 +90,14 @@ class HelpScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(height: 32),
+              Gaps.v32,
 
               // FAQ Sections
               ...HelpContent.sections.map(
                 (section) => _buildHelpSection(context, section),
               ),
 
-              const SizedBox(height: 32),
+              Gaps.v32,
 
               // Contact Section
               Container(
@@ -107,12 +116,12 @@ class HelpScreen extends StatelessWidget {
                         context,
                       ).copyWith(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
-                    const SizedBox(height: 16),
+                    Gaps.v16,
                     Text(
                       'Contact our support team for additional assistance.',
                       style: AppTextStyles.settings(context),
                     ),
-                    const SizedBox(height: 16),
+                    Gaps.v16,
                     Row(
                       children: [
                         Expanded(
@@ -155,7 +164,7 @@ class HelpScreen extends StatelessWidget {
               context,
             ).copyWith(fontSize: 18, fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 16),
+          Gaps.v16,
           ...section.items.map((item) => _buildHelpItem(context, item)),
         ],
       ),
@@ -166,7 +175,11 @@ class HelpScreen extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        border: Border.all(color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.3)),
+        border: Border.all(
+          color: Theme.of(
+            context,
+          ).colorScheme.onSurfaceVariant.withOpacity(0.3),
+        ),
         borderRadius: BorderRadius.circular(12),
       ),
       child: ExpansionTile(
@@ -181,9 +194,10 @@ class HelpScreen extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
             child: Text(
               item.answer,
-              style: AppTextStyles.settings(
-                context,
-              ).copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant, height: 1.5),
+              style: AppTextStyles.settings(context).copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                height: 1.5,
+              ),
             ),
           ),
         ],

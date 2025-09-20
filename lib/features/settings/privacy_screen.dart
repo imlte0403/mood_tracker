@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mood_tracker/core/constants/app_text_styles.dart';
+import 'package:mood_tracker/core/constants/gaps.dart';
 import 'package:mood_tracker/core/constants/sizes.dart';
 
 class PrivacyScreen extends StatelessWidget {
@@ -28,13 +29,21 @@ class PrivacyScreen extends StatelessWidget {
             padding: const EdgeInsets.only(left: 16),
             child: Row(
               mainAxisSize: MainAxisSize.min,
-              children: [Icon(Icons.arrow_back_ios, color: Theme.of(context).colorScheme.onSurface)],
+              children: [
+                Icon(
+                  Icons.arrow_back_ios,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ],
             ),
           ),
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1.0),
-          child: Container(color: Theme.of(context).colorScheme.onSurfaceVariant, height: 1.0),
+          child: Container(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+            height: 1.0,
+          ),
         ),
       ),
       body: Container(
@@ -50,14 +59,15 @@ class PrivacyScreen extends StatelessWidget {
                   Theme.of(context).textTheme,
                 )?.copyWith(fontSize: 24, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: Sizes.size20),
+              Gaps.v20,
               Text(
                 "Last updated: ${DateTime.now().year}-${DateTime.now().month.toString().padLeft(2, '0')}-${DateTime.now().day.toString().padLeft(2, '0')}",
-                style: AppTextStyles.settings(
-                  context,
-                ).copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 14),
+                style: AppTextStyles.settings(context).copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  fontSize: 14,
+                ),
               ),
-              const SizedBox(height: Sizes.size32),
+              Gaps.v32,
 
               _buildSection(
                 context,
@@ -111,14 +121,14 @@ class PrivacyScreen extends StatelessWidget {
             Theme.of(context).textTheme,
           )?.copyWith(fontSize: 18, fontWeight: FontWeight.w600),
         ),
-        const SizedBox(height: Sizes.size12),
+        Gaps.v12,
         Text(
           content,
           style: AppTextStyles.settings(
             context,
           ).copyWith(fontSize: 16, height: 1.5),
         ),
-        const SizedBox(height: Sizes.size24),
+        Gaps.v24,
       ],
     );
   }

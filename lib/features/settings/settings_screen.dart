@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:mood_tracker/core/constants/gaps.dart';
 import 'package:mood_tracker/core/constants/sizes.dart';
 import 'package:mood_tracker/core/constants/app_text_styles.dart';
 
@@ -26,7 +27,7 @@ class _ThemeSection extends ConsumerWidget {
             context,
           ).copyWith(fontWeight: FontWeight.w700, color: colorScheme.onSurface),
         ),
-        const SizedBox(height: Sizes.size12),
+        Gaps.v12,
         SwitchListTile.adaptive(
           contentPadding: EdgeInsets.zero,
           secondary: Icon(
@@ -106,7 +107,7 @@ class SettingsScreen extends ConsumerWidget {
       ),
       body: ListView(
         children: [
-          const SizedBox(height: Sizes.size12),
+          Gaps.v12,
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: Sizes.size16),
             child: _ThemeSection(),
@@ -118,7 +119,9 @@ class SettingsScreen extends ConsumerWidget {
               color: Theme.of(context).colorScheme.onSurface,
             ),
             title: Text("Account", style: AppTextStyles.settings(context)),
-            onTap: () {},
+            onTap: () {
+              context.go('/settings/account');
+            },
           ),
           ListTile(
             leading: Icon(
