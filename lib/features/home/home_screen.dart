@@ -10,7 +10,49 @@ import 'package:mood_tracker/features/home/widget/daily_timeline.dart';
 import 'package:mood_tracker/features/home/widget/home_appbar.dart';
 import 'package:mood_tracker/features/home/widget/post_btn.dart';
 import 'package:mood_tracker/features/home/widget/weekly_calendar.dart';
+import 'package:mood_tracker/features/post/post_edit.dart';
 import 'package:mood_tracker/features/post/post_screen.dart';
+
+class GreetingSection extends StatelessWidget {
+  const GreetingSection({super.key, required this.name});
+
+  final String name;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+    final helloStyle = AppTextStyles.greetingHello(textTheme);
+    final nameStyle = AppTextStyles.greetingName(textTheme);
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Hello,', style: helloStyle),
+              Gaps.v4,
+              Transform.translate(
+                offset: const Offset(0, -4),
+                child: Text.rich(
+                  TextSpan(
+                    children: [
+                      TextSpan(text: name, style: nameStyle),
+                      TextSpan(text: '!', style: helloStyle),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        Gaps.h4,
+      ],
+    );
+  }
+}
 
 class HomeScreen extends ConsumerWidget {
   static const String routeName = 'home';
@@ -83,47 +125,6 @@ class HomeScreen extends ConsumerWidget {
       floatingActionButton: PostBtn(
         onPressed: () => context.push(PostScreen.routeURL),
       ),
-    );
-  }
-}
-
-class GreetingSection extends StatelessWidget {
-  const GreetingSection({super.key, required this.name});
-
-  final String name;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final textTheme = theme.textTheme;
-    final helloStyle = AppTextStyles.greetingHello(textTheme);
-    final nameStyle = AppTextStyles.greetingName(textTheme);
-
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Hello,', style: helloStyle),
-              Gaps.v4,
-              Transform.translate(
-                offset: const Offset(0, -8),
-                child: Text.rich(
-                  TextSpan(
-                    children: [
-                      TextSpan(text: name, style: nameStyle),
-                      TextSpan(text: '!', style: helloStyle),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        Gaps.h4,
-      ],
     );
   }
 }

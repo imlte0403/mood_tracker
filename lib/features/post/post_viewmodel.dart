@@ -133,6 +133,15 @@ class MoodEntryFormNotifier extends StateNotifier<MoodEntryForm> {
     );
   }
 
+  void updateTimestamp(DateTime timestamp) {
+    if (timestamp.isAtSameMomentAs(state.timestamp)) return;
+    state = state.copyWith(
+      timestamp: timestamp,
+      errorMessage: null,
+      isSuccess: false,
+    );
+  }
+
   void updateMessage(String value) {
     final truncated = value.length > 500 ? value.substring(0, 500) : value;
     final overLimit = value.length > 500;

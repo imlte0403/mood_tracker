@@ -77,7 +77,13 @@ class WeeklyCalendar extends StatelessWidget {
                       selectedDate.day,
                     );
                 final emotion = moodByDate[normalized];
-                final color = emotion?.color ?? theme.dividerColor;
+                final hasMood = emotion != null;
+                final baseColor = hasMood
+                    ? emotion!.color
+                    : AppColors.placeholder.withOpacity(0.45);
+                final highlightColor = hasMood
+                    ? baseColor.withValues(alpha: 0.18)
+                    : AppColors.placeholder.withOpacity(0.16);
                 final weekday = weekdayLabels[date.weekday % 7];
                 return GestureDetector(
                   onTap: () => onSelectDate(normalized),
@@ -86,19 +92,17 @@ class WeeklyCalendar extends StatelessWidget {
                     width: 40,
                     padding: const EdgeInsets.symmetric(vertical: 6),
                     decoration: BoxDecoration(
-                      color: isSelected
-                          ? color.withValues(alpha: 0.18)
-                          : Colors.transparent,
+                      color: isSelected ? highlightColor : Colors.transparent,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(weekday, style: labelStyle),
-                        const SizedBox(height: 8),
+                        Gaps.v8,
                         CircleAvatar(
                           radius: 13,
-                          backgroundColor: color,
+                          backgroundColor: baseColor,
                           child: Text('${date.day}', style: dayNumberStyle),
                         ),
                       ],
