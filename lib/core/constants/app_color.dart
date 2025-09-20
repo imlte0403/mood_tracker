@@ -6,6 +6,7 @@ class AppColors {
   static const point = Color(0xFFFF9800);
   static const text = Color(0xFF000000);
   static const placeholder = Color(0xFF9E9E9E);
+  static const error = Colors.red;
 
   static const moodAngry = Color(0xFFFF4B4B);
   static const moodSad = Color(0xFFFF8A3D);

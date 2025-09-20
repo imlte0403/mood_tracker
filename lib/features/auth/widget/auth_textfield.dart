@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mood_tracker/core/constants/sizes.dart';
+import 'package:mood_tracker/core/constants/app_color.dart';
 
 typedef AuthFieldValidator = String? Function(String? value);
 
@@ -160,8 +161,11 @@ class _AuthTextFieldState extends State<AuthTextField> {
       onFieldSubmitted: widget.onSubmitted,
       validator: widget.validator,
       autofillHints: widget.autofillHints,
+      cursorColor: AppColors.point,
       decoration: InputDecoration(
         labelText: widget.label,
+        labelStyle: TextStyle(color: AppColors.text),
+        floatingLabelStyle: TextStyle(color: AppColors.text),
         suffixIcon: widget.enableObscureToggle
             ? IconButton(
                 onPressed: () {
@@ -176,6 +180,23 @@ class _AuthTextFieldState extends State<AuthTextField> {
             : null,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(Sizes.size8),
+          borderSide: BorderSide(color: AppColors.text),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(Sizes.size8),
+          borderSide: BorderSide(color: AppColors.text),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(Sizes.size8),
+          borderSide: BorderSide(color: AppColors.text, width: 2),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(Sizes.size8),
+          borderSide: BorderSide(color: AppColors.error),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(Sizes.size8),
+          borderSide: BorderSide(color: AppColors.error, width: 2),
         ),
       ),
     );

@@ -135,7 +135,7 @@ class _LogInScreenState extends ConsumerState<LogInScreen>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Gaps.v20,
+                      Gaps.v24,
                       Padding(
                         padding: const EdgeInsets.only(left: 16),
                         child: AuthHeader(
@@ -144,7 +144,7 @@ class _LogInScreenState extends ConsumerState<LogInScreen>
                               'Log in to continue tracking your mood journey.',
                         ),
                       ),
-                      Gaps.v20,
+                      Gaps.v10,
                       DecoratedBox(
                         decoration: BoxDecoration(
                           color: AppColors.bgWhite,
