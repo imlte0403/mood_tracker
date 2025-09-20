@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mood_tracker/core/constants/app_color.dart';
 import 'package:mood_tracker/core/constants/app_text_styles.dart';
 import 'package:mood_tracker/core/constants/gaps.dart';
 import 'package:mood_tracker/core/models/timeline_entry.dart';
@@ -41,6 +40,7 @@ class DailyTimeline extends ConsumerWidget {
             }
 
             final slotWidgets = buildMoodPostSections(
+              context: context,
               items: items,
               timeStyle: timeStyle,
               slotLabelStyle: slotLabelStyle,
@@ -80,7 +80,7 @@ class DailyTimeline extends ConsumerWidget {
 
         return Card(
           elevation: 3,
-          color: AppColors.bgWhite,
+          color: Theme.of(context).colorScheme.surface,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:mood_tracker/core/constants/app_color.dart';
 import 'package:mood_tracker/core/constants/app_text_styles.dart';
 import 'package:mood_tracker/core/constants/gaps.dart';
 import 'package:mood_tracker/features/home/home_viewmodel.dart';
@@ -67,7 +66,6 @@ class HomeScreen extends ConsumerWidget {
     final greetingName = state.displayName ?? 'Username';
 
     return Scaffold(
-      backgroundColor: AppColors.bgWhite,
       appBar: const HomeAppBar(),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: CustomScrollView(

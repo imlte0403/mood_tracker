@@ -21,7 +21,7 @@ class UpdatesScreen extends StatelessWidget {
           )?.copyWith(fontSize: 20),
         ),
         centerTitle: true,
-        backgroundColor: AppColors.bgWhite,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         leadingWidth: 100,
         leading: GestureDetector(
           onTap: () => context.pop(),
@@ -29,17 +29,17 @@ class UpdatesScreen extends StatelessWidget {
             padding: const EdgeInsets.only(left: 16),
             child: Row(
               mainAxisSize: MainAxisSize.min,
-              children: [Icon(Icons.arrow_back_ios, color: AppColors.text)],
+              children: [Icon(Icons.arrow_back_ios, color: Theme.of(context).colorScheme.onSurface)],
             ),
           ),
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1.0),
-          child: Container(color: AppColors.placeholder, height: 1.0),
+          child: Container(color: Theme.of(context).colorScheme.onSurfaceVariant, height: 1.0),
         ),
       ),
       body: Container(
-        color: AppColors.bgWhite,
+        color: Theme.of(context).colorScheme.surface,
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(Sizes.size20),
           child: Column(
@@ -94,7 +94,7 @@ class UpdatesScreen extends StatelessWidget {
                 "현재 버전",
                 style: AppTextStyles.settings(
                   context,
-                ).copyWith(fontSize: 14, color: AppColors.placeholder),
+                ).copyWith(fontSize: 14, color: Theme.of(context).colorScheme.onSurfaceVariant),
               ),
               Text(
                 "Version 1.0.0",
@@ -141,7 +141,7 @@ class UpdatesScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.placeholder),
+        border: Border.all(color: Theme.of(context).colorScheme.onSurfaceVariant),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -188,7 +188,7 @@ class UpdatesScreen extends StatelessWidget {
             "${date.year}.${date.month.toString().padLeft(2, '0')}.${date.day.toString().padLeft(2, '0')}",
             style: AppTextStyles.settings(
               context,
-            ).copyWith(color: AppColors.placeholder, fontSize: 14),
+            ).copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 14),
           ),
           const SizedBox(height: Sizes.size16),
           ...features.map(
@@ -238,16 +238,20 @@ class UpdatesScreen extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(Sizes.size20),
           decoration: BoxDecoration(
-            color: AppColors.placeholder.withOpacity(0.05),
+            color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.05),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppColors.placeholder),
+            border: Border.all(color: Theme.of(context).colorScheme.onSurfaceVariant),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
-                  Icon(Icons.upcoming, color: AppColors.placeholder, size: 20),
+                  Icon(
+                    Icons.upcoming,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    size: 20,
+                  ),
                   const SizedBox(width: Sizes.size8),
                   Text(
                     "Version 1.1.0 (예정)",
@@ -274,7 +278,7 @@ class UpdatesScreen extends StatelessWidget {
                         width: 4,
                         height: 4,
                         decoration: BoxDecoration(
-                          color: AppColors.placeholder,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                           shape: BoxShape.circle,
                         ),
                       ),
@@ -285,7 +289,7 @@ class UpdatesScreen extends StatelessWidget {
                           style: AppTextStyles.settings(context).copyWith(
                             fontSize: 15,
                             height: 1.4,
-                            color: AppColors.placeholder,
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
                         ),
                       ),

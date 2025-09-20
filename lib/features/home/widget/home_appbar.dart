@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:mood_tracker/core/constants/app_text_styles.dart';
-import 'package:mood_tracker/core/constants/app_color.dart';
 import 'package:mood_tracker/features/settings/settings_screen.dart';
 
 class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -14,10 +13,8 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     return AppBar(
-      backgroundColor: AppColors.bgWhite,
-      surfaceTintColor: AppColors.bgWhite,
-      elevation: 0,
       automaticallyImplyLeading: false,
       title: Text(
         'MoodLine',
@@ -28,7 +25,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       actions: [
         IconButton(
-          icon: const Icon(Icons.settings, color: AppColors.text),
+          icon: Icon(Icons.settings, color: colorScheme.onSurface),
           onPressed: () => context.push(SettingsScreen.routeURL),
         ),
       ],

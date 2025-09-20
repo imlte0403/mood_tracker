@@ -8,6 +8,7 @@ import 'package:mood_tracker/core/utils/firebase_error_handler.dart';
 import 'package:mood_tracker/features/home/home_viewmodel.dart';
 
 List<Widget> buildMoodPostSections({
+  required BuildContext context,
   required List<TimelineEntry> items,
   required TextStyle? timeStyle,
   required TextStyle? slotLabelStyle,
@@ -18,6 +19,7 @@ List<Widget> buildMoodPostSections({
   required void Function(TimelineEntry) onEdit,
   required void Function(TimelineEntry) onDelete,
 }) {
+  final colorScheme = Theme.of(context).colorScheme;
   final slots = _mapEntriesToSlots(items);
   return slots.asMap().entries.map((entry) {
     final index = entry.key;
@@ -46,9 +48,9 @@ List<Widget> buildMoodPostSections({
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          AppColors.placeholder.withOpacity(0.1),
-                          AppColors.placeholder.withOpacity(0.3),
-                          AppColors.placeholder.withOpacity(0.1),
+                          colorScheme.outlineVariant.withOpacity(0.08),
+                          colorScheme.outlineVariant.withOpacity(0.24),
+                          colorScheme.outlineVariant.withOpacity(0.08),
                         ],
                       ),
                     ),
@@ -149,6 +151,7 @@ class _SlotSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final label = slot.label;
     final entries = slot.entries;
     final firstEntryTime = slot.firstEntryTime(context);
@@ -172,7 +175,7 @@ class _SlotSection extends StatelessWidget {
                       fontSize: 12,
                       color: entries.isNotEmpty
                           ? AppColors.point
-                          : AppColors.placeholder,
+                          : colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ),
@@ -354,6 +357,7 @@ class _TimelineEntryTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -363,7 +367,7 @@ class _TimelineEntryTile extends StatelessWidget {
           width: double.infinity,
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: AppColors.bgBeige,
+            color: Theme.of(context).colorScheme.surfaceContainerHighest,
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
@@ -426,10 +430,10 @@ class _TimelineEntryTile extends StatelessWidget {
                     icon: SizedBox(
                       width: 16,
                       height: 16,
-                      child: const Icon(
+                      child: Icon(
                         Icons.more_horiz,
                         size: 16,
-                        color: AppColors.placeholder,
+                        color: colorScheme.onSurfaceVariant,
                       ),
                     ),
                     shape: RoundedRectangleBorder(
@@ -454,7 +458,7 @@ class _TimelineEntryTile extends StatelessWidget {
                             Icon(
                               Icons.edit_outlined,
                               size: 14,
-                              color: AppColors.text,
+                              color: colorScheme.onSurface,
                             ),
                             Gaps.h12,
                             Text(
@@ -463,7 +467,7 @@ class _TimelineEntryTile extends StatelessWidget {
                                 fontFamily: 'PlayfairDisplay',
                                 fontWeight: FontWeight.w600,
                                 fontSize: 12,
-                                color: AppColors.text,
+                                color: colorScheme.onSurface,
                               ),
                             ),
                           ],
@@ -502,7 +506,9 @@ class _TimelineEntryTile extends StatelessWidget {
                   width: double.infinity,
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: AppColors.bgBeige.withOpacity(0.5),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.surfaceContainerHighest.withOpacity(0.5),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
@@ -510,7 +516,7 @@ class _TimelineEntryTile extends StatelessWidget {
                     style: messageStyle?.copyWith(
                       fontSize: 12,
                       height: 1.4,
-                      color: AppColors.text,
+                      color: colorScheme.onSurface,
                       fontWeight: FontWeight.w500,
                     ),
                   ),

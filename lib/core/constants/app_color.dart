@@ -1,11 +1,34 @@
 import 'package:flutter/material.dart';
 
+class AppTheme {
+  static ThemeData light = ThemeData(
+    colorScheme: const ColorScheme.light(
+      surface: Color(0xFFFFFFFF),
+      surfaceContainerHighest: Color(0xFFFAF8F5),
+      onSurface: Color(0xFF000000),
+      onSurfaceVariant: Color(0xFF9E9E9E),
+      primary: Color(0xFFFF9800),
+      error: Colors.red,
+    ),
+    useMaterial3: true,
+  );
+
+  static ThemeData dark = ThemeData(
+    colorScheme: const ColorScheme.dark(
+      surface: Color(0xFF1E1E1E),
+      surfaceContainerHighest: Color(0xFF2A2A2A),
+      onSurface: Color(0xFFE6E1E5),
+      onSurfaceVariant: Color(0xFF999999),
+      primary: Color(0xFFFF9800),
+      error: Colors.red,
+    ),
+    useMaterial3: true,
+  );
+}
+
 class AppColors {
-  static const bgWhite = Color(0xFFFFFFFF);
-  static const bgBeige = Color(0xFFFAF8F5);
+
   static const point = Color(0xFFFF9800);
-  static const text = Color(0xFF000000);
-  static const placeholder = Color(0xFF9E9E9E);
   static const error = Colors.red;
 
   static const moodAngry = Color(0xFFFF4B4B);

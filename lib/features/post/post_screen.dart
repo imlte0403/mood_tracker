@@ -79,12 +79,12 @@ class _PostScreenState extends ConsumerState<PostScreen> {
     final isEditing = form.isEditing;
 
     return Scaffold(
-      backgroundColor: AppColors.bgWhite,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.close, color: AppColors.text),
+          icon: Icon(Icons.close, color: Theme.of(context).colorScheme.onSurface),
           onPressed: () {
             if (context.canPop()) {
               context.pop();
@@ -97,19 +97,19 @@ class _PostScreenState extends ConsumerState<PostScreen> {
         backgroundColor: AppColors.point,
         onPressed: handleSubmit,
         child: form.isSubmitting
-            ? const SizedBox(
+            ? SizedBox(
                 width: Sizes.size20,
                 height: Sizes.size20,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.bgWhite),
+                  valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.surface),
                 ),
               )
             : Text(
                 isEditing ? 'Update' : 'Post',
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.w600,
-                  color: AppColors.bgWhite,
+                  color: Theme.of(context).colorScheme.surface,
                 ),
               ),
       ),
@@ -126,11 +126,11 @@ class _PostScreenState extends ConsumerState<PostScreen> {
                 isEditing
                     ? 'Write about your mood'
                     : 'How do you feel Right Now?',
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: 'PlayfairDisplay',
                   fontSize: Sizes.size24,
                   fontWeight: FontWeight.w600,
-                  color: AppColors.text,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
               Gaps.v32,

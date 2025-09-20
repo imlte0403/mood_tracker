@@ -22,7 +22,7 @@ class HelpScreen extends StatelessWidget {
           )?.copyWith(fontSize: 20),
         ),
         centerTitle: true,
-        backgroundColor: AppColors.bgWhite,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         leadingWidth: 100,
         leading: GestureDetector(
           onTap: () => context.pop(),
@@ -30,17 +30,17 @@ class HelpScreen extends StatelessWidget {
             padding: const EdgeInsets.only(left: 16),
             child: Row(
               mainAxisSize: MainAxisSize.min,
-              children: [Icon(Icons.arrow_back_ios, color: AppColors.text)],
+              children: [Icon(Icons.arrow_back_ios, color: Theme.of(context).colorScheme.onSurface)],
             ),
           ),
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1.0),
-          child: Container(color: AppColors.placeholder, height: 1.0),
+          child: Container(color: Theme.of(context).colorScheme.onSurfaceVariant, height: 1.0),
         ),
       ),
       body: Container(
-        color: AppColors.bgWhite,
+        color: Theme.of(context).colorScheme.surface,
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
           child: Column(
@@ -66,16 +66,15 @@ class HelpScreen extends StatelessWidget {
                     const SizedBox(height: 16),
                     Text(
                       'How can we help you?',
-                      style: AppTextStyles.settings(context).copyWith(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: AppTextStyles.settings(
+                        context,
+                      ).copyWith(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       'Find answers to common questions below',
                       style: AppTextStyles.settings(context).copyWith(
-                        color: AppColors.placeholder,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                         fontSize: 16,
                       ),
                     ),
@@ -96,7 +95,7 @@ class HelpScreen extends StatelessWidget {
                 width: double.infinity,
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: AppColors.bgBeige,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Column(
@@ -104,10 +103,9 @@ class HelpScreen extends StatelessWidget {
                   children: [
                     Text(
                       'Still need help?',
-                      style: AppTextStyles.settings(context).copyWith(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: AppTextStyles.settings(
+                        context,
+                      ).copyWith(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 16),
                     Text(
@@ -119,7 +117,8 @@ class HelpScreen extends StatelessWidget {
                       children: [
                         Expanded(
                           child: ElevatedButton.icon(
-                            onPressed: () => _launchEmail(HelpContent.contactInfo.email),
+                            onPressed: () =>
+                                _launchEmail(HelpContent.contactInfo.email),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.point,
                               foregroundColor: Colors.white,
@@ -152,15 +151,12 @@ class HelpScreen extends StatelessWidget {
         children: [
           Text(
             section.title,
-            style: AppTextStyles.settings(context).copyWith(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
+            style: AppTextStyles.settings(
+              context,
+            ).copyWith(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
-          ...section.items.map(
-            (item) => _buildHelpItem(context, item),
-          ),
+          ...section.items.map((item) => _buildHelpItem(context, item)),
         ],
       ),
     );
@@ -170,25 +166,24 @@ class HelpScreen extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        border: Border.all(color: AppColors.placeholder.withOpacity(0.3)),
+        border: Border.all(color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.3)),
         borderRadius: BorderRadius.circular(12),
       ),
       child: ExpansionTile(
         title: Text(
           item.question,
-          style: AppTextStyles.settings(context).copyWith(
-            fontWeight: FontWeight.w600,
-          ),
+          style: AppTextStyles.settings(
+            context,
+          ).copyWith(fontWeight: FontWeight.w600),
         ),
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
             child: Text(
               item.answer,
-              style: AppTextStyles.settings(context).copyWith(
-                color: AppColors.placeholder,
-                height: 1.5,
-              ),
+              style: AppTextStyles.settings(
+                context,
+              ).copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant, height: 1.5),
             ),
           ),
         ],

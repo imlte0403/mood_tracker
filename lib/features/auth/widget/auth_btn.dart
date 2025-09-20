@@ -13,8 +13,8 @@ class AuthBtn extends StatelessWidget {
     this.icon,
     this.backgroundColor,
     this.foregroundColor,
-  })  : _variant = variant,
-        assert(variant != _AuthBtnVariant.social || icon != null);
+  }) : _variant = variant,
+       assert(variant != _AuthBtnVariant.social || icon != null);
 
   //기본 로그인 버튼
   factory AuthBtn.primary({
@@ -62,8 +62,10 @@ class AuthBtn extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final effectiveOnPressed = isLoading ? null : onPressed;
-    final Color resolvedBackground = backgroundColor ?? Colors.black;
-    final Color resolvedForeground = foregroundColor ?? Colors.white;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final Color resolvedBackground = backgroundColor ?? colorScheme.onSurface;
+    final Color resolvedForeground = foregroundColor ?? colorScheme.surface;
     final style = ElevatedButton.styleFrom(
       minimumSize: const Size.fromHeight(Sizes.size48),
       shape: RoundedRectangleBorder(

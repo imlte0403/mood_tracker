@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mood_tracker/core/constants/app_color.dart';
 import 'package:mood_tracker/core/constants/app_text_styles.dart';
 import 'package:mood_tracker/core/constants/gaps.dart';
 
@@ -27,6 +26,7 @@ class WeeklyCalendar extends StatelessWidget {
   Widget build(BuildContext context) {
     const weekdayLabels = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
 
     final titleStyle = AppTextStyles.weeklyCalendarTitle(textTheme);
@@ -35,7 +35,7 @@ class WeeklyCalendar extends StatelessWidget {
 
     return Card(
       elevation: 2,
-      color: AppColors.bgWhite,
+      color: colorScheme.surface,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
@@ -80,10 +80,10 @@ class WeeklyCalendar extends StatelessWidget {
                 final hasMood = emotion != null;
                 final baseColor = hasMood
                     ? emotion.color
-                    : AppColors.placeholder.withOpacity(0.45);
+                    : colorScheme.onSurfaceVariant.withOpacity(0.3);
                 final highlightColor = hasMood
-                    ? baseColor.withValues(alpha: 0.18)
-                    : AppColors.placeholder.withOpacity(0.16);
+                    ? baseColor.withOpacity(0.18)
+                    : colorScheme.outlineVariant.withOpacity(0.24);
                 final weekday = weekdayLabels[date.weekday % 7];
                 return GestureDetector(
                   onTap: () => onSelectDate(normalized),

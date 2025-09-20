@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:mood_tracker/core/constants/app_color.dart';
 import 'package:mood_tracker/core/constants/sizes.dart';
 
 class PostBtn extends StatelessWidget {
@@ -19,11 +18,11 @@ class PostBtn extends StatelessWidget {
       height: targetSize,
       child: FloatingActionButton(
         onPressed: onPressed,
-        backgroundColor: AppColors.point,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         shape: const CircleBorder(),
-        child: const Icon(
+        child: Icon(
           Icons.add,
-          color: AppColors.bgWhite,
+          color: Theme.of(context).colorScheme.onPrimary,
           size: Sizes.size36,
         ),
       ),

@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
-import 'package:mood_tracker/core/constants/app_color.dart';
 import 'package:mood_tracker/core/constants/app_text_styles.dart';
 import 'package:mood_tracker/core/constants/gaps.dart';
 import 'package:mood_tracker/core/constants/sizes.dart';
@@ -62,6 +62,7 @@ class _PostEditScreenState extends ConsumerState<PostEditScreen> {
 
     final form = ref.watch(moodEntryFormProvider);
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
 
     final EmotionType emotion = form.emotion;
@@ -94,21 +95,22 @@ class _PostEditScreenState extends ConsumerState<PostEditScreen> {
     }
 
     return Scaffold(
-      backgroundColor: AppColors.bgWhite,
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton(
-        backgroundColor: AppColors.point,
+        backgroundColor: colorScheme.primary,
         onPressed: handleSubmit,
         child: form.isSubmitting
-            ? const SizedBox(
+            ? SizedBox(
                 width: Sizes.size20,
                 height: Sizes.size20,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.bgWhite),
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    colorScheme.onPrimary,
+                  ),
                 ),
               )
-            : const Icon(Icons.check, color: AppColors.bgWhite),
+            : Icon(Icons.check, color: colorScheme.onPrimary),
       ),
       body: Stack(
         children: [
@@ -116,10 +118,14 @@ class _PostEditScreenState extends ConsumerState<PostEditScreen> {
             child: Padding(
               padding: const EdgeInsets.only(left: 8.0, top: 8.0),
               child: CupertinoNavigationBarBackButton(
-                color: AppColors.text,
+                color: colorScheme.onSurface,
                 onPressed: () {
-                  if (Navigator.of(context).canPop()) {
-                    Navigator.of(context).pop();
+                  if (context.mounted) {
+                    if (Navigator.of(context).canPop()) {
+                      context.pop();
+                    } else {
+                      context.go('/');
+                    }
                   }
                 },
               ),
@@ -164,9 +170,9 @@ class _PostEditScreenState extends ConsumerState<PostEditScreen> {
                                 style: textTheme.headlineSmall?.copyWith(
                                   fontFamily: AppFonts.playfair,
                                   fontWeight: FontWeight.w700,
-                                  color: AppColors.text,
+                                  color: colorScheme.onSurface,
                                 ),
-                                dropdownColor: AppColors.bgWhite,
+                                dropdownColor: colorScheme.surface,
                                 onChanged: form.isSubmitting
                                     ? null
                                     : (value) {
@@ -197,7 +203,7 @@ class _PostEditScreenState extends ConsumerState<PostEditScreen> {
                     Container(
                       height: Sizes.size100,
                       decoration: BoxDecoration(
-                        color: AppColors.bgWhite,
+                        color: colorScheme.surface,
                         borderRadius: BorderRadius.circular(Sizes.size16),
                       ),
                       padding: const EdgeInsets.symmetric(
@@ -209,7 +215,7 @@ class _PostEditScreenState extends ConsumerState<PostEditScreen> {
                             dateTimePickerTextStyle: textTheme.titleMedium
                                 ?.copyWith(
                                   fontFamily: AppFonts.playfair,
-                                  color: AppColors.text,
+                                  color: colorScheme.onSurface,
                                 ),
                           ),
                         ),
@@ -240,8 +246,16 @@ class _PostEditScreenState extends ConsumerState<PostEditScreen> {
                         decoration: InputDecoration(
                           hintText: '기분을 기록해보세요',
                           filled: true,
-                          fillColor: AppColors.bgBeige,
+                          fillColor: colorScheme.surfaceContainerHighest,
                           border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(Sizes.size16),
+                            borderSide: BorderSide.none,
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(Sizes.size16),
+                            borderSide: BorderSide.none,
+                          ),
+                          enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(Sizes.size16),
                             borderSide: BorderSide.none,
                           ),
@@ -249,9 +263,9 @@ class _PostEditScreenState extends ConsumerState<PostEditScreen> {
                         ),
                         style: textTheme.bodyMedium?.copyWith(
                           fontFamily: AppFonts.playfair,
-                          color: AppColors.text,
+                          color: colorScheme.onSurface,
                         ),
-                        cursorColor: AppColors.point,
+                        cursorColor: colorScheme.primary,
                       ),
                     ),
                     if (form.errorMessage != null) ...[

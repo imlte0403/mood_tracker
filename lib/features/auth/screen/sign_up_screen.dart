@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mood_tracker/core/constants/app_color.dart';
 import 'package:mood_tracker/core/constants/app_text_styles.dart';
 import 'package:mood_tracker/core/constants/gaps.dart';
 import 'package:mood_tracker/core/constants/sizes.dart';
@@ -102,13 +101,10 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen>
     final isLoading = ref.watch(signUpProvider).isLoading;
     final theme = Theme.of(context);
     final textTheme = theme.textTheme;
+    final colorScheme = theme.colorScheme;
 
     return Scaffold(
-      backgroundColor: AppColors.bgWhite,
       appBar: AppBar(
-        backgroundColor: AppColors.bgWhite,
-        surfaceTintColor: AppColors.bgWhite,
-        elevation: 0,
         titleSpacing: 0,
         title: Text('Sign Up', style: AppTextStyles.authAppBar(textTheme)),
       ),
@@ -141,7 +137,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen>
                       Gaps.v28,
                       DecoratedBox(
                         decoration: BoxDecoration(
-                          color: AppColors.bgWhite,
+                          color: colorScheme.surface,
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Padding(

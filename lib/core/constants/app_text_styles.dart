@@ -14,7 +14,6 @@ class AppTextStyles {
     return textTheme.headlineMedium?.copyWith(
       fontFamily: AppFonts.playfair,
       fontWeight: FontWeight.w800,
-      color: AppColors.text,
     );
   }
 
@@ -22,7 +21,6 @@ class AppTextStyles {
     return textTheme.titleLarge?.copyWith(
       fontFamily: AppFonts.playfair,
       fontWeight: FontWeight.w700,
-      color: AppColors.text,
     );
   }
 
@@ -30,7 +28,6 @@ class AppTextStyles {
     return textTheme.headlineSmall?.copyWith(
       fontFamily: AppFonts.playfair,
       fontWeight: FontWeight.w700,
-      color: AppColors.text,
       letterSpacing: -0.4,
     );
   }
@@ -38,7 +35,7 @@ class AppTextStyles {
   static TextStyle? authSubtitle(TextTheme textTheme) {
     return textTheme.bodyMedium?.copyWith(
       fontFamily: AppFonts.playfair,
-      color: AppColors.placeholder,
+      color: textTheme.bodyMedium?.color?.withOpacity(0.6),
     );
   }
 
@@ -53,7 +50,6 @@ class AppTextStyles {
   static TextStyle? authBody(TextTheme textTheme) {
     return textTheme.bodyMedium?.copyWith(
       fontFamily: AppFonts.playfair,
-      color: AppColors.text,
     );
   }
 
@@ -61,8 +57,8 @@ class AppTextStyles {
     return textTheme.headlineLarge?.copyWith(
       fontFamily: AppFonts.playfair,
       fontWeight: FontWeight.w900,
-      color: AppColors.point,
       fontSize: Sizes.size40,
+      color: AppColors.point,
     );
   }
 
@@ -104,7 +100,7 @@ class AppTextStyles {
   static TextStyle? timelineSlotLabel(TextTheme textTheme) {
     return textTheme.bodySmall?.copyWith(
       fontFamily: AppFonts.playfair,
-      color: AppColors.placeholder,
+      color: textTheme.bodySmall?.color?.withOpacity(0.6),
     );
   }
 
@@ -122,7 +118,7 @@ class AppTextStyles {
   static TextStyle? timelineStackLabel(TextTheme textTheme) {
     return textTheme.bodySmall?.copyWith(
       fontFamily: AppFonts.playfair,
-      color: AppColors.placeholder,
+      color: textTheme.bodySmall?.color?.withOpacity(0.6),
       fontStyle: FontStyle.italic,
     );
   }
@@ -130,14 +126,14 @@ class AppTextStyles {
   static TextStyle? timelineStackHint(TextTheme textTheme) {
     return textTheme.bodySmall?.copyWith(
       fontFamily: AppFonts.playfair,
-      color: AppColors.placeholder.withOpacity(0.7),
+      color: textTheme.bodySmall?.color?.withOpacity(0.5),
       fontStyle: FontStyle.italic,
     );
   }
 
-  static TextStyle settings(BuildContext context) => TextStyle(
-    fontSize: 16,
-    fontWeight: FontWeight.w400,
-    color: AppColors.text,
-  );
+  static TextStyle settings(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    return textTheme.bodyMedium?.copyWith(fontSize: 16, fontWeight: FontWeight.w400) ??
+        const TextStyle(fontSize: 16, fontWeight: FontWeight.w400);
+  }
 }

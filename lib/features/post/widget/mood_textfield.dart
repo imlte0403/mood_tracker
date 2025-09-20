@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:mood_tracker/core/constants/app_color.dart';
 import 'package:mood_tracker/core/constants/gaps.dart';
 import 'package:mood_tracker/core/constants/sizes.dart';
 import 'package:mood_tracker/core/models/emotion_type.dart';
@@ -72,9 +71,11 @@ class _MoodTextFieldState extends ConsumerState<MoodTextField> {
             maxLength: 500,
             decoration: InputDecoration(
               border: InputBorder.none,
+              focusedBorder: InputBorder.none,
+              enabledBorder: InputBorder.none,
               hintText: placeholder,
               hintStyle: theme.textTheme.bodyMedium?.copyWith(
-                color: AppColors.placeholder,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
               counterText: '',
             ),
@@ -104,7 +105,7 @@ class _MoodTextFieldState extends ConsumerState<MoodTextField> {
             Text(
               '${form.message.length}/500',
               style: theme.textTheme.bodySmall?.copyWith(
-                color: AppColors.placeholder,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             ),
           ],

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:mood_tracker/core/constants/sizes.dart';
-import 'package:mood_tracker/core/constants/app_color.dart';
-
 typedef AuthFieldValidator = String? Function(String? value);
 
 //인증 텍스트 필드 위젯
@@ -151,21 +149,25 @@ class _AuthTextFieldState extends State<AuthTextField> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+
+
     return TextFormField(
       controller: widget.controller,
       focusNode: widget.focusNode,
       keyboardType: widget.keyboardType,
       textInputAction: widget.textInputAction,
-      obscureText: widget.enableObscureToggle ? _obscureText : widget.initialObscureText,
+      obscureText:
+          widget.enableObscureToggle ? _obscureText : widget.initialObscureText,
       autovalidateMode: widget.autovalidateMode,
       onFieldSubmitted: widget.onSubmitted,
       validator: widget.validator,
       autofillHints: widget.autofillHints,
-      cursorColor: AppColors.point,
+      cursorColor: colorScheme.primary,
       decoration: InputDecoration(
         labelText: widget.label,
-        labelStyle: TextStyle(color: AppColors.text),
-        floatingLabelStyle: TextStyle(color: AppColors.text),
         suffixIcon: widget.enableObscureToggle
             ? IconButton(
                 onPressed: () {
@@ -180,23 +182,10 @@ class _AuthTextFieldState extends State<AuthTextField> {
             : null,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(Sizes.size8),
-          borderSide: BorderSide(color: AppColors.text),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(Sizes.size8),
-          borderSide: BorderSide(color: AppColors.text),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(Sizes.size8),
-          borderSide: BorderSide(color: AppColors.text, width: 2),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(Sizes.size8),
-          borderSide: BorderSide(color: AppColors.error),
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(Sizes.size8),
-          borderSide: BorderSide(color: AppColors.error, width: 2),
+          borderSide: BorderSide(color: colorScheme.onSurface),
         ),
       ),
     );
