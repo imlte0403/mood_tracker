@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mood_tracker/core/constants/app_text_styles.dart';
+import 'package:mood_tracker/core/constants/gaps.dart';
 
 class AuthHeader extends StatelessWidget {
   const AuthHeader({
@@ -22,7 +23,7 @@ class AuthHeader extends StatelessWidget {
           style: AppTextStyles.authTitle(textTheme),
         ),
         if (subtitle != null) ...[
-          const SizedBox(height: 8),
+          Gaps.v8,
           Text(
             subtitle!,
             style: AppTextStyles.authSubtitle(textTheme),

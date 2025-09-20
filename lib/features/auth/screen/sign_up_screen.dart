@@ -29,6 +29,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen>
     with AuthFormMixin<SignUpScreen> {
   final _nameController = TextEditingController();
   final _nameFocus = FocusNode();
+  bool _shouldAutovalidate = false;
 
   @override
   void dispose() {
@@ -38,6 +39,10 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen>
   }
 
   void _submit() async {
+    if (ref.read(signUpProvider).isLoading) return;
+
+    setState(() => _shouldAutovalidate = true);
+
     final form = formKey.currentState;
     if (form == null || !form.validate()) return;
 
@@ -55,6 +60,9 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen>
       controller: _nameController,
       focusNode: _nameFocus,
       onSubmitted: (_) => emailFocus.requestFocus(),
+      autovalidateMode: _shouldAutovalidate
+          ? AutovalidateMode.onUserInteraction
+          : AutovalidateMode.disabled,
     );
   }
 
@@ -63,6 +71,9 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen>
       controller: emailController,
       focusNode: emailFocus,
       onSubmitted: (_) => passwordFocus.requestFocus(),
+      autovalidateMode: _shouldAutovalidate
+          ? AutovalidateMode.onUserInteraction
+          : AutovalidateMode.disabled,
     );
   }
 
@@ -71,6 +82,9 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen>
       controller: passwordController,
       focusNode: passwordFocus,
       onSubmitted: (_) => _submit(),
+      autovalidateMode: _shouldAutovalidate
+          ? AutovalidateMode.onUserInteraction
+          : AutovalidateMode.disabled,
     );
   }
 
@@ -115,10 +129,14 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      const AuthHeader(
-                        title: 'Create a new account',
-                        subtitle:
-                            'Sign up to start logging your emotional patterns.',
+                      Gaps.v20,
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16),
+                        child: const AuthHeader(
+                          title: 'Create a new account',
+                          subtitle:
+                              'Sign up to start logging your emotional patterns.',
+                        ),
                       ),
                       Gaps.v28,
                       DecoratedBox(
@@ -137,9 +155,9 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen>
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
                                 _buildNameField(),
-                                Gaps.v16,
+                                Gaps.v20,
                                 _buildEmailField(),
-                                Gaps.v16,
+                                Gaps.v20,
                                 _buildPasswordField(),
                                 Gaps.v24,
                                 AuthBtn.primary(

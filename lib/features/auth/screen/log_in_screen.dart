@@ -28,8 +28,12 @@ class LogInScreen extends ConsumerStatefulWidget {
 
 class _LogInScreenState extends ConsumerState<LogInScreen>
     with AuthFormMixin<LogInScreen> {
+  bool _shouldAutovalidate = false;
+
   void _submit() async {
     if (ref.read(loginProvider).isLoading) return;
+
+    setState(() => _shouldAutovalidate = true);
 
     final form = formKey.currentState;
     if (form == null || !form.validate()) return;
@@ -47,6 +51,9 @@ class _LogInScreenState extends ConsumerState<LogInScreen>
       controller: emailController,
       focusNode: emailFocus,
       onSubmitted: (_) => passwordFocus.requestFocus(),
+      autovalidateMode: _shouldAutovalidate
+          ? AutovalidateMode.onUserInteraction
+          : AutovalidateMode.disabled,
     );
   }
 
@@ -55,7 +62,9 @@ class _LogInScreenState extends ConsumerState<LogInScreen>
       controller: passwordController,
       focusNode: passwordFocus,
       onSubmitted: (_) => _submit(),
-      enableVisibilityToggle: false,
+      autovalidateMode: _shouldAutovalidate
+          ? AutovalidateMode.onUserInteraction
+          : AutovalidateMode.disabled,
     );
   }
 
@@ -107,10 +116,7 @@ class _LogInScreenState extends ConsumerState<LogInScreen>
         surfaceTintColor: AppColors.bgWhite,
         elevation: 0,
         titleSpacing: 0,
-        title: Text(
-          'Log In',
-          style: AppTextStyles.authAppBar(textTheme),
-        ),
+        title: Text('Log In', style: AppTextStyles.authAppBar(textTheme)),
       ),
       body: SafeArea(
         child: LayoutBuilder(
@@ -129,11 +135,16 @@ class _LogInScreenState extends ConsumerState<LogInScreen>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      AuthHeader(
-                        title: 'Welcome back',
-                        subtitle: 'Log in to continue tracking your mood journey.',
+                      Gaps.v20,
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16),
+                        child: AuthHeader(
+                          title: 'Welcome back!',
+                          subtitle:
+                              'Log in to continue tracking your mood journey.',
+                        ),
                       ),
-                      Gaps.v28,
+                      Gaps.v20,
                       DecoratedBox(
                         decoration: BoxDecoration(
                           color: AppColors.bgWhite,
@@ -150,14 +161,15 @@ class _LogInScreenState extends ConsumerState<LogInScreen>
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
                                 _buildEmailField(),
-                                Gaps.v16,
+                                Gaps.v20,
                                 _buildPasswordField(),
                                 Gaps.v24,
                                 AuthBtn.primary(
                                   label: 'Log In',
                                   isLoading: loginState.emailLoading,
-                                  onPressed:
-                                      loginState.isLoading ? null : _submit,
+                                  onPressed: loginState.isLoading
+                                      ? null
+                                      : _submit,
                                 ),
                               ],
                             ),
@@ -193,9 +205,9 @@ class _LogInScreenState extends ConsumerState<LogInScreen>
                               children: [
                                 TextSpan(
                                   text: 'Sign Up',
-                                  style: AppTextStyles.authLink(textTheme)?.copyWith(
-                                    fontWeight: FontWeight.w800,
-                                  ),
+                                  style: AppTextStyles.authLink(
+                                    textTheme,
+                                  )?.copyWith(fontWeight: FontWeight.w800),
                                 ),
                               ],
                             ),
