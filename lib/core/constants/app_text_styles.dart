@@ -134,4 +134,10 @@ class AppTextStyles {
       fontStyle: FontStyle.italic,
     );
   }
+
+  static TextStyle settings(BuildContext context) => TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.w400,
+    color: AppColors.text,
+  );
 }

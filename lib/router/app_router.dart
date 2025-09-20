@@ -6,10 +6,14 @@ import 'package:mood_tracker/core/models/timeline_entry.dart';
 import 'package:mood_tracker/features/post/post_edit.dart';
 import 'package:mood_tracker/features/post/post_screen.dart';
 import 'package:mood_tracker/features/settings/settings_screen.dart';
+import 'package:mood_tracker/features/settings/about/about_screen.dart';
+import 'package:mood_tracker/features/settings/help/help_screen.dart';
+import 'package:mood_tracker/features/settings/privacy_screen.dart';
+import 'package:mood_tracker/features/settings/updates_screen.dart';
 
 final router = GoRouter(
   debugLogDiagnostics: true,
-  initialLocation: HomeScreen.routeURL,
+  initialLocation: LogInScreen.routeURL,
   routes: [
     GoRoute(
       path: LogInScreen.routeURL,
@@ -30,6 +34,28 @@ final router = GoRouter(
       path: SettingsScreen.routeURL,
       name: SettingsScreen.routeName,
       builder: (context, state) => const SettingsScreen(),
+      routes: [
+        GoRoute(
+          path: '/about',
+          name: AboutScreen.routeName,
+          builder: (context, state) => const AboutScreen(),
+        ),
+        GoRoute(
+          path: '/help',
+          name: HelpScreen.routeName,
+          builder: (context, state) => const HelpScreen(),
+        ),
+        GoRoute(
+          path: '/privacy',
+          name: PrivacyScreen.routeName,
+          builder: (context, state) => const PrivacyScreen(),
+        ),
+        GoRoute(
+          path: '/updates',
+          name: UpdatesScreen.routeName,
+          builder: (context, state) => const UpdatesScreen(),
+        ),
+      ],
     ),
     GoRoute(
       path: PostScreen.routeURL,

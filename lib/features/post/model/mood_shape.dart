@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'dart:ui' show lerpDouble;
 
 import 'package:flutter/material.dart';
 
@@ -146,9 +147,11 @@ class MoodShapeEngine {
     final Color blended =
         Color.lerp(lower.color, upper.color, easedT) ?? lower.color;
 
-    final ShapeBorder morphedShape = isLast || easedT == 0.0
-        ? lower.shape
-        : ShapeBorder.lerp(lower.shape, upper.shape, easedT) ?? lower.shape;
+    final ShapeBorder morphedShape = _interpolateShape(
+      lower.shape,
+      upper.shape,
+      easedT,
+    );
 
     final MoodType currentMood = (isLast || rawT <= 0.5)
         ? lower.type
@@ -202,13 +205,13 @@ final List<MoodShapeDefinition> _definitions = <MoodShapeDefinition>[
     type: MoodType.lucky,
     sliderStart: 5,
     color: MoodType.lucky.emotion.color,
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50.0)),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
   ),
   MoodShapeDefinition(
     type: MoodType.excited,
     sliderStart: 6,
     color: MoodType.excited.emotion.color,
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(70.0)),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40.0)),
   ),
   MoodShapeDefinition(
     type: MoodType.happy,
@@ -222,3 +225,47 @@ final Map<MoodType, MoodShapeDefinition> _definitionsByType =
     <MoodType, MoodShapeDefinition>{
       for (final definition in _definitions) definition.type: definition,
     };
+
+ShapeBorder _interpolateShape(ShapeBorder from, ShapeBorder to, double t) {
+  if (t <= 0.0) return from;
+  if (t >= 1.0) return to;
+
+  if (from is StarBorder && to is CircleBorder) {
+    if (t >= 0.98) return to;
+    return _roundedStar(from, t);
+  }
+
+  if (from is CircleBorder && to is StarBorder) {
+    final double collapse = 1.0 - t;
+    if (collapse >= 0.98) return from;
+    return _roundedStar(to, collapse);
+  }
+
+  return ShapeBorder.lerp(from, to, t) ?? from;
+}
+
+StarBorder _roundedStar(StarBorder base, double collapse) {
+  // 더 부드러운 곡선 적용
+  final double smoothCollapse = Curves.easeInOutSine.transform(collapse);
+
+  final double innerRatio = lerpDouble(
+    base.innerRadiusRatio,
+    0.88 + (0.10 * smoothCollapse), // 0.88 → 0.98로 더 점진적
+    smoothCollapse * 0.8, // 80%까지만 빠르게, 나머지는 천천히
+  )!.clamp(0.0, 0.99);
+
+  final double rounding = lerpDouble(
+    base.pointRounding,
+    0.7 + (0.2 * smoothCollapse), // 0.7 → 0.9로 더 부드럽게
+    math.pow(smoothCollapse, 0.6).toDouble(),
+  )!.clamp(0.0, 1.0);
+
+  return StarBorder(
+    side: base.side,
+    points: base.points,
+    innerRadiusRatio: innerRatio,
+    pointRounding: rounding,
+    rotation: base.rotation,
+    squash: base.squash,
+  );
+}

@@ -79,7 +79,7 @@ class WeeklyCalendar extends StatelessWidget {
                 final emotion = moodByDate[normalized];
                 final hasMood = emotion != null;
                 final baseColor = hasMood
-                    ? emotion!.color
+                    ? emotion.color
                     : AppColors.placeholder.withOpacity(0.45);
                 final highlightColor = hasMood
                     ? baseColor.withValues(alpha: 0.18)

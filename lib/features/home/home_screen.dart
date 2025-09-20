@@ -10,7 +10,6 @@ import 'package:mood_tracker/features/home/widget/daily_timeline.dart';
 import 'package:mood_tracker/features/home/widget/home_appbar.dart';
 import 'package:mood_tracker/features/home/widget/post_btn.dart';
 import 'package:mood_tracker/features/home/widget/weekly_calendar.dart';
-import 'package:mood_tracker/features/post/post_edit.dart';
 import 'package:mood_tracker/features/post/post_screen.dart';
 
 class GreetingSection extends StatelessWidget {

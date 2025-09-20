@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:mood_tracker/core/constants/app_text_styles.dart';
 import 'package:mood_tracker/core/constants/app_color.dart';
+import 'package:mood_tracker/features/settings/settings_screen.dart';
 
 class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   const HomeAppBar({super.key});
@@ -24,6 +26,12 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
           fontFamily: AppFonts.playfair,
         ),
       ),
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.settings, color: AppColors.text),
+          onPressed: () => context.push(SettingsScreen.routeURL),
+        ),
+      ],
     );
   }
 }
