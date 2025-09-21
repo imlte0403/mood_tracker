@@ -8,7 +8,6 @@ import 'package:mood_tracker/core/constants/app_text_styles.dart';
 
 import 'package:mood_tracker/features/auth/mixins/auth_form_mixin.dart';
 import 'package:mood_tracker/core/utils/auth_utils.dart';
-import 'package:mood_tracker/features/auth/widget/auth_textfield.dart';
 import 'package:mood_tracker/features/auth/widget/auth_btn.dart';
 import 'package:mood_tracker/features/auth/widget/auth_header.dart';
 import 'package:mood_tracker/features/auth/view_model/login_view_model.dart';
@@ -45,55 +44,15 @@ class _LogInScreenState extends ConsumerState<LogInScreen>
         );
   }
 
-  Widget _buildEmailField() {
-    return AuthTextField.email(
-      controller: emailController,
-      focusNode: emailFocus,
-      onSubmitted: (_) => passwordFocus.requestFocus(),
-      autovalidateMode: _shouldAutovalidate
-          ? AutovalidateMode.onUserInteraction
-          : AutovalidateMode.disabled,
-    );
-  }
-
-  Widget _buildPasswordField() {
-    return AuthTextField.password(
-      controller: passwordController,
-      focusNode: passwordFocus,
-      onSubmitted: (_) => _submit(),
-      autovalidateMode: _shouldAutovalidate
-          ? AutovalidateMode.onUserInteraction
-          : AutovalidateMode.disabled,
-    );
-  }
-
-  Widget _buildSocialButtons(LoginState state) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        AuthBtn.social(
-          label: 'Continue with Google',
-          icon: const Icon(Icons.g_mobiledata),
-          isLoading: state.googleLoading,
-          onPressed: state.isLoading
-              ? null
-              : () => ref.read(loginProvider.notifier).loginWithGoogle(),
-        ),
-        Gaps.v12,
-        AuthBtn.social(
-          label: 'Continue with Apple',
-          icon: const Icon(Icons.apple),
-          isLoading: state.appleLoading,
-          onPressed: state.isLoading
-              ? null
-              : () => ref.read(loginProvider.notifier).loginWithApple(),
-        ),
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
+
+    final loginState = ref.watch(loginProvider);
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+    final colorScheme = theme.colorScheme;
+
+    // 로그인 버튼 상태에 따른 화면 전환
     ref.listen<LoginState>(loginProvider, (previous, next) {
       AuthUtils.handleAuthStateChange(
         context,
@@ -103,11 +62,6 @@ class _LogInScreenState extends ConsumerState<LogInScreen>
         fallbackErrorMessage: 'Sign-in failed.',
       );
     });
-
-    final loginState = ref.watch(loginProvider);
-    final theme = Theme.of(context);
-    final textTheme = theme.textTheme;
-    final colorScheme = theme.colorScheme;
 
     return Scaffold(
       appBar: AppBar(
@@ -156,9 +110,14 @@ class _LogInScreenState extends ConsumerState<LogInScreen>
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                _buildEmailField(),
+                                buildEmailField(
+                                  shouldAutovalidate: _shouldAutovalidate,
+                                ),
                                 Gaps.v20,
-                                _buildPasswordField(),
+                                buildPasswordField(
+                                  shouldAutovalidate: _shouldAutovalidate,
+                                  onSubmit: _submit,
+                                ),
                                 Gaps.v24,
                                 AuthBtn.primary(
                                   label: 'Log In',
@@ -189,7 +148,20 @@ class _LogInScreenState extends ConsumerState<LogInScreen>
                         ],
                       ),
                       Gaps.v16,
-                      _buildSocialButtons(loginState),
+                      AuthSocialButtons(
+                        googleLoading: loginState.googleLoading,
+                        appleLoading: loginState.appleLoading,
+                        onGooglePressed: loginState.isLoading
+                            ? null
+                            : () => ref
+                                .read(loginProvider.notifier)
+                                .loginWithGoogle(),
+                        onApplePressed: loginState.isLoading
+                            ? null
+                            : () => ref
+                                .read(loginProvider.notifier)
+                                .loginWithApple(),
+                      ),
                       Gaps.v24,
                       Center(
                         child: TextButton(
