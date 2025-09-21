@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:mood_tracker/core/models/emotion_type.dart';
 import 'package:mood_tracker/core/models/timeline_entry.dart';
+import 'package:mood_tracker/core/providers/auth_providers.dart';
 import 'package:mood_tracker/features/home/data/mood_repository.dart';
 import 'package:mood_tracker/core/utils/firebase_error_handler.dart';
 
@@ -14,8 +15,16 @@ final homeViewModelProvider = StateNotifierProvider<HomeViewModel, HomeState>((
   final repository = ref.watch(moodRepositoryProvider);
   final notifier = HomeViewModel(repository: repository);
 
-  final currentUser = FirebaseAuth.instance.currentUser;
-  notifier.setUser(currentUser);
+  final auth = ref.watch(firebaseAuthProvider);
+  notifier.setUser(auth.currentUser);
+
+  ref.listen<AsyncValue<User?>>(authStateChangesProvider, (previous, next) {
+    next.when(
+      data: (user) => notifier.setUser(user),
+      loading: () {},
+      error: (error, stackTrace) => notifier.setAuthError(error, stackTrace),
+    );
+  });
 
   return notifier;
 });
@@ -31,7 +40,7 @@ class HomeViewModel extends StateNotifier<HomeState> {
           entries: const AsyncLoading(),
           weekDates: week,
           displayName: 'Username',
-          weeklyMoods: _generateDemoWeekData(week),
+          weeklyMoods: const <DateTime, EmotionType>{},
         );
       }());
 
@@ -42,6 +51,7 @@ class HomeViewModel extends StateNotifier<HomeState> {
   Map<DateTime, List<TimelineEntry>> _cachedWeekEntries =
       <DateTime, List<TimelineEntry>>{};
 
+// Greeting 섹션 이름 설정
   void setUser(User? user) {
     final userId = user?.uid;
     final displayName = user?.displayName ?? 'User';
@@ -56,8 +66,8 @@ class HomeViewModel extends StateNotifier<HomeState> {
       state = state.copyWith(
         userId: null,
         displayName: 'Username',
-        entries: AsyncData(_buildDemoEntries(state.selectedDate)),
-        weeklyMoods: _generateDemoWeekData(state.weekDates),
+        entries: AsyncData<List<TimelineEntry>>(<TimelineEntry>[]),
+        weeklyMoods: const <DateTime, EmotionType>{},
       );
       return;
     }
@@ -83,7 +93,7 @@ class HomeViewModel extends StateNotifier<HomeState> {
       userId: null,
       displayName: 'Username',
       entries: AsyncError<List<TimelineEntry>>(message, stackTrace),
-      weeklyMoods: _generateDemoWeekData(state.weekDates),
+      weeklyMoods: const <DateTime, EmotionType>{},
     );
   }
 
@@ -99,8 +109,8 @@ class HomeViewModel extends StateNotifier<HomeState> {
     );
     if (_userId == null) {
       state = state.copyWith(
-        weeklyMoods: _generateDemoWeekData(week),
-        entries: AsyncData(_buildDemoEntries(normalized)),
+        weeklyMoods: const <DateTime, EmotionType>{},
+        entries: AsyncData<List<TimelineEntry>>(<TimelineEntry>[]),
       );
       return;
     }
@@ -141,8 +151,8 @@ class HomeViewModel extends StateNotifier<HomeState> {
     final userId = _userId;
     if (userId == null) {
       state = state.copyWith(
-        entries: AsyncData(_buildDemoEntries(state.selectedDate)),
-        weeklyMoods: _generateDemoWeekData(state.weekDates),
+        entries: AsyncData<List<TimelineEntry>>(<TimelineEntry>[]),
+        weeklyMoods: const <DateTime, EmotionType>{},
       );
       return;
     }
@@ -248,38 +258,6 @@ class HomeViewModel extends StateNotifier<HomeState> {
     );
   }
 
-  //데모 데이터
-  static Map<DateTime, EmotionType> _generateDemoWeekData(
-    List<DateTime> weekDates,
-  ) {
-    const emotions = <EmotionType>[
-      EmotionType.happy,
-      EmotionType.excited,
-      EmotionType.normal,
-      EmotionType.angry,
-      EmotionType.sad,
-      EmotionType.lucky,
-      EmotionType.depressed,
-    ];
-    return <DateTime, EmotionType>{
-      for (var i = 0; i < weekDates.length; i++)
-        weekDates[i]: emotions[i % emotions.length],
-    };
-  }
-
-  List<TimelineEntry> _buildDemoEntries(DateTime date) {
-    final baseDate = DateTime(date.year, date.month, date.day);
-    final timestamp = baseDate.add(const Duration(hours: 9));
-    return [
-      TimelineEntry(
-        id: 'demo-0',
-        timestamp: timestamp,
-        emotion: EmotionType.happy,
-        message: '아침 산책 후 상쾌한 기분이었어요.',
-        userId: 'demo',
-      ),
-    ];
-  }
 }
 
 class HomeState {
