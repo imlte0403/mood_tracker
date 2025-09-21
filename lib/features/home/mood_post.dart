@@ -1,12 +1,18 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:mood_tracker/core/constants/app_color.dart';
 import 'package:mood_tracker/core/constants/gaps.dart';
+
 import 'package:mood_tracker/core/models/emotion_type.dart';
 import 'package:mood_tracker/core/models/timeline_entry.dart';
 import 'package:mood_tracker/core/utils/firebase_error_handler.dart';
 import 'package:mood_tracker/features/home/home_viewmodel.dart';
 
+// 무드 포스트 섹션들을 빌드하는 메인 함수
+// TimelineEntry 목록을 시간대별 슬롯으로 나누어 UI 구성
 List<Widget> buildMoodPostSections({
   required BuildContext context,
   required List<TimelineEntry> items,
@@ -45,6 +51,7 @@ List<Widget> buildMoodPostSections({
                 Expanded(
                   child: Container(
                     height: 1,
+                    //시간 블록 구분선
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
@@ -64,31 +71,34 @@ List<Widget> buildMoodPostSections({
   }).toList();
 }
 
-class _SlotRange {
-  const _SlotRange({required this.startHour, required this.endHour});
+// 시간 범위를 정의하는 데이터 클래스
+class SlotRange {
+  const SlotRange({required this.startHour, required this.endHour});
 
   final int startHour;
   final int endHour;
 }
 
-// 3시간 단위 슬롯
-const List<_SlotRange> _slotRanges = <_SlotRange>[
-  _SlotRange(startHour: 0, endHour: 6),
-  _SlotRange(startHour: 6, endHour: 9),
-  _SlotRange(startHour: 9, endHour: 12),
-  _SlotRange(startHour: 12, endHour: 15),
-  _SlotRange(startHour: 15, endHour: 18),
-  _SlotRange(startHour: 18, endHour: 21),
-  _SlotRange(startHour: 21, endHour: 24),
+// 하루를 시간대별로 나눈 슬롯 범위 정의 (3시간 단위)
+const List<SlotRange> slotRanges = <SlotRange>[
+  SlotRange(startHour: 0, endHour: 6),
+  SlotRange(startHour: 6, endHour: 9),
+  SlotRange(startHour: 9, endHour: 12),
+  SlotRange(startHour: 12, endHour: 15),
+  SlotRange(startHour: 15, endHour: 18),
+  SlotRange(startHour: 18, endHour: 21),
+  SlotRange(startHour: 21, endHour: 24),
 ];
 
+/// 타임라인 슬롯의 뷰모델 클래스
+/// 특정 시간 범위의 엔트리들과 표시 정보를 관리
 class TimelineSlotViewModel {
   TimelineSlotViewModel({
     required this.range,
     required List<TimelineEntry> entries,
   }) : entries = entries..sort((a, b) => a.timestamp.compareTo(b.timestamp));
 
-  final _SlotRange range;
+  final SlotRange range;
   final List<TimelineEntry> entries;
 
   String get label => _formatHour(range.startHour);
@@ -98,11 +108,13 @@ class TimelineSlotViewModel {
     return TimeOfDay.fromDateTime(entries.first.timestamp).format(context);
   }
 
+  // 해당 슬롯에 여러 개의 엔트리가 있는지 확인
   bool get hasMultipleEntries => entries.length > 1;
 }
 
+// TimelineEntry 목록을 시간대별 슬롯으로 매핑
 List<TimelineSlotViewModel> _mapEntriesToSlots(List<TimelineEntry> source) {
-  return _slotRanges
+  return slotRanges
       .map(
         (range) => TimelineSlotViewModel(
           range: range,
@@ -112,7 +124,8 @@ List<TimelineSlotViewModel> _mapEntriesToSlots(List<TimelineEntry> source) {
       .toList();
 }
 
-bool _isWithinRange(TimelineEntry entry, _SlotRange range) {
+// 엔트리가 특정 시간 범위 내에 있는지 확인
+bool _isWithinRange(TimelineEntry entry, SlotRange range) {
   final hour = entry.timestamp.hour;
   final bool isStartIncluded = hour >= range.startHour;
   final bool isEndExcluded = hour < range.endHour;
@@ -124,6 +137,7 @@ bool _isWithinRange(TimelineEntry entry, _SlotRange range) {
   return isStartIncluded && isEndExcluded;
 }
 
+// 시간대별 슬롯을 표시하는 섹션 위젯
 class _SlotSection extends StatelessWidget {
   const _SlotSection({
     required this.slot,
@@ -297,6 +311,7 @@ class _SlotSection extends StatelessWidget {
   }
 }
 
+// 여러 엔트리를 가로 스크롤로 표시하는 캐러셀 위젯
 class _TimelineEntryCarousel extends StatelessWidget {
   const _TimelineEntryCarousel({
     required this.entries,
@@ -340,6 +355,7 @@ class _TimelineEntryCarousel extends StatelessWidget {
   }
 }
 
+// 개별 타임라인 엔트리를 표시하는 타일 위젯
 class _TimelineEntryTile extends StatelessWidget {
   const _TimelineEntryTile({
     required this.entry,
@@ -381,7 +397,6 @@ class _TimelineEntryTile extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // 감정 헤더 부분
               Row(
                 children: [
                   // 이모지 컨테이너
@@ -424,7 +439,7 @@ class _TimelineEntryTile extends StatelessWidget {
                       ],
                     ),
                   ),
-                  // 메뉴 버튼
+                  // 메뉴{edit, delete} 버튼
                   PopupMenuButton<_EntryAction>(
                     padding: EdgeInsets.zero,
                     icon: SizedBox(
@@ -532,12 +547,13 @@ class _TimelineEntryTile extends StatelessWidget {
 
 enum _EntryAction { edit, delete }
 
+// 시간 표시 형식
 String _formatHour(int hour) {
   final normalized = hour % 24;
   return '${normalized.toString().padLeft(2, '0')}:00';
 }
 
-//삭제 기능
+// 엔트리 삭제 확인 alert + 삭제 처리
 Future<void> confirmDelete(
   BuildContext context,
   WidgetRef ref,
@@ -568,13 +584,17 @@ Future<void> confirmDelete(
 
   try {
     await ref.read(homeViewModelProvider.notifier).deleteEntry(entry.id);
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Entry deleted')));
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Entry deleted')),
+      );
+    }
   } catch (error, _) {
     final message = FirebaseErrorHandler.getErrorMessage(error);
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(message)));
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message)),
+      );
+    }
   }
 }

@@ -29,6 +29,45 @@ final homeViewModelProvider = StateNotifierProvider<HomeViewModel, HomeState>((
   return notifier;
 });
 
+class HomeState {
+  const HomeState({
+    required this.selectedDate,
+    required this.entries,
+    required this.weekDates,
+    required this.weeklyMoods,
+    this.userId,
+    this.displayName,
+  });
+
+  final DateTime selectedDate;
+  final AsyncValue<List<TimelineEntry>> entries;
+  final List<DateTime> weekDates;
+  final Map<DateTime, EmotionType> weeklyMoods;
+  final String? userId;
+  final String? displayName;
+
+  HomeState copyWith({
+    DateTime? selectedDate,
+    AsyncValue<List<TimelineEntry>>? entries,
+    List<DateTime>? weekDates,
+    Map<DateTime, EmotionType>? weeklyMoods,
+    String? userId,
+    String? displayName,
+  }) {
+    return HomeState(
+      selectedDate: selectedDate ?? this.selectedDate,
+      entries: entries ?? this.entries,
+      weekDates: weekDates ?? this.weekDates,
+      weeklyMoods: weeklyMoods ?? this.weeklyMoods,
+      userId: userId ?? this.userId,
+      displayName: displayName ?? this.displayName,
+    );
+  }
+
+  List<TimelineEntry> get entriesValue =>
+      entries.valueOrNull ?? const <TimelineEntry>[];
+}
+
 class HomeViewModel extends StateNotifier<HomeState> {
   HomeViewModel({required MoodRepository repository})
     : _repository = repository,
@@ -51,7 +90,7 @@ class HomeViewModel extends StateNotifier<HomeState> {
   Map<DateTime, List<TimelineEntry>> _cachedWeekEntries =
       <DateTime, List<TimelineEntry>>{};
 
-// Greeting 섹션 이름 설정
+  //인증 메서드
   void setUser(User? user) {
     final userId = user?.uid;
     final displayName = user?.displayName ?? 'User';
@@ -103,10 +142,7 @@ class HomeViewModel extends StateNotifier<HomeState> {
       return;
     }
     final week = _computeWeekDates(normalized);
-    state = state.copyWith(
-      selectedDate: normalized,
-      weekDates: week,
-    );
+    state = state.copyWith(selectedDate: normalized, weekDates: week);
     if (_userId == null) {
       state = state.copyWith(
         weeklyMoods: const <DateTime, EmotionType>{},
@@ -124,6 +160,7 @@ class HomeViewModel extends StateNotifier<HomeState> {
     }
   }
 
+  //CRUD
   Future<TimelineEntry> createEntry({
     required DateTime timestamp,
     required EmotionType emotion,
@@ -147,6 +184,7 @@ class HomeViewModel extends StateNotifier<HomeState> {
     return _repository.deleteEntry(userId: userId, entryId: entryId);
   }
 
+  //Data streem
   void _listenWeekEntries({bool forceReload = false}) {
     final userId = _userId;
     if (userId == null) {
@@ -162,7 +200,9 @@ class HomeViewModel extends StateNotifier<HomeState> {
     }
 
     final weekStart = state.weekDates.first;
-    if (!forceReload && _currentWeekStart != null && _currentWeekStart == weekStart) {
+    if (!forceReload &&
+        _currentWeekStart != null &&
+        _currentWeekStart == weekStart) {
       _emitWeekState();
       return;
     }
@@ -211,6 +251,7 @@ class HomeViewModel extends StateNotifier<HomeState> {
     );
   }
 
+  //타임라인 메서드
   Map<DateTime, List<TimelineEntry>> _groupEntriesByDate(
     List<TimelineEntry> entries,
   ) {
@@ -234,12 +275,6 @@ class HomeViewModel extends StateNotifier<HomeState> {
     return userId;
   }
 
-  @override
-  void dispose() {
-    _weekEntriesSubscription?.cancel();
-    super.dispose();
-  }
-
   static DateTime _normalizeDate(DateTime date) {
     return DateTime(date.year, date.month, date.day);
   }
@@ -258,43 +293,9 @@ class HomeViewModel extends StateNotifier<HomeState> {
     );
   }
 
-}
-
-class HomeState {
-  const HomeState({
-    required this.selectedDate,
-    required this.entries,
-    required this.weekDates,
-    required this.weeklyMoods,
-    this.userId,
-    this.displayName,
-  });
-
-  final DateTime selectedDate;
-  final AsyncValue<List<TimelineEntry>> entries;
-  final List<DateTime> weekDates;
-  final Map<DateTime, EmotionType> weeklyMoods;
-  final String? userId;
-  final String? displayName;
-
-  HomeState copyWith({
-    DateTime? selectedDate,
-    AsyncValue<List<TimelineEntry>>? entries,
-    List<DateTime>? weekDates,
-    Map<DateTime, EmotionType>? weeklyMoods,
-    String? userId,
-    String? displayName,
-  }) {
-    return HomeState(
-      selectedDate: selectedDate ?? this.selectedDate,
-      entries: entries ?? this.entries,
-      weekDates: weekDates ?? this.weekDates,
-      weeklyMoods: weeklyMoods ?? this.weeklyMoods,
-      userId: userId ?? this.userId,
-      displayName: displayName ?? this.displayName,
-    );
+  @override
+  void dispose() {
+    _weekEntriesSubscription?.cancel();
+    super.dispose();
   }
-
-  List<TimelineEntry> get entriesValue =>
-      entries.valueOrNull ?? const <TimelineEntry>[];
 }
