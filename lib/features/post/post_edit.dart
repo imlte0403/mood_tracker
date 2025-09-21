@@ -8,6 +8,7 @@ import 'package:mood_tracker/core/constants/gaps.dart';
 import 'package:mood_tracker/core/constants/sizes.dart';
 import 'package:mood_tracker/core/models/emotion_type.dart';
 import 'package:mood_tracker/core/models/timeline_entry.dart';
+
 import 'package:mood_tracker/features/post/model/mood_shape.dart';
 import 'package:mood_tracker/features/post/post_viewmodel.dart';
 
@@ -95,6 +96,7 @@ class _PostEditScreenState extends ConsumerState<PostEditScreen> {
     }
 
     return Scaffold(
+      backgroundColor: colorScheme.surface,
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton(
         backgroundColor: colorScheme.primary,
@@ -117,17 +119,20 @@ class _PostEditScreenState extends ConsumerState<PostEditScreen> {
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.only(left: 8.0, top: 8.0),
-              child: CupertinoNavigationBarBackButton(
-                color: colorScheme.onSurface,
-                onPressed: () {
-                  if (context.mounted) {
-                    if (Navigator.of(context).canPop()) {
-                      context.pop();
-                    } else {
-                      context.go('/');
-                    }
-                  }
-                },
+              child: GestureDetector(
+                onTap: () => context.go('/'),
+                child: Container(
+                  padding: const EdgeInsets.only(left: 16),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.arrow_back_ios,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
           ),

@@ -5,17 +5,22 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:mood_tracker/core/models/emotion_type.dart';
 import 'package:mood_tracker/core/models/timeline_entry.dart';
-import 'package:mood_tracker/features/home/data/mood_repository.dart';
 import 'package:mood_tracker/core/utils/firebase_error_handler.dart';
+
+import 'package:mood_tracker/features/home/data/mood_repository.dart';
 import 'package:mood_tracker/features/post/model/mood_shape.dart';
 
+// 슬라이더 값을 관리하는 Provider (초기 값: 3.5)
 final moodSliderValueProvider = StateProvider.autoDispose<double>((ref) => 3.5);
 
+// 현재 감정 데이터를 제공하는 Provider
+// 슬라이더 값을 기반으로 MoodShapeEngine에서 감정 정보를 가져옴
 final currentMoodDataProvider = Provider.autoDispose<MoodShapeSnapshot>((ref) {
   final value = ref.watch(moodSliderValueProvider);
   return MoodShapeEngine.resolve(value);
 });
 
+// 감정 엔트리 폼 상태를 관리하는 Provider
 final moodEntryFormProvider =
     StateNotifierProvider.autoDispose<MoodEntryFormNotifier, MoodEntryForm>((
       ref,
@@ -23,6 +28,7 @@ final moodEntryFormProvider =
       return MoodEntryFormNotifier(ref);
     });
 
+// 감정 기록 모델 클래스
 class MoodEntryForm {
   const MoodEntryForm({
     required this.timestamp,
@@ -48,6 +54,7 @@ class MoodEntryForm {
 
   bool get isEditing => entryId != null;
 
+  // 생성자
   factory MoodEntryForm.initial(EmotionType emotion) {
     return MoodEntryForm(
       timestamp: DateTime.now(),
@@ -62,6 +69,7 @@ class MoodEntryForm {
     );
   }
 
+  // 메서드
   MoodEntryForm copyWith({
     DateTime? timestamp,
     EmotionType? emotion,
@@ -91,11 +99,13 @@ class MoodEntryForm {
     );
   }
 
+  // 메시지 길이 제한
   static bool _validate(EmotionType emotion, String message) {
     return message.length <= 500;
   }
 }
 
+// null 구별
 const Object _noValue = Object();
 
 class MoodEntryFormNotifier extends StateNotifier<MoodEntryForm> {
@@ -106,11 +116,13 @@ class MoodEntryFormNotifier extends StateNotifier<MoodEntryForm> {
 
   final Ref ref;
 
+  // 초기 기록용 초기화
   void startNew() {
     final currentEmotion = ref.read(currentMoodDataProvider).displayEmotion;
     state = MoodEntryForm.initial(currentEmotion);
   }
 
+  // 기록 편집용 초기화
   void startEditing(TimelineEntry entry) {
     state = MoodEntryForm(
       timestamp: entry.timestamp,
@@ -125,6 +137,7 @@ class MoodEntryFormNotifier extends StateNotifier<MoodEntryForm> {
     );
   }
 
+  // 감정 타입
   void updateEmotion(EmotionType emotion) {
     state = state.copyWith(
       emotion: emotion,
@@ -133,6 +146,7 @@ class MoodEntryFormNotifier extends StateNotifier<MoodEntryForm> {
     );
   }
 
+  // 타임스탬프
   void updateTimestamp(DateTime timestamp) {
     if (timestamp.isAtSameMomentAs(state.timestamp)) return;
     state = state.copyWith(
@@ -142,6 +156,7 @@ class MoodEntryFormNotifier extends StateNotifier<MoodEntryForm> {
     );
   }
 
+  // 메시지 업데이트
   void updateMessage(String value) {
     final truncated = value.length > 500 ? value.substring(0, 500) : value;
     final overLimit = value.length > 500;
@@ -153,24 +168,29 @@ class MoodEntryFormNotifier extends StateNotifier<MoodEntryForm> {
     );
   }
 
+  // 에러 메시지 초기화
   void resetError() {
     if (state.errorMessage != null) {
       state = state.copyWith(errorMessage: null);
     }
   }
 
+  // 폼 제출 처리 (새 기록 생성 또는 기존 기록 수정)
   Future<bool> submit() async {
+    // 유효성 검사
     if (!state.isValid) {
       state = state.copyWith(errorMessage: '감정을 선택하거나 메시지를 다시 확인해주세요.');
       return false;
     }
 
+    // 사용자 인증 확인
     final currentUser = await _ensureCurrentUser();
     if (currentUser == null) {
       state = state.copyWith(errorMessage: '로그인이 필요합니다.');
       return false;
     }
 
+    // 사용자 ID 결정
     final String resolvedUserId =
         (state.userId != null && state.userId!.isNotEmpty)
         ? state.userId!
@@ -179,6 +199,7 @@ class MoodEntryFormNotifier extends StateNotifier<MoodEntryForm> {
     final bool editing = state.entryId != null;
     final DateTime timestamp = editing ? state.timestamp : DateTime.now();
 
+    // 제출 상태로 변경
     state = state.copyWith(
       isSubmitting: true,
       errorMessage: null,
@@ -189,6 +210,7 @@ class MoodEntryFormNotifier extends StateNotifier<MoodEntryForm> {
       final repository = ref.read(moodRepositoryProvider);
 
       if (state.entryId != null) {
+        // 수정
         final updatedEntry = TimelineEntry(
           id: state.entryId!,
           timestamp: state.timestamp,
@@ -203,6 +225,7 @@ class MoodEntryFormNotifier extends StateNotifier<MoodEntryForm> {
           userId: resolvedUserId,
         );
       } else {
+        // 새 기록 생성
         await repository.createEntry(
           userId: resolvedUserId,
           timestamp: state.timestamp,
@@ -210,6 +233,7 @@ class MoodEntryFormNotifier extends StateNotifier<MoodEntryForm> {
           message: state.message.isEmpty ? null : state.message,
         );
 
+        // 성공 후 폼 초기화
         state = MoodEntryForm.initial(
           state.emotion,
         ).copyWith(isSuccess: true, userId: resolvedUserId);
@@ -231,6 +255,7 @@ class MoodEntryFormNotifier extends StateNotifier<MoodEntryForm> {
     }
   }
 
+  // 현재 로그인된 사용자 확인
   Future<User?> _ensureCurrentUser() async {
     final cachedUser = FirebaseAuth.instance.currentUser;
     if (cachedUser != null) {

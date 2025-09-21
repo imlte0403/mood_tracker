@@ -6,6 +6,7 @@ import 'package:mood_tracker/core/constants/app_color.dart';
 import 'package:mood_tracker/core/constants/gaps.dart';
 import 'package:mood_tracker/core/constants/sizes.dart';
 import 'package:mood_tracker/core/models/timeline_entry.dart';
+
 import 'package:mood_tracker/features/home/home_screen.dart';
 import 'package:mood_tracker/features/post/model/mood_shape.dart';
 import 'package:mood_tracker/features/post/post_viewmodel.dart';
@@ -84,7 +85,10 @@ class _PostScreenState extends ConsumerState<PostScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.close, color: Theme.of(context).colorScheme.onSurface),
+          icon: Icon(
+            Icons.close,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
           onPressed: () {
             if (context.canPop()) {
               context.pop();
@@ -102,7 +106,9 @@ class _PostScreenState extends ConsumerState<PostScreen> {
                 height: Sizes.size20,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.surface),
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    Theme.of(context).colorScheme.surface,
+                  ),
                 ),
               )
             : Text(

@@ -1,25 +1,19 @@
 import 'dart:math' as math;
-import 'dart:ui' show lerpDouble;
 
 import 'package:flutter/material.dart';
 
 import 'package:mood_tracker/core/models/emotion_type.dart';
 
+// 슬라이더 최소값, 최대값 정의
 const double kMoodSliderMin = 0.0;
 const double kMoodSliderMax = 7.0;
 
-enum MoodType {
-  angry,
-  sad,
-  anxious,
-  confused,
-  depressed,
-  lucky,
-  excited,
-  happy,
-}
+//감정 종류
+enum MoodType { angry, sad, anxious, normal, depressed, lucky, excited, happy }
 
+// 메서드
 extension MoodTypeX on MoodType {
+  // MoodType을 EmotionType으로 변환
   EmotionType get emotion {
     switch (this) {
       case MoodType.angry:
@@ -28,7 +22,7 @@ extension MoodTypeX on MoodType {
         return EmotionType.sad;
       case MoodType.anxious:
         return EmotionType.anxious;
-      case MoodType.confused:
+      case MoodType.normal:
         return EmotionType.normal;
       case MoodType.depressed:
         return EmotionType.depressed;
@@ -41,6 +35,7 @@ extension MoodTypeX on MoodType {
     }
   }
 
+  // EmotionType을 MoodType으로 변환
   static MoodType fromEmotion(EmotionType emotion) {
     switch (emotion) {
       case EmotionType.angry:
@@ -50,7 +45,7 @@ extension MoodTypeX on MoodType {
       case EmotionType.anxious:
         return MoodType.anxious;
       case EmotionType.normal:
-        return MoodType.confused;
+        return MoodType.normal;
       case EmotionType.depressed:
         return MoodType.depressed;
       case EmotionType.lucky:
@@ -63,6 +58,7 @@ extension MoodTypeX on MoodType {
   }
 }
 
+// 각 감정의 시각적 정의
 class MoodShapeDefinition {
   const MoodShapeDefinition({
     required this.type,
@@ -84,9 +80,6 @@ class MoodShapeSnapshot {
     required this.displayEmotion,
     required this.color,
     required this.shape,
-    required this.t,
-    required this.lowerMood,
-    required this.upperMood,
   });
 
   final double sliderValue;
@@ -94,40 +87,55 @@ class MoodShapeSnapshot {
   final EmotionType displayEmotion;
   final Color color;
   final ShapeBorder shape;
-  final double t;
-  final MoodType lowerMood;
-  final MoodType upperMood;
 }
 
+// 슬라이더의 값에 따른 변화 처리
 class MoodShapeEngine {
   const MoodShapeEngine._();
 
+  // 슬라이더 값에서 감정 타입 추출
   static MoodType getMoodFromSlider(double value) {
     return resolve(value).currentMood;
   }
 
+  // 감정에 따른 색상 반환
   static Color colorForMood(MoodType mood) {
-    return _definitionsByType[mood]?.color ?? EmotionType.happy.color;
+    // _definitionsByType 대신 직접 검색
+    for (final definition in _definitions) {
+      if (definition.type == mood) {
+        return definition.color;
+      }
+    }
+    return EmotionType.happy.color;
   }
 
+  // EmotionType에 따른 색상 반환
   static Color colorForEmotion(EmotionType emotion) {
     return colorForMood(MoodTypeX.fromEmotion(emotion));
   }
 
+  // 슬라이더 기준점 반환
   static double sliderAnchorForMood(MoodType mood) {
-    final definition = _definitionsByType[mood];
-    if (definition == null) return kMoodSliderMin;
-    final index = _definitions.indexOf(definition);
-    final bool isLast = index == _definitions.length - 1;
-    final double anchor = definition.sliderStart + (isLast ? 0.0 : 0.5);
-    return anchor.clamp(kMoodSliderMin, kMoodSliderMax);
+    for (int i = 0; i < _definitions.length; i++) {
+      final definition = _definitions[i];
+      if (definition.type == mood) {
+        final bool isLast = i == _definitions.length - 1;
+        final double anchor = definition.sliderStart + (isLast ? 0.0 : 0.5);
+        return anchor.clamp(kMoodSliderMin, kMoodSliderMax);
+      }
+    }
+    return kMoodSliderMin;
   }
 
+  // EmotionType에 따른 슬라이더 기준점 반환
   static double sliderAnchorForEmotion(EmotionType emotion) {
     return sliderAnchorForMood(MoodTypeX.fromEmotion(emotion));
   }
 
+  // MoodShapeSnapshot을 생성하는 메인 메서드
+  // 색상과 모양 morphing
   static MoodShapeSnapshot resolve(double sliderValue) {
+    // 값 제한 및 기본 설정
     final double clamped = sliderValue.clamp(kMoodSliderMin, kMoodSliderMax);
     final int lowerIndex = math.min(_definitions.length - 1, clamped.floor());
     final MoodShapeDefinition lower = _definitions[lowerIndex];
@@ -136,6 +144,7 @@ class MoodShapeEngine {
         ? lower
         : _definitions[lowerIndex + 1];
 
+    // morphing 비율 계산
     final double span = isLast
         ? 1
         : (upper.sliderStart - lower.sliderStart).clamp(0.001, 1.0);
@@ -144,15 +153,18 @@ class MoodShapeEngine {
         : ((clamped - lower.sliderStart) / span).clamp(0.0, 1.0);
     final double easedT = isLast ? 0 : Curves.easeInOutCubic.transform(rawT);
 
+    // 색상
     final Color blended =
         Color.lerp(lower.color, upper.color, easedT) ?? lower.color;
 
+    // 모양
     final ShapeBorder morphedShape = _interpolateShape(
       lower.shape,
       upper.shape,
       easedT,
     );
 
+    // 현재 감정 결정 (중간점 기준)
     final MoodType currentMood = (isLast || rawT <= 0.5)
         ? lower.type
         : upper.type;
@@ -163,13 +175,11 @@ class MoodShapeEngine {
       displayEmotion: currentMood.emotion,
       color: blended,
       shape: morphedShape,
-      t: rawT,
-      lowerMood: lower.type,
-      upperMood: upper.type,
     );
   }
 }
 
+// 슬라이더 위치에 따른 감정별 색상, 모양 정의
 final List<MoodShapeDefinition> _definitions = <MoodShapeDefinition>[
   MoodShapeDefinition(
     type: MoodType.angry,
@@ -190,9 +200,9 @@ final List<MoodShapeDefinition> _definitions = <MoodShapeDefinition>[
     shape: StarBorder(points: 7, innerRadiusRatio: 0.6, pointRounding: 0.2),
   ),
   MoodShapeDefinition(
-    type: MoodType.confused,
+    type: MoodType.normal,
     sliderStart: 3,
-    color: MoodType.confused.emotion.color,
+    color: MoodType.normal.emotion.color,
     shape: StarBorder(points: 5, innerRadiusRatio: 0.7, pointRounding: 0.3),
   ),
   MoodShapeDefinition(
@@ -201,6 +211,7 @@ final List<MoodShapeDefinition> _definitions = <MoodShapeDefinition>[
     color: MoodType.depressed.emotion.color,
     shape: StarBorder(points: 3, innerRadiusRatio: 0.6, pointRounding: 0.4),
   ),
+  //TODO: 기회가 된다면 도형 전환 더 자연스럽게 구현
   MoodShapeDefinition(
     type: MoodType.lucky,
     sliderStart: 5,
@@ -221,51 +232,7 @@ final List<MoodShapeDefinition> _definitions = <MoodShapeDefinition>[
   ),
 ];
 
-final Map<MoodType, MoodShapeDefinition> _definitionsByType =
-    <MoodType, MoodShapeDefinition>{
-      for (final definition in _definitions) definition.type: definition,
-    };
-
+// 간단한 모양 보간 (기본 Flutter 기능만 사용)
 ShapeBorder _interpolateShape(ShapeBorder from, ShapeBorder to, double t) {
-  if (t <= 0.0) return from;
-  if (t >= 1.0) return to;
-
-  if (from is StarBorder && to is CircleBorder) {
-    if (t >= 0.98) return to;
-    return _roundedStar(from, t);
-  }
-
-  if (from is CircleBorder && to is StarBorder) {
-    final double collapse = 1.0 - t;
-    if (collapse >= 0.98) return from;
-    return _roundedStar(to, collapse);
-  }
-
   return ShapeBorder.lerp(from, to, t) ?? from;
-}
-
-StarBorder _roundedStar(StarBorder base, double collapse) {
-  // 더 부드러운 곡선 적용
-  final double smoothCollapse = Curves.easeInOutSine.transform(collapse);
-
-  final double innerRatio = lerpDouble(
-    base.innerRadiusRatio,
-    0.88 + (0.10 * smoothCollapse), // 0.88 → 0.98로 더 점진적
-    smoothCollapse * 0.8, // 80%까지만 빠르게, 나머지는 천천히
-  )!.clamp(0.0, 0.99);
-
-  final double rounding = lerpDouble(
-    base.pointRounding,
-    0.7 + (0.2 * smoothCollapse), // 0.7 → 0.9로 더 부드럽게
-    math.pow(smoothCollapse, 0.6).toDouble(),
-  )!.clamp(0.0, 1.0);
-
-  return StarBorder(
-    side: base.side,
-    points: base.points,
-    innerRadiusRatio: innerRatio,
-    pointRounding: rounding,
-    rotation: base.rotation,
-    squash: base.squash,
-  );
 }
