@@ -46,7 +46,6 @@ class _LogInScreenState extends ConsumerState<LogInScreen>
 
   @override
   Widget build(BuildContext context) {
-
     final loginState = ref.watch(loginProvider);
     final theme = Theme.of(context);
     final textTheme = theme.textTheme;
@@ -64,6 +63,7 @@ class _LogInScreenState extends ConsumerState<LogInScreen>
     });
 
     return Scaffold(
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
         titleSpacing: 0,
         title: Text('Log In', style: AppTextStyles.authAppBar(textTheme)),
@@ -154,13 +154,13 @@ class _LogInScreenState extends ConsumerState<LogInScreen>
                         onGooglePressed: loginState.isLoading
                             ? null
                             : () => ref
-                                .read(loginProvider.notifier)
-                                .loginWithGoogle(),
+                                  .read(loginProvider.notifier)
+                                  .loginWithGoogle(),
                         onApplePressed: loginState.isLoading
                             ? null
                             : () => ref
-                                .read(loginProvider.notifier)
-                                .loginWithApple(),
+                                  .read(loginProvider.notifier)
+                                  .loginWithApple(),
                       ),
                       Gaps.v24,
                       Center(

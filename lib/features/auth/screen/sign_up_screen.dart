@@ -73,6 +73,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen>
     });
 
     return Scaffold(
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
         titleSpacing: 0,
         title: Text('Sign Up', style: AppTextStyles.authAppBar(textTheme)),
