@@ -64,10 +64,12 @@ class HomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(homeViewModelProvider);
     final notifier = ref.read(homeViewModelProvider.notifier);
+    final colorScheme = Theme.of(context).colorScheme;
 
     final greetingName = state.displayName ?? 'Username';
 
     return Scaffold(
+      backgroundColor: colorScheme.surface,
       appBar: const HomeAppBar(),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: CustomScrollView(

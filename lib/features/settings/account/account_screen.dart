@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mood_tracker/core/constants/gaps.dart';
+import 'package:mood_tracker/core/constants/app_text_styles.dart';
 
 import 'package:mood_tracker/features/auth/screen/log_in_screen.dart';
 
@@ -78,18 +79,40 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(accountViewModelProvider);
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        title: const Text('Account'),
+        title: Text(
+          "Account",
+          style: AppTextStyles.authAppBar(
+            Theme.of(context).textTheme,
+          )?.copyWith(fontSize: 20),
+        ),
         centerTitle: true,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         leadingWidth: 100,
         leading: GestureDetector(
           onTap: () => context.pop(),
           child: Container(
             padding: const EdgeInsets.only(left: 16),
-            alignment: Alignment.centerLeft,
-            child: const Icon(Icons.arrow_back_ios),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.arrow_back_ios,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ],
+            ),
+          ),
+        ),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1.0),
+          child: Container(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+            height: 1.0,
           ),
         ),
       ),

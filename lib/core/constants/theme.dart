@@ -10,7 +10,7 @@ class AppTheme {
     final colorScheme = base.colorScheme;
 
     return base.copyWith(
-      scaffoldBackgroundColor: colorScheme.surfaceVariant,
+      scaffoldBackgroundColor: colorScheme.surfaceContainerHighest,
       textTheme: base.textTheme.apply(
         bodyColor: colorScheme.onSurface,
         displayColor: colorScheme.onSurface,
@@ -68,7 +68,7 @@ class AppTheme {
     final colorScheme = base.colorScheme;
 
     return base.copyWith(
-      scaffoldBackgroundColor: colorScheme.surfaceVariant,
+      scaffoldBackgroundColor: colorScheme.surfaceContainerHighest,
       textTheme: base.textTheme.apply(
         bodyColor: colorScheme.onSurface,
         displayColor: colorScheme.onSurface,
