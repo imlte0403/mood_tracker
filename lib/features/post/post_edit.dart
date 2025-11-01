@@ -97,11 +97,35 @@ class _PostEditScreenState extends ConsumerState<PostEditScreen> {
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
+      appBar: AppBar(
+        backgroundColor: colorScheme.surface,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        leading: BackButton(
+          color: colorScheme.onSurface,
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go('/');
+            }
+          },
+        ),
+        title: Text(
+          form.isEditing ? '감정 기록 수정' : '새 감정 기록',
+          style: textTheme.titleMedium?.copyWith(
+            fontFamily: AppFonts.playfair,
+            fontWeight: FontWeight.w700,
+            color: colorScheme.onSurface,
+          ),
+        ),
+      ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
+        tooltip: '기록 저장',
         backgroundColor: colorScheme.primary,
-        onPressed: handleSubmit,
-        child: form.isSubmitting
+        onPressed: form.isSubmitting ? null : handleSubmit,
+        icon: form.isSubmitting
             ? SizedBox(
                 width: Sizes.size20,
                 height: Sizes.size20,
@@ -113,182 +137,221 @@ class _PostEditScreenState extends ConsumerState<PostEditScreen> {
                 ),
               )
             : Icon(Icons.check, color: colorScheme.onPrimary),
+        label: Text(
+          form.isEditing ? '수정 완료' : '저장',
+          style: textTheme.labelLarge?.copyWith(
+            fontFamily: AppFonts.playfair,
+            fontWeight: FontWeight.w700,
+            color: colorScheme.onPrimary,
+          ),
+        ),
       ),
-      body: Stack(
-        children: [
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.only(left: 8.0, top: 8.0),
-              child: GestureDetector(
-                onTap: () => context.go('/'),
-                child: Container(
-                  padding: const EdgeInsets.only(left: 16),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.arrow_back_ios,
-                        color: Theme.of(context).colorScheme.onSurface,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.only(
+            left: Sizes.size32,
+            right: Sizes.size32,
+            bottom: Sizes.size96,
+            top: Sizes.size20,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '오늘의 감정',
+                style: textTheme.titleMedium?.copyWith(
+                  fontFamily: AppFonts.playfair,
+                  fontWeight: FontWeight.w700,
+                  color: colorScheme.onSurface,
+                ),
+              ),
+              Gaps.v16,
+              Row(
+                children: [
+                  Container(
+                    width: Sizes.size56,
+                    height: Sizes.size56,
+                    decoration: ShapeDecoration(
+                      color: shape.color,
+                      shape: shape.shape,
+                    ),
+                  ),
+                  Gaps.h16,
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: Sizes.size16,
+                        vertical: Sizes.size8,
                       ),
-                    ],
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<EmotionType>(
+                          value: emotion,
+                          isExpanded: true,
+                          icon: const Icon(
+                            Icons.keyboard_arrow_down_rounded,
+                          ),
+                          style: textTheme.headlineSmall?.copyWith(
+                            fontFamily: AppFonts.playfair,
+                            fontWeight: FontWeight.w700,
+                            color: colorScheme.onSurface,
+                          ),
+                          dropdownColor: colorScheme.surface,
+                          onChanged: form.isSubmitting
+                              ? null
+                              : (value) {
+                                  if (value == null) return;
+                                  ref
+                                      .read(
+                                        moodEntryFormProvider.notifier,
+                                      )
+                                      .updateEmotion(value);
+                                },
+                          items: EmotionType.values
+                              .map(
+                                (type) => DropdownMenuItem<EmotionType>(
+                                  value: type,
+                                  child: Text(
+                                    '${type.emoji} ${type.displayNameEn}',
+                                  ),
+                                ),
+                              )
+                              .toList(),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Gaps.v24,
+              Text(
+                '기록 시각',
+                style: textTheme.titleMedium?.copyWith(
+                  fontFamily: AppFonts.playfair,
+                  fontWeight: FontWeight.w700,
+                  color: colorScheme.onSurface,
+                ),
+              ),
+              Gaps.v12,
+              Container(
+                height: 216,
+                decoration: BoxDecoration(
+                  color: colorScheme.surface,
+                  borderRadius: BorderRadius.circular(Sizes.size16),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: Sizes.size8,
+                      offset: Offset(0, Sizes.size4),
+                    ),
+                  ],
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: Sizes.size12,
+                ),
+                child: CupertinoTheme(
+                  data: CupertinoTheme.of(context).copyWith(
+                    textTheme: CupertinoTextThemeData(
+                      dateTimePickerTextStyle: textTheme.titleMedium?.copyWith(
+                        fontFamily: AppFonts.playfair,
+                        color: colorScheme.onSurface,
+                      ),
+                    ),
+                  ),
+                  child: CupertinoDatePicker(
+                    key: ValueKey(form.timestamp.millisecondsSinceEpoch),
+                    initialDateTime: form.timestamp,
+                    mode: CupertinoDatePickerMode.dateAndTime,
+                    use24hFormat: true,
+                    onDateTimeChanged: (value) {
+                      ref
+                          .read(moodEntryFormProvider.notifier)
+                          .updateTimestamp(value);
+                    },
                   ),
                 ),
               ),
-            ),
-          ),
-          SafeArea(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.only(bottom: Sizes.size96),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: Sizes.size32,
-                  vertical: Sizes.size20,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Gaps.v56,
-                    Row(
-                      children: [
-                        Container(
-                          width: Sizes.size56,
-                          height: Sizes.size56,
-                          decoration: ShapeDecoration(
-                            color: shape.color,
-                            shape: shape.shape,
-                          ),
-                        ),
-                        Gaps.h16,
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: Sizes.size16,
-                              vertical: Sizes.size8,
-                            ),
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButton<EmotionType>(
-                                value: emotion,
-                                isExpanded: true,
-                                icon: const Icon(
-                                  Icons.keyboard_arrow_down_rounded,
-                                ),
-                                style: textTheme.headlineSmall?.copyWith(
-                                  fontFamily: AppFonts.playfair,
-                                  fontWeight: FontWeight.w700,
-                                  color: colorScheme.onSurface,
-                                ),
-                                dropdownColor: colorScheme.surface,
-                                onChanged: form.isSubmitting
-                                    ? null
-                                    : (value) {
-                                        if (value == null) return;
-                                        ref
-                                            .read(
-                                              moodEntryFormProvider.notifier,
-                                            )
-                                            .updateEmotion(value);
-                                      },
-                                items: EmotionType.values
-                                    .map(
-                                      (type) => DropdownMenuItem<EmotionType>(
-                                        value: type,
-                                        child: Text(
-                                          '${type.emoji} ${type.displayNameEn}',
-                                        ),
-                                      ),
-                                    )
-                                    .toList(),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Gaps.v24,
-                    Container(
-                      height: Sizes.size100,
-                      decoration: BoxDecoration(
-                        color: colorScheme.surface,
-                        borderRadius: BorderRadius.circular(Sizes.size16),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: Sizes.size12,
-                      ),
-                      child: CupertinoTheme(
-                        data: CupertinoTheme.of(context).copyWith(
-                          textTheme: CupertinoTextThemeData(
-                            dateTimePickerTextStyle: textTheme.titleMedium
-                                ?.copyWith(
-                                  fontFamily: AppFonts.playfair,
-                                  color: colorScheme.onSurface,
-                                ),
-                          ),
-                        ),
-                        child: CupertinoDatePicker(
-                          key: ValueKey(form.timestamp.millisecondsSinceEpoch),
-                          initialDateTime: form.timestamp,
-                          mode: CupertinoDatePickerMode.dateAndTime,
-                          use24hFormat: true,
-                          onDateTimeChanged: (value) {
-                            ref
-                                .read(moodEntryFormProvider.notifier)
-                                .updateTimestamp(value);
-                          },
-                        ),
-                      ),
-                    ),
-                    Gaps.v24,
-                    ConstrainedBox(
-                      constraints: const BoxConstraints(minHeight: 400),
-                      child: TextField(
-                        controller: _messageController,
-                        maxLines: null,
-                        minLines: 6,
-                        enabled: !form.isSubmitting,
-                        onChanged: (value) => ref
-                            .read(moodEntryFormProvider.notifier)
-                            .updateMessage(value),
-                        decoration: InputDecoration(
-                          hintText: '기분을 기록해보세요',
-                          filled: true,
-                          fillColor: colorScheme.surfaceContainerHighest,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(Sizes.size16),
-                            borderSide: BorderSide.none,
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(Sizes.size16),
-                            borderSide: BorderSide.none,
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(Sizes.size16),
-                            borderSide: BorderSide.none,
-                          ),
-                          contentPadding: const EdgeInsets.all(Sizes.size20),
-                        ),
-                        style: textTheme.bodyMedium?.copyWith(
-                          fontFamily: AppFonts.playfair,
-                          color: colorScheme.onSurface,
-                        ),
-                        cursorColor: colorScheme.primary,
-                      ),
-                    ),
-                    if (form.errorMessage != null) ...[
-                      Gaps.v12,
-                      Text(
-                        form.errorMessage!,
-                        style: textTheme.bodySmall?.copyWith(
-                          fontFamily: AppFonts.playfair,
-                          color: Colors.redAccent,
-                        ),
-                      ),
-                    ],
-                  ],
+              Gaps.v24,
+              Text(
+                '기분 기록',
+                style: textTheme.titleMedium?.copyWith(
+                  fontFamily: AppFonts.playfair,
+                  fontWeight: FontWeight.w700,
+                  color: colorScheme.onSurface,
                 ),
               ),
-            ),
+              Gaps.v12,
+              ConstrainedBox(
+                constraints: const BoxConstraints(minHeight: 400),
+                child: TextField(
+                  controller: _messageController,
+                  maxLines: null,
+                  minLines: 6,
+                  maxLength: 500,
+                  keyboardType: TextInputType.multiline,
+                  textInputAction: TextInputAction.newline,
+                  enabled: !form.isSubmitting,
+                  onChanged: (value) => ref
+                      .read(moodEntryFormProvider.notifier)
+                      .updateMessage(value),
+                  decoration: InputDecoration(
+                    labelText: '오늘의 생각을 적어보세요',
+                    alignLabelWithHint: true,
+                    hintText: '기분을 기록해보세요',
+                    filled: true,
+                    fillColor: colorScheme.surfaceContainerHighest,
+                    counterText: '',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(Sizes.size16),
+                      borderSide: BorderSide.none,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(Sizes.size16),
+                      borderSide: BorderSide.none,
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(Sizes.size16),
+                      borderSide: BorderSide.none,
+                    ),
+                    contentPadding: const EdgeInsets.all(Sizes.size20),
+                  ),
+                  style: textTheme.bodyMedium?.copyWith(
+                    fontFamily: AppFonts.playfair,
+                    color: colorScheme.onSurface,
+                    height: 1.4,
+                  ),
+                  cursorColor: colorScheme.primary,
+                ),
+              ),
+              Gaps.v12,
+              Row(
+                children: [
+                  Expanded(
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 180),
+                      child: form.errorMessage == null
+                          ? const SizedBox.shrink()
+                          : Text(
+                              form.errorMessage!,
+                              key: ValueKey(form.errorMessage),
+                              style: textTheme.bodySmall?.copyWith(
+                                fontFamily: AppFonts.playfair,
+                                color: Colors.redAccent,
+                              ),
+                            ),
+                    ),
+                  ),
+                  Text(
+                    '${form.message.length}/500',
+                    style: textTheme.bodySmall?.copyWith(
+                      fontFamily: AppFonts.playfair,
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

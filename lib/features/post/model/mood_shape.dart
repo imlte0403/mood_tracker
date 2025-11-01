@@ -203,32 +203,31 @@ final List<MoodShapeDefinition> _definitions = <MoodShapeDefinition>[
     type: MoodType.normal,
     sliderStart: 3,
     color: MoodType.normal.emotion.color,
-    shape: StarBorder(points: 5, innerRadiusRatio: 0.7, pointRounding: 0.3),
+    shape: StarBorder(points: 5, innerRadiusRatio: 0.6, pointRounding: 0.5),
   ),
   MoodShapeDefinition(
     type: MoodType.depressed,
     sliderStart: 4,
     color: MoodType.depressed.emotion.color,
-    shape: StarBorder(points: 3, innerRadiusRatio: 0.6, pointRounding: 0.4),
+    shape: StarBorder(points: 3, innerRadiusRatio: 0.3, pointRounding: 0.9),
   ),
-  //TODO: 기회가 된다면 도형 전환 더 자연스럽게 구현
   MoodShapeDefinition(
     type: MoodType.lucky,
     sliderStart: 5,
     color: MoodType.lucky.emotion.color,
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+    shape: StarBorder(points: 4, innerRadiusRatio: 0.3, pointRounding: 0.9),
   ),
   MoodShapeDefinition(
     type: MoodType.excited,
     sliderStart: 6,
     color: MoodType.excited.emotion.color,
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40.0)),
+    shape: StarBorder(points: 6, innerRadiusRatio: 0.3, pointRounding: 0.9),
   ),
   MoodShapeDefinition(
     type: MoodType.happy,
     sliderStart: 7,
     color: MoodType.happy.emotion.color,
-    shape: const CircleBorder(),
+    shape: StarBorder(points: 10, innerRadiusRatio: 0.3, pointRounding: 0.9),
   ),
 ];
 

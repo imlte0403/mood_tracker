@@ -27,7 +27,6 @@ class AppTheme {
 }
 
 class AppColors {
-
   static const point = Color(0xFFFF9800);
   static const error = Colors.red;
 
@@ -38,5 +37,5 @@ class AppColors {
   static const moodDepressed = Color(0xFF90A4AE);
   static const moodLucky = Color(0xFF81C784);
   static const moodExcited = Color(0xFF4CAF50);
-  static const moodHappy = Color(0xFF1B5E20);
+  static const moodHappy = Color(0xFF008C14);
 }
