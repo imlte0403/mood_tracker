@@ -37,27 +37,27 @@ final router = GoRouter(
       builder: (context, state) => const SettingsScreen(),
       routes: [
         GoRoute(
-          path: '/about',
+          path: 'about',
           name: AboutScreen.routeName,
           builder: (context, state) => const AboutScreen(),
         ),
         GoRoute(
-          path: '/account',
+          path: 'account',
           name: AccountScreen.routeName,
           builder: (context, state) => const AccountScreen(),
         ),
         GoRoute(
-          path: '/help',
+          path: 'help',
           name: HelpScreen.routeName,
           builder: (context, state) => const HelpScreen(),
         ),
         GoRoute(
-          path: '/privacy',
+          path: 'privacy',
           name: PrivacyScreen.routeName,
           builder: (context, state) => const PrivacyScreen(),
         ),
         GoRoute(
-          path: '/updates',
+          path: 'updates',
           name: UpdatesScreen.routeName,
           builder: (context, state) => const UpdatesScreen(),
         ),

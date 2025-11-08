@@ -132,7 +132,8 @@ class HelpScreen extends StatelessWidget {
                                 _launchEmail(HelpContent.contactInfo.email),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.point,
-                              foregroundColor: Colors.white,
+                              foregroundColor:
+                                  Theme.of(context).colorScheme.onPrimary,
                               padding: const EdgeInsets.symmetric(vertical: 12),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),

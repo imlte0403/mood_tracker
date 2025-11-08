@@ -87,6 +87,7 @@ class UpdatesScreen extends StatelessWidget {
   }
 
   Widget _buildCurrentVersion(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.all(Sizes.size20),
       decoration: BoxDecoration(
@@ -129,7 +130,7 @@ class UpdatesScreen extends StatelessWidget {
             child: Text(
               "최신",
               style: AppTextStyles.settings(context).copyWith(
-                color: Colors.white,
+                color: colorScheme.onPrimary,
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
               ),
@@ -148,13 +149,14 @@ class UpdatesScreen extends StatelessWidget {
     List<String> features, {
     bool isLatest = false,
   }) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.all(Sizes.size20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Theme.of(context).colorScheme.onSurfaceVariant,
+          color: colorScheme.onSurfaceVariant,
         ),
       ),
       child: Column(

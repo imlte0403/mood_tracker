@@ -134,8 +134,13 @@ class AppTextStyles {
   }
 
   static TextStyle settings(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    return textTheme.bodyMedium?.copyWith(fontSize: 16, fontWeight: FontWeight.w400) ??
+    final theme = Theme.of(context);
+    final base = theme.textTheme.bodyMedium ??
         const TextStyle(fontSize: 16, fontWeight: FontWeight.w400);
+    return base.copyWith(
+      fontSize: 16,
+      fontWeight: FontWeight.w400,
+      color: theme.colorScheme.onSurface,
+    );
   }
 }
