@@ -22,7 +22,7 @@ class _ThemeSection extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Appearance',
+          '화면 표현',
           style: AppTextStyles.settings(
             context,
           ).copyWith(fontWeight: FontWeight.w700, color: colorScheme.onSurface),
@@ -35,7 +35,7 @@ class _ThemeSection extends ConsumerWidget {
             color: colorScheme.onSurface,
           ),
           title: Text(
-            'Match system theme',
+            '시스템 설정과 동일하게 맞추기',
             style: AppTextStyles.settings(context),
           ),
           value: viewModel.followSystem,
@@ -56,7 +56,7 @@ class _ThemeSection extends ConsumerWidget {
                 ? colorScheme.onSurface.withValues(alpha: 0.4)
                 : colorScheme.onSurface,
           ),
-          title: Text('Dark mode', style: AppTextStyles.settings(context)),
+          title: Text('다크 모드', style: AppTextStyles.settings(context)),
           value: viewModel.darkMode,
           onChanged: viewModel.followSystem
               ? null
@@ -84,7 +84,7 @@ class SettingsScreen extends ConsumerWidget {
       backgroundColor: colorScheme.surface,
       appBar: AppBar(
         title: Text(
-          "Settings",
+          "환경설정",
           style: AppTextStyles.authAppBar(
             Theme.of(context).textTheme,
           )?.copyWith(fontSize: 20),
@@ -121,7 +121,7 @@ class SettingsScreen extends ConsumerWidget {
               Icons.account_circle_outlined,
               color: Theme.of(context).colorScheme.onSurface,
             ),
-            title: Text("Account", style: AppTextStyles.settings(context)),
+            title: Text("계정 관리", style: AppTextStyles.settings(context)),
             onTap: () {
               context.go('/settings/account');
             },
@@ -131,7 +131,7 @@ class SettingsScreen extends ConsumerWidget {
               Icons.notifications_none_rounded,
               color: Theme.of(context).colorScheme.onSurface,
             ),
-            title: Text("Updates", style: AppTextStyles.settings(context)),
+            title: Text("업데이트 소식", style: AppTextStyles.settings(context)),
             onTap: () {
               context.go('/settings/updates');
             },
@@ -141,7 +141,7 @@ class SettingsScreen extends ConsumerWidget {
               Icons.lock_outline,
               color: Theme.of(context).colorScheme.onSurface,
             ),
-            title: Text("Privacy", style: AppTextStyles.settings(context)),
+            title: Text("개인 정보", style: AppTextStyles.settings(context)),
             onTap: () {
               context.go('/settings/privacy');
             },
@@ -152,7 +152,7 @@ class SettingsScreen extends ConsumerWidget {
               Icons.help_outline,
               color: Theme.of(context).colorScheme.onSurface,
             ),
-            title: Text("Help", style: AppTextStyles.settings(context)),
+            title: Text("도움받기", style: AppTextStyles.settings(context)),
             onTap: () {
               context.go('/settings/help');
             },
@@ -162,7 +162,7 @@ class SettingsScreen extends ConsumerWidget {
               Icons.info_outline,
               color: Theme.of(context).colorScheme.onSurface,
             ),
-            title: Text("About", style: AppTextStyles.settings(context)),
+            title: Text("앱 소개", style: AppTextStyles.settings(context)),
             onTap: () {
               context.go('/settings/about');
             },
@@ -170,7 +170,7 @@ class SettingsScreen extends ConsumerWidget {
           const Divider(height: Sizes.size2, thickness: 0.5),
           ListTile(
             title: Text(
-              "Log out",
+              "로그아웃",
               style: AppTextStyles.settings(context).copyWith(
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
@@ -184,7 +184,9 @@ class SettingsScreen extends ConsumerWidget {
               } catch (error) {
                 if (!context.mounted) return;
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Log out failed. Try again.')),
+                  const SnackBar(
+                    content: Text('로그아웃에 실패했어요. 다시 시도해 주세요.'),
+                  ),
                 );
                 return;
               }

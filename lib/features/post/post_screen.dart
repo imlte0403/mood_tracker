@@ -129,11 +129,9 @@ class _PostScreenState extends ConsumerState<PostScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                isEditing
-                    ? 'Write about your mood'
-                    : 'How do you feel Right Now?',
+                isEditing ? '생각을 같이 정리해볼까요?' : '지금 어떤 기분인가요?',
                 style: TextStyle(
-                  fontFamily: 'PlayfairDisplay',
+                  fontFamily: 'Pretendard',
                   fontSize: Sizes.size24,
                   fontWeight: FontWeight.w600,
                   color: Theme.of(context).colorScheme.onSurface,

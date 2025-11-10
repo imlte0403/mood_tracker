@@ -39,10 +39,10 @@ flutter:
     - assets/images/hand_drawing.png
   
   fonts:
-    - family: PlayfairDisplay
+    - family: Pretendard
       fonts:
-        - asset: assets/fonts/PlayfairDisplay-Regular.ttf
-        - asset: assets/fonts/PlayfairDisplay-SemiBold.ttf
+        - asset: assets/fonts/Pretendard-Regular.ttf
+        - asset: assets/fonts/Pretendard-SemiBold.ttf
           weight: 600
-        - asset: assets/fonts/PlayfairDisplay-Italic.ttf
-          style: italic
+        - asset: assets/fonts/Pretendard-Bold.ttf
+          weight: 700

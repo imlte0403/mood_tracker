@@ -96,14 +96,14 @@ class _MoodShapeDisplayState extends ConsumerState<MoodShapeDisplay>
         Text(
           _emotionMessage(mood.displayEmotion),
           style: theme.textTheme.headlineSmall?.copyWith(
-            fontFamily: 'PlayfairDisplay',
+            fontFamily: 'Pretendard',
             fontWeight: FontWeight.w600,
           ),
           textAlign: TextAlign.center,
         ),
         Gaps.v12,
         Text(
-          mood.displayEmotion.displayNameEn,
+          mood.displayEmotion.displayNameKo,
           style: theme.textTheme.titleMedium?.copyWith(
             color: mood.color,
             fontWeight: FontWeight.w600,
@@ -118,21 +118,21 @@ class _MoodShapeDisplayState extends ConsumerState<MoodShapeDisplay>
   String _emotionMessage(EmotionType emotion) {
     switch (emotion) {
       case EmotionType.angry:
-        return 'I feel frustrated.';
+        return '화가나요';
       case EmotionType.sad:
-        return 'I feel a little down.';
+        return '슬퍼요';
       case EmotionType.anxious:
-        return 'I feel nervous.';
+        return '긴장되고 걱정돼요.';
       case EmotionType.normal:
-        return 'I don\'t know my feeling.';
+        return '그냥 그래요';
       case EmotionType.depressed:
-        return 'I feel low.';
+        return '우울해요';
       case EmotionType.lucky:
-        return 'I feel hopeful.';
+        return 'I Feel Lucky!';
       case EmotionType.excited:
-        return 'I feel thrilled!';
+        return '설레요!';
       case EmotionType.happy:
-        return 'I feel great!';
+        return '행복해요!';
     }
   }
 }
@@ -189,4 +189,3 @@ class _MoodColorIndicator extends ConsumerWidget {
     );
   }
 }
-

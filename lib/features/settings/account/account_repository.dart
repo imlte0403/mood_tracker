@@ -85,7 +85,7 @@ class AccountRepository {
     if (email == null) {
       throw FirebaseAuthException(
         code: 'missing-email',
-        message: 'Email address is required to update password.',
+        message: '비밀번호를 변경하려면 이메일 정보가 필요해요.',
       );
     }
 
@@ -110,7 +110,7 @@ class AccountRepository {
     if (user == null) {
       throw FirebaseAuthException(
         code: 'user-not-found',
-        message: 'No authenticated user.',
+        message: '로그인한 사용자를 찾을 수 없어요.',
       );
     }
     return user;

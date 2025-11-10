@@ -161,7 +161,7 @@ class _SlotSection extends StatelessWidget {
   final void Function(TimelineEntry) onEdit;
   final void Function(TimelineEntry) onDelete;
 
-  final String _swipeHintText = 'Swipe to see more';
+  final String _swipeHintText = '옆으로 넘기면 더 많은 기록을 볼 수 있어요';
 
   @override
   Widget build(BuildContext context) {
@@ -432,7 +432,7 @@ class _TimelineEntryTile extends StatelessWidget {
                               color: Colors.white,
                               fontWeight: FontWeight.w600,
                               fontSize: 11,
-                              fontFamily: 'PlayfairDisplay',
+                              fontFamily: 'Pretendard',
                             ),
                           ),
                         ),
@@ -479,7 +479,7 @@ class _TimelineEntryTile extends StatelessWidget {
                             Text(
                               'Edit',
                               style: TextStyle(
-                                fontFamily: 'PlayfairDisplay',
+                                fontFamily: 'Pretendard',
                                 fontWeight: FontWeight.w600,
                                 fontSize: 12,
                                 color: colorScheme.onSurface,
@@ -501,7 +501,7 @@ class _TimelineEntryTile extends StatelessWidget {
                             const Text(
                               'Delete',
                               style: TextStyle(
-                                fontFamily: 'PlayfairDisplay',
+                                fontFamily: 'Pretendard',
                                 fontWeight: FontWeight.w600,
                                 fontSize: 12,
                                 color: Colors.redAccent,
@@ -563,8 +563,8 @@ Future<void> confirmDelete(
     context: context,
     builder: (context) {
       return AlertDialog(
-        title: const Text('Delete entry?'),
-        content: const Text('This action cannot be undone.'),
+        title: const Text('기록을 삭제할까요?'),
+        content: const Text('삭제한 기록은 다시 되돌릴 수 없어요.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
@@ -586,7 +586,7 @@ Future<void> confirmDelete(
     await ref.read(homeViewModelProvider.notifier).deleteEntry(entry.id);
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Entry deleted')),
+        const SnackBar(content: Text('기록을 지웠어요.')),
       );
     }
   } catch (error, _) {

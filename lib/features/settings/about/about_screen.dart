@@ -16,7 +16,7 @@ class AboutScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "About",
+          "앱 소개",
           style: AppTextStyles.authAppBar(
             Theme.of(context).textTheme,
           )?.copyWith(fontSize: 20),
@@ -71,7 +71,7 @@ class AboutScreen extends StatelessWidget {
                     ),
                     Gaps.v8,
                     Text(
-                      'Version ${AboutContent.appVersion} (${AboutContent.buildNumber})',
+                      '버전 ${AboutContent.appVersion} (${AboutContent.buildNumber})',
                       style: AppTextStyles.settings(context).copyWith(
                         color: Theme.of(context).colorScheme.onSurfaceVariant,
                         fontSize: 16,
@@ -90,7 +90,7 @@ class AboutScreen extends StatelessWidget {
               ),
               Gaps.v32,
               Text(
-                'Features',
+                '주요 기능',
                 style: AppTextStyles.settings(
                   context,
                 ).copyWith(fontSize: 18, fontWeight: FontWeight.bold),
@@ -114,7 +114,7 @@ class AboutScreen extends StatelessWidget {
               ),
               Gaps.v32,
               Text(
-                'Developer',
+                '만든 사람',
                 style: AppTextStyles.settings(
                   context,
                 ).copyWith(fontSize: 18, fontWeight: FontWeight.bold),
@@ -126,7 +126,7 @@ class AboutScreen extends StatelessWidget {
               ),
               Gaps.v32,
               Text(
-                'Open Source Licenses',
+                '오픈 소스 라이선스',
                 style: AppTextStyles.settings(
                   context,
                 ).copyWith(fontSize: 18, fontWeight: FontWeight.bold),
@@ -140,31 +140,31 @@ class AboutScreen extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
                       borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          license.name,
-                          style: AppTextStyles.settings(
-                            context,
-                          ).copyWith(fontWeight: FontWeight.bold),
-                        ),
-                        Gaps.v4,
-                        Text(
-                          'Version: ${license.version}',
-                          style: AppTextStyles.settings(context).copyWith(
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
-                            fontSize: 14,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            license.name,
+                            style: AppTextStyles.settings(
+                              context,
+                            ).copyWith(fontWeight: FontWeight.bold),
                           ),
-                        ),
-                        Text(
-                          'License: ${license.license}',
-                          style: AppTextStyles.settings(context).copyWith(
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
-                            fontSize: 14,
+                          Gaps.v4,
+                          Text(
+                          '버전: ${license.version}',
+                            style: AppTextStyles.settings(context).copyWith(
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
+                              fontSize: 14,
+                            ),
                           ),
-                        ),
+                          Text(
+                          '라이선스: ${license.license}',
+                            style: AppTextStyles.settings(context).copyWith(
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
+                              fontSize: 14,
+                            ),
+                          ),
                       ],
                     ),
                   ),

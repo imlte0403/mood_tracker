@@ -11,6 +11,7 @@ class AppTheme {
       error: Colors.red,
     ),
     useMaterial3: true,
+    fontFamily: 'Pretendard',
   );
 
   static ThemeData dark = ThemeData(
@@ -23,6 +24,7 @@ class AppTheme {
       error: Colors.red,
     ),
     useMaterial3: true,
+    fontFamily: 'Pretendard',
   );
 }
 

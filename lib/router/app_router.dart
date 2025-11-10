@@ -14,7 +14,7 @@ import 'package:mood_tracker/features/settings/updates_screen.dart';
 
 final router = GoRouter(
   debugLogDiagnostics: true,
-  initialLocation: HomeScreen.routeURL, //TODO: 추후에 로그인으로 변경
+  initialLocation: LogInScreen.routeURL, //TODO: 추후에 로그인으로 변경
   routes: [
     GoRoute(
       path: LogInScreen.routeURL,

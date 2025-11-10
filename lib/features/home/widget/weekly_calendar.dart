@@ -54,7 +54,7 @@ class WeeklyCalendar extends StatelessWidget {
                   ),
                   Expanded(
                     child: Text(
-                      'Weekly calendar',
+                      'Weekly Calendar',
                       textAlign: TextAlign.center,
                       style: titleStyle,
                     ),

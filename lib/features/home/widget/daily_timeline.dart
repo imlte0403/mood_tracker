@@ -97,7 +97,7 @@ class DailyTimeline extends ConsumerWidget {
                 Row(
                   children: [
                     Expanded(flex: 2, child: Text('Time', style: headerStyle)),
-                    Expanded(flex: 10, child: Text('Mood', style: headerStyle)),
+                    Expanded(flex: 10, child: Text('Note', style: headerStyle)),
                   ],
                 ),
                 Gaps.v8,
@@ -121,7 +121,7 @@ class _EmptyTimeline extends StatelessWidget {
       child: Text(
         '아직 기록이 없어요.',
         style: theme.textTheme.bodyMedium?.copyWith(
-          fontFamily: AppFonts.playfair,
+          fontFamily: AppFonts.pretendard,
         ),
       ),
     );

@@ -93,7 +93,7 @@ class HomeViewModel extends StateNotifier<HomeState> {
           selectedDate: today,
           entries: const AsyncLoading(),
           weekDates: week,
-          displayName: 'Username',
+          displayName: '마음 친구',
           weeklyMoods: const <DateTime, EmotionType>{},
         );
       }());
@@ -115,7 +115,7 @@ class HomeViewModel extends StateNotifier<HomeState> {
   // 사용자 변경 시 기존 데이터 초기화, 새로운 데이터 로드
   void setUser(User? user) {
     final userId = user?.uid;
-    final displayName = user?.displayName ?? 'User';
+    final displayName = user?.displayName ?? '마음 친구';
 
     // 동일한 사용자인 경우 무시
     if (_userId == userId && state.displayName == displayName) {
@@ -147,7 +147,7 @@ class HomeViewModel extends StateNotifier<HomeState> {
   void _resetStateToDefault() {
     state = state.copyWith(
       userId: null,
-      displayName: 'Username',
+      displayName: '마음 친구',
       entries: AsyncData<List<TimelineEntry>>(<TimelineEntry>[]),
       weeklyMoods: const <DateTime, EmotionType>{},
     );
@@ -177,7 +177,7 @@ class HomeViewModel extends StateNotifier<HomeState> {
     final message = FirebaseErrorHandler.getErrorMessage(error);
     state = state.copyWith(
       userId: null,
-      displayName: 'Username',
+      displayName: '마음 친구',
       entries: AsyncError<List<TimelineEntry>>(message, stackTrace),
       weeklyMoods: const <DateTime, EmotionType>{},
     );

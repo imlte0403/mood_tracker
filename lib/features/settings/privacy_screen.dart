@@ -15,7 +15,7 @@ class PrivacyScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Privacy",
+          "개인 정보",
           style: AppTextStyles.authAppBar(
             Theme.of(context).textTheme,
           )?.copyWith(fontSize: 20),
@@ -54,14 +54,14 @@ class PrivacyScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Privacy Policy",
+                "개인정보 보호 안내",
                 style: AppTextStyles.authAppBar(
                   Theme.of(context).textTheme,
                 )?.copyWith(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               Gaps.v20,
               Text(
-                "Last updated: ${DateTime.now().year}-${DateTime.now().month.toString().padLeft(2, '0')}-${DateTime.now().day.toString().padLeft(2, '0')}",
+                "마지막 업데이트: ${DateTime.now().year}-${DateTime.now().month.toString().padLeft(2, '0')}-${DateTime.now().day.toString().padLeft(2, '0')}",
                 style: AppTextStyles.settings(context).copyWith(
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                   fontSize: 14,
@@ -71,38 +71,38 @@ class PrivacyScreen extends StatelessWidget {
 
               _buildSection(
                 context,
-                "Information We Collect",
-                "We collect information you provide directly to us, such as when you create an account, log your mood entries, and use our app features. This includes your mood data, journal entries, and account information.",
+                "우리가 수집하는 정보",
+                "회원 가입과 감정 기록 과정에서 입력한 이름, 이메일, 감정 기록과 같은 데이터를 안전하게 보관합니다.",
               ),
 
               _buildSection(
                 context,
-                "How We Use Your Information",
-                "We use the information we collect to provide, maintain, and improve our services. Your mood data is used to generate insights and help you track your emotional wellbeing over time.",
+                "정보 활용 방법",
+                "수집된 정보는 기록을 저장하고 더 나은 서비스를 제공하기 위한 분석에만 사용됩니다. 축적된 감정 데이터는 오직 회원님의 마음 흐름을 이해하는 데 쓰입니다.",
               ),
 
               _buildSection(
                 context,
-                "Data Security",
-                "We implement appropriate security measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction. Your data is encrypted and stored securely.",
+                "데이터 보안",
+                "암호화와 접근 제한을 포함한 여러 보안 장치를 통해 허가되지 않은 접근이나 노출로부터 정보를 보호합니다.",
               ),
 
               _buildSection(
                 context,
-                "Data Sharing",
-                "We do not sell, trade, or otherwise transfer your personal information to third parties. Your mood data and journal entries remain private and are only accessible to you.",
+                "정보 공유 여부",
+                "회원님의 데이터를 제3자에게 판매하거나 공유하지 않습니다. 모든 감정 기록과 메모는 회원님만 확인할 수 있습니다.",
               ),
 
               _buildSection(
                 context,
-                "Your Rights",
-                "You have the right to access, update, or delete your personal information. You can export your data or delete your account at any time through the app settings.",
+                "회원님의 권리",
+                "언제든지 정보를 조회하거나 수정하고, 필요하다면 앱 설정에서 데이터를 내보내거나 계정을 삭제할 수 있습니다.",
               ),
 
               _buildSection(
                 context,
-                "Contact Us",
-                "If you have any questions about this Privacy Policy, please contact us through the app's help section or at support@moodtracker.app",
+                "문의 방법",
+                "개인정보 보호와 관련한 궁금증은 도움말 메뉴 또는 support@moodtracker.app으로 편하게 연락해 주세요.",
               ),
             ],
           ),

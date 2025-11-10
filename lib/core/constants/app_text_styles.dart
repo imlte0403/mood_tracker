@@ -6,7 +6,7 @@ import 'package:mood_tracker/core/constants/app_color.dart';
 import 'package:mood_tracker/core/constants/sizes.dart';
 
 class AppFonts {
-  static const playfair = 'PlayfairDisplay';
+  static const pretendard = 'Pretendard';
 }
 
 class AppTextStyles {
@@ -14,21 +14,21 @@ class AppTextStyles {
 
   static TextStyle? greetingHello(TextTheme textTheme) {
     return textTheme.headlineMedium?.copyWith(
-      fontFamily: AppFonts.playfair,
+      fontFamily: AppFonts.pretendard,
       fontWeight: FontWeight.w800,
     );
   }
 
   static TextStyle? authAppBar(TextTheme textTheme) {
     return textTheme.titleLarge?.copyWith(
-      fontFamily: AppFonts.playfair,
+      fontFamily: AppFonts.pretendard,
       fontWeight: FontWeight.w700,
     );
   }
 
   static TextStyle? authTitle(TextTheme textTheme) {
     return textTheme.headlineSmall?.copyWith(
-      fontFamily: AppFonts.playfair,
+      fontFamily: AppFonts.pretendard,
       fontWeight: FontWeight.w700,
       letterSpacing: -0.4,
     );
@@ -36,14 +36,14 @@ class AppTextStyles {
 
   static TextStyle? authSubtitle(TextTheme textTheme) {
     return textTheme.bodyMedium?.copyWith(
-      fontFamily: AppFonts.playfair,
+      fontFamily: AppFonts.pretendard,
       color: textTheme.bodyMedium?.color?.withOpacity(0.6),
     );
   }
 
   static TextStyle? authLink(TextTheme textTheme) {
     return textTheme.bodyMedium?.copyWith(
-      fontFamily: AppFonts.playfair,
+      fontFamily: AppFonts.pretendard,
       fontWeight: FontWeight.w600,
       color: AppColors.point,
     );
@@ -51,13 +51,13 @@ class AppTextStyles {
 
   static TextStyle? authBody(TextTheme textTheme) {
     return textTheme.bodyMedium?.copyWith(
-      fontFamily: AppFonts.playfair,
+      fontFamily: AppFonts.pretendard,
     );
   }
 
   static TextStyle? greetingName(TextTheme textTheme) {
     return textTheme.headlineLarge?.copyWith(
-      fontFamily: AppFonts.playfair,
+      fontFamily: AppFonts.pretendard,
       fontWeight: FontWeight.w900,
       fontSize: Sizes.size40,
       color: AppColors.point,
@@ -66,14 +66,14 @@ class AppTextStyles {
 
   static TextStyle? weeklyCalendarTitle(TextTheme textTheme) {
     return textTheme.titleMedium?.copyWith(
-      fontFamily: AppFonts.playfair,
+      fontFamily: AppFonts.pretendard,
       fontWeight: FontWeight.w700,
     );
   }
 
   static TextStyle? weeklyCalendarLabel(TextTheme textTheme) {
     return textTheme.labelLarge?.copyWith(
-      fontFamily: AppFonts.playfair,
+      fontFamily: AppFonts.pretendard,
       fontWeight: FontWeight.w400,
     );
   }
@@ -87,39 +87,39 @@ class AppTextStyles {
 
   static TextStyle? timelineHeader(TextTheme textTheme) {
     return textTheme.labelMedium?.copyWith(
-      fontFamily: AppFonts.playfair,
+      fontFamily: AppFonts.pretendard,
       fontWeight: FontWeight.w600,
     );
   }
 
   static TextStyle? timelineTime(TextTheme textTheme) {
     return textTheme.bodySmall?.copyWith(
-      fontFamily: AppFonts.playfair,
+      fontFamily: AppFonts.pretendard,
       fontWeight: FontWeight.w600,
     );
   }
 
   static TextStyle? timelineSlotLabel(TextTheme textTheme) {
     return textTheme.bodySmall?.copyWith(
-      fontFamily: AppFonts.playfair,
+      fontFamily: AppFonts.pretendard,
       color: textTheme.bodySmall?.color?.withOpacity(0.6),
     );
   }
 
   static TextStyle? timelineMoodTitle(TextTheme textTheme) {
     return textTheme.titleSmall?.copyWith(
-      fontFamily: AppFonts.playfair,
+      fontFamily: AppFonts.pretendard,
       fontWeight: FontWeight.w600,
     );
   }
 
   static TextStyle? timelineMessage(TextTheme textTheme) {
-    return textTheme.bodyMedium?.copyWith(fontFamily: AppFonts.playfair);
+    return textTheme.bodyMedium?.copyWith(fontFamily: AppFonts.pretendard);
   }
 
   static TextStyle? timelineStackLabel(TextTheme textTheme) {
     return textTheme.bodySmall?.copyWith(
-      fontFamily: AppFonts.playfair,
+      fontFamily: AppFonts.pretendard,
       color: textTheme.bodySmall?.color?.withOpacity(0.6),
       fontStyle: FontStyle.italic,
     );
@@ -127,7 +127,7 @@ class AppTextStyles {
 
   static TextStyle? timelineStackHint(TextTheme textTheme) {
     return textTheme.bodySmall?.copyWith(
-      fontFamily: AppFonts.playfair,
+      fontFamily: AppFonts.pretendard,
       color: textTheme.bodySmall?.color?.withOpacity(0.5),
       fontStyle: FontStyle.italic,
     );

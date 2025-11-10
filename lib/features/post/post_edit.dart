@@ -114,7 +114,7 @@ class _PostEditScreenState extends ConsumerState<PostEditScreen> {
         title: Text(
           form.isEditing ? '감정 기록 수정' : '새 감정 기록',
           style: textTheme.titleMedium?.copyWith(
-            fontFamily: AppFonts.playfair,
+            fontFamily: AppFonts.pretendard,
             fontWeight: FontWeight.w700,
             color: colorScheme.onSurface,
           ),
@@ -140,7 +140,7 @@ class _PostEditScreenState extends ConsumerState<PostEditScreen> {
         label: Text(
           form.isEditing ? '수정 완료' : '저장',
           style: textTheme.labelLarge?.copyWith(
-            fontFamily: AppFonts.playfair,
+            fontFamily: AppFonts.pretendard,
             fontWeight: FontWeight.w700,
             color: colorScheme.onPrimary,
           ),
@@ -160,7 +160,7 @@ class _PostEditScreenState extends ConsumerState<PostEditScreen> {
               Text(
                 '오늘의 감정',
                 style: textTheme.titleMedium?.copyWith(
-                  fontFamily: AppFonts.playfair,
+                  fontFamily: AppFonts.pretendard,
                   fontWeight: FontWeight.w700,
                   color: colorScheme.onSurface,
                 ),
@@ -191,7 +191,7 @@ class _PostEditScreenState extends ConsumerState<PostEditScreen> {
                             Icons.keyboard_arrow_down_rounded,
                           ),
                           style: textTheme.headlineSmall?.copyWith(
-                            fontFamily: AppFonts.playfair,
+                            fontFamily: AppFonts.pretendard,
                             fontWeight: FontWeight.w700,
                             color: colorScheme.onSurface,
                           ),
@@ -210,9 +210,7 @@ class _PostEditScreenState extends ConsumerState<PostEditScreen> {
                               .map(
                                 (type) => DropdownMenuItem<EmotionType>(
                                   value: type,
-                                  child: Text(
-                                    '${type.emoji} ${type.displayNameEn}',
-                                  ),
+                                  child: Text(type.displayNameKo),
                                 ),
                               )
                               .toList(),
@@ -226,7 +224,7 @@ class _PostEditScreenState extends ConsumerState<PostEditScreen> {
               Text(
                 '기록 시각',
                 style: textTheme.titleMedium?.copyWith(
-                  fontFamily: AppFonts.playfair,
+                  fontFamily: AppFonts.pretendard,
                   fontWeight: FontWeight.w700,
                   color: colorScheme.onSurface,
                 ),
@@ -252,7 +250,7 @@ class _PostEditScreenState extends ConsumerState<PostEditScreen> {
                   data: CupertinoTheme.of(context).copyWith(
                     textTheme: CupertinoTextThemeData(
                       dateTimePickerTextStyle: textTheme.titleMedium?.copyWith(
-                        fontFamily: AppFonts.playfair,
+                        fontFamily: AppFonts.pretendard,
                         color: colorScheme.onSurface,
                       ),
                     ),
@@ -274,7 +272,7 @@ class _PostEditScreenState extends ConsumerState<PostEditScreen> {
               Text(
                 '기분 기록',
                 style: textTheme.titleMedium?.copyWith(
-                  fontFamily: AppFonts.playfair,
+                  fontFamily: AppFonts.pretendard,
                   fontWeight: FontWeight.w700,
                   color: colorScheme.onSurface,
                 ),
@@ -315,7 +313,7 @@ class _PostEditScreenState extends ConsumerState<PostEditScreen> {
                     contentPadding: const EdgeInsets.all(Sizes.size20),
                   ),
                   style: textTheme.bodyMedium?.copyWith(
-                    fontFamily: AppFonts.playfair,
+                    fontFamily: AppFonts.pretendard,
                     color: colorScheme.onSurface,
                     height: 1.4,
                   ),
@@ -334,7 +332,7 @@ class _PostEditScreenState extends ConsumerState<PostEditScreen> {
                               form.errorMessage!,
                               key: ValueKey(form.errorMessage),
                               style: textTheme.bodySmall?.copyWith(
-                                fontFamily: AppFonts.playfair,
+                                fontFamily: AppFonts.pretendard,
                                 color: Colors.redAccent,
                               ),
                             ),
@@ -343,7 +341,7 @@ class _PostEditScreenState extends ConsumerState<PostEditScreen> {
                   Text(
                     '${form.message.length}/500',
                     style: textTheme.bodySmall?.copyWith(
-                      fontFamily: AppFonts.playfair,
+                      fontFamily: AppFonts.pretendard,
                       color: colorScheme.onSurfaceVariant,
                     ),
                   ),

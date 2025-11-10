@@ -40,19 +40,19 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
         context,
         previous?.renameStatus,
         next.renameStatus,
-        successMessage: 'Display name updated.',
+        successMessage: '이름을 새롭게 저장했어요.',
       );
       _handleStatusChange(
         context,
         previous?.verificationStatus,
         next.verificationStatus,
-        successMessage: 'Verification email sent.',
+        successMessage: '확인 메일을 보냈어요.',
       );
       _handleStatusChange(
         context,
         previous?.passwordStatus,
         next.passwordStatus,
-        successMessage: 'Password updated successfully.',
+        successMessage: '비밀번호를 안전하게 바꿨어요.',
         onSuccess: () {
           _currentPasswordController.clear();
         },
@@ -61,7 +61,7 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
         context,
         previous?.deleteStatus,
         next.deleteStatus,
-        successMessage: 'Account deleted.',
+        successMessage: '계정을 삭제했어요.',
         onSuccess: () => context.go(LogInScreen.routeURL),
       );
     }, fireImmediately: false);
@@ -85,7 +85,7 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
       backgroundColor: colorScheme.surface,
       appBar: AppBar(
         title: Text(
-          "Account",
+          "계정 관리",
           style: AppTextStyles.authAppBar(
             Theme.of(context).textTheme,
           )?.copyWith(fontSize: 20),
@@ -153,11 +153,11 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Edit Display Name'),
+          title: const Text('이름을 수정할까요?'),
           content: TextField(
             controller: controller,
             autofocus: true,
-            decoration: const InputDecoration(labelText: 'Display name'),
+            decoration: const InputDecoration(labelText: '표시 이름'),
           ),
           actions: [
             TextButton(
@@ -185,7 +185,7 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
 
     if (next != confirm) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('New passwords do not match.')),
+        const SnackBar(content: Text('새 비밀번호가 서로 다르게 입력되었어요.')),
       );
       return;
     }
@@ -201,9 +201,9 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Delete Account'),
+          title: const Text('계정을 삭제할까요?'),
           content: const Text(
-            'This action will permanently delete your account. Continue?',
+            '삭제하면 모든 데이터가 사라져요. 계속 진행할까요?',
           ),
           actions: [
             TextButton(
@@ -259,7 +259,7 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
 
   String _errorMessage(Object error) {
     if (error is FirebaseAuthException) {
-      return error.message ?? 'Authentication error occurred.';
+      return error.message ?? '계정 정보를 확인하는 중 문제가 발생했어요.';
     }
     return error.toString();
   }
@@ -319,7 +319,7 @@ class _AccountContent extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Profile', style: theme.textTheme.titleMedium),
+                Text('프로필', style: theme.textTheme.titleMedium),
                 TextButton(
                   onPressed: state.renameStatus.isLoading
                       ? null
@@ -336,17 +336,17 @@ class _AccountContent extends StatelessWidget {
             ),
             Gaps.v16,
             _InfoRow(
-              label: 'Name',
+              label: '이름',
               value: state.displayName.isEmpty ? '-' : state.displayName,
             ),
             Gaps.v8,
             _InfoRow(
-              label: 'Email',
+              label: '이메일',
               value: state.email.isEmpty ? '-' : state.email,
             ),
             Gaps.v8,
             _InfoRow(
-              label: 'Member since',
+              label: '가입일',
               value: _formatDate(state.createdAt),
             ),
           ],
@@ -365,7 +365,7 @@ class _AccountContent extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Email verification', style: theme.textTheme.titleMedium),
+            Text('이메일 인증', style: theme.textTheme.titleMedium),
             Gaps.v12,
             Row(
               children: [
@@ -376,7 +376,7 @@ class _AccountContent extends StatelessWidget {
                       : theme.colorScheme.error,
                 ),
                 Gaps.h8,
-                Text(state.emailVerified ? 'Verified' : 'Not verified'),
+                Text(state.emailVerified ? '인증 완료' : '인증 필요'),
               ],
             ),
             Gaps.v12,
@@ -425,7 +425,7 @@ class _AccountContent extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(top: 8),
                 child: Text(
-                  'You can resend after $cooldownSeconds seconds.',
+                  '$cooldownSeconds초 뒤에 다시 보낼 수 있어요.',
                   style: theme.textTheme.bodySmall,
                 ),
               ),
@@ -442,7 +442,7 @@ class _AccountContent extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Change password', style: theme.textTheme.titleMedium),
+            Text('비밀번호 변경', style: theme.textTheme.titleMedium),
             Gaps.v12,
             if (!state.canEditPassword)
               Container(
@@ -453,7 +453,7 @@ class _AccountContent extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: const Text(
-                  'Password change is disabled for social logins.',
+                  '소셜 로그인 계정은 비밀번호를 변경할 수 없어요.',
                 ),
               )
             else ...[
@@ -461,21 +461,21 @@ class _AccountContent extends StatelessWidget {
                 controller: currentPasswordController,
                 obscureText: true,
                 decoration: const InputDecoration(
-                  labelText: 'Current password',
+                  labelText: '현재 비밀번호',
                 ),
               ),
               Gaps.v12,
               TextField(
                 controller: newPasswordController,
                 obscureText: true,
-                decoration: const InputDecoration(labelText: 'New password'),
+                decoration: const InputDecoration(labelText: '새 비밀번호'),
               ),
               Gaps.v12,
               TextField(
                 controller: confirmPasswordController,
                 obscureText: true,
                 decoration: const InputDecoration(
-                  labelText: 'Confirm new password',
+                  labelText: '새 비밀번호 확인',
                 ),
               ),
               Gaps.v16,
@@ -511,9 +511,9 @@ class _AccountContent extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Delete account', style: theme.textTheme.titleMedium),
+            Text('계정 삭제', style: theme.textTheme.titleMedium),
             Gaps.v12,
-            const Text('Permanently remove your account and data.'),
+            const Text('계정과 모든 데이터가 완전히 삭제돼요.'),
             Gaps.v16,
             FilledButton(
               style: FilledButton.styleFrom(

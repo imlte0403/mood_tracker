@@ -39,7 +39,7 @@ class AccountViewModel extends StateNotifier<AccountState> {
         renameStatus: AsyncError(
           FirebaseAuthException(
             code: 'invalid-display-name',
-            message: 'Display name cannot be empty.',
+            message: '표시 이름을 입력해 주세요.',
           ),
           StackTrace.current,
         ),
@@ -64,7 +64,7 @@ class AccountViewModel extends StateNotifier<AccountState> {
     if (remaining > 0) {
       state = state.copyWith(
         verificationStatus: AsyncError(
-          Exception('Please wait $remaining seconds.'),
+          Exception('$remaining초 뒤에 다시 시도해 주세요.'),
           StackTrace.current,
         ),
       );
@@ -109,7 +109,7 @@ class AccountViewModel extends StateNotifier<AccountState> {
     if (!state.canEditPassword) {
       state = state.copyWith(
         passwordStatus: AsyncError(
-          Exception('Password updates are unavailable for this account.'),
+          Exception('해당 계정에서는 비밀번호를 변경할 수 없어요.'),
           StackTrace.current,
         ),
       );
@@ -121,7 +121,7 @@ class AccountViewModel extends StateNotifier<AccountState> {
         passwordStatus: AsyncError(
           FirebaseAuthException(
             code: 'weak-password',
-            message: 'Password should be at least 6 characters long.',
+            message: '비밀번호는 6자 이상 입력해 주세요.',
           ),
           StackTrace.current,
         ),

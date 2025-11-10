@@ -19,7 +19,7 @@ class HelpScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Help",
+          "도움말",
           style: AppTextStyles.authAppBar(
             Theme.of(context).textTheme,
           )?.copyWith(fontSize: 20),
@@ -76,14 +76,14 @@ class HelpScreen extends StatelessWidget {
                     ),
                     Gaps.v16,
                     Text(
-                      'How can we help you?',
+                      '어떤 도움이 필요하신가요?',
                       style: AppTextStyles.settings(
                         context,
                       ).copyWith(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                     Gaps.v8,
                     Text(
-                      'Find answers to common questions below',
+                      '아래에서 자주 묻는 질문과 답을 차분히 살펴보세요.',
                       style: AppTextStyles.settings(context).copyWith(
                         color: Theme.of(context).colorScheme.onSurfaceVariant,
                         fontSize: 16,
@@ -113,14 +113,14 @@ class HelpScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Still need help?',
+                      '더 필요한 도움이 있으신가요?',
                       style: AppTextStyles.settings(
                         context,
                       ).copyWith(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     Gaps.v16,
                     Text(
-                      'Contact our support team for additional assistance.',
+                      '언제든지 메일로 연락 주시면 정성껏 답변드릴게요.',
                       style: AppTextStyles.settings(context),
                     ),
                     Gaps.v16,
@@ -212,7 +212,7 @@ class HelpScreen extends StatelessWidget {
     final Uri emailLaunchUri = Uri(
       scheme: 'mailto',
       path: email,
-      query: 'subject=Mood Tracker Support',
+      query: 'subject=Mood Tracker 문의',
     );
 
     if (await canLaunchUrl(emailLaunchUri)) {

@@ -18,7 +18,7 @@ class UpdatesScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Updates",
+          "업데이트 소식",
           style: AppTextStyles.authAppBar(
             Theme.of(context).textTheme,
           )?.copyWith(fontSize: 20),
@@ -61,8 +61,8 @@ class UpdatesScreen extends StatelessWidget {
 
               _buildUpdateCard(
                 context,
-                "Version 1.0.0",
-                "초기 출시 🎉",
+                "버전 1.0.0",
+                "첫 번째 공개 소식",
                 DateTime.now(),
                 [
                   "감정 기록 및 추적 기능",
@@ -110,7 +110,7 @@ class UpdatesScreen extends StatelessWidget {
                 ),
               ),
               Text(
-                "Version 1.0.0",
+                "버전 1.0.0",
                 style: AppTextStyles.authAppBar(
                   Theme.of(context).textTheme,
                 )?.copyWith(fontSize: 18, fontWeight: FontWeight.bold),
@@ -182,7 +182,7 @@ class UpdatesScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
-                    "NEW",
+                    "신규",
                     style: AppTextStyles.settings(context).copyWith(
                       color: AppColors.point,
                       fontSize: 10,
@@ -275,7 +275,7 @@ class UpdatesScreen extends StatelessWidget {
                   ),
                   Gaps.h8,
                   Text(
-                    "Version 1.1.0 (예정)",
+                    "버전 1.1.0 (예정)",
                     style: AppTextStyles.authAppBar(
                       Theme.of(context).textTheme,
                     )?.copyWith(fontSize: 16, fontWeight: FontWeight.w600),

@@ -19,8 +19,8 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
       title: Text(
         'MoodLine',
         style: theme.textTheme.titleLarge?.copyWith(
-          fontWeight: FontWeight.w600,
-          fontFamily: AppFonts.playfair,
+          fontWeight: FontWeight.w400,
+          fontFamily: AppFonts.pretendard,
         ),
       ),
       actions: [

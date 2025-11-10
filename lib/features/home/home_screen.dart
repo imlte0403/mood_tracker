@@ -66,7 +66,7 @@ class HomeScreen extends ConsumerWidget {
     final notifier = ref.read(homeViewModelProvider.notifier);
     final colorScheme = Theme.of(context).colorScheme;
 
-    final greetingName = state.displayName ?? 'Username';
+    final greetingName = state.displayName ?? '마음 친구';
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
