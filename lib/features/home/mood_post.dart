@@ -399,44 +399,51 @@ class _TimelineEntryTile extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  // 이모지 컨테이너
-                  SizedBox(
-                    width: 30,
-                    height: 30,
-                    child: Center(
-                      child: Text(
-                        entry.emotion.emoji,
-                        style: const TextStyle(fontSize: 20),
-                      ),
-                    ),
-                  ),
-                  Gaps.h16,
-                  // 감정 정보
                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // 감정 이름
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: entry.emotion.color,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Text(
-                            entry.emotion.displayNameEn,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 11,
-                              fontFamily: 'Pretendard',
-                            ),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 10,
+                        ),
+                        decoration: BoxDecoration(
+                          color: entry.emotion.color.withOpacity(0.08),
+                          borderRadius: BorderRadius.circular(32),
+                          border: Border.all(
+                            color: entry.emotion.color.withOpacity(0.2),
                           ),
                         ),
-                      ],
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Container(
+                              width: 8,
+                              height: 8,
+                              decoration: BoxDecoration(
+                                color: entry.emotion.color,
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: entry.emotion.color.withOpacity(0.4),
+                                    blurRadius: 6,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Gaps.h10,
+                            Text(
+                              entry.emotion.displayNameKo,
+                              style: TextStyle(
+                                fontFamily: 'Pretendard',
+                                fontWeight: FontWeight.w700,
+                                fontSize: 13,
+                                color: colorScheme.onSurface,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                   // 메뉴{edit, delete} 버튼

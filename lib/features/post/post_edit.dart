@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -65,6 +67,8 @@ class _PostEditScreenState extends ConsumerState<PostEditScreen> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
+    final Size screenSize = MediaQuery.of(context).size;
+    final double journalMinHeight = math.max(screenSize.height * 0.35, 360);
 
     final EmotionType emotion = form.emotion;
     final MoodShapeSnapshot shape = MoodShapeEngine.resolve(
@@ -114,7 +118,7 @@ class _PostEditScreenState extends ConsumerState<PostEditScreen> {
         title: Text(
           form.isEditing ? '감정 기록 수정' : '새 감정 기록',
           style: textTheme.titleMedium?.copyWith(
-            fontFamily: AppFonts.pretendard,
+            fontFamily: AppFonts.playfair,
             fontWeight: FontWeight.w700,
             color: colorScheme.onSurface,
           ),
@@ -140,7 +144,7 @@ class _PostEditScreenState extends ConsumerState<PostEditScreen> {
         label: Text(
           form.isEditing ? '수정 완료' : '저장',
           style: textTheme.labelLarge?.copyWith(
-            fontFamily: AppFonts.pretendard,
+            fontFamily: AppFonts.playfair,
             fontWeight: FontWeight.w700,
             color: colorScheme.onPrimary,
           ),
@@ -160,13 +164,14 @@ class _PostEditScreenState extends ConsumerState<PostEditScreen> {
               Text(
                 '오늘의 감정',
                 style: textTheme.titleMedium?.copyWith(
-                  fontFamily: AppFonts.pretendard,
+                  fontFamily: AppFonts.playfair,
                   fontWeight: FontWeight.w700,
                   color: colorScheme.onSurface,
                 ),
               ),
               Gaps.v16,
               Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
                     width: Sizes.size56,
@@ -180,41 +185,95 @@ class _PostEditScreenState extends ConsumerState<PostEditScreen> {
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: Sizes.size16,
-                        vertical: Sizes.size8,
+                        horizontal: Sizes.size8,
+                        vertical: Sizes.size4,
                       ),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<EmotionType>(
-                          value: emotion,
-                          isExpanded: true,
-                          icon: const Icon(
-                            Icons.keyboard_arrow_down_rounded,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '감정을 골라주세요',
+                            style: textTheme.titleSmall?.copyWith(
+                              fontFamily: AppFonts.playfair,
+                              fontWeight: FontWeight.w600,
+                              color: colorScheme.onSurfaceVariant,
+                            ),
                           ),
-                          style: textTheme.headlineSmall?.copyWith(
-                            fontFamily: AppFonts.pretendard,
-                            fontWeight: FontWeight.w700,
-                            color: colorScheme.onSurface,
+                          Gaps.v12,
+                          SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              children: EmotionType.values.map((type) {
+                                final snapshot = MoodShapeEngine.resolve(
+                                  MoodShapeEngine.sliderAnchorForEmotion(type),
+                                );
+                                final bool isSelected = type == emotion;
+                                final Color backgroundColor = isSelected
+                                    ? snapshot.color.withOpacity(0.2)
+                                    : colorScheme.surfaceContainerHigh;
+                                return Padding(
+                                  padding: const EdgeInsets.only(
+                                    right: Sizes.size8,
+                                  ),
+                                  child: Material(
+                                    color: Colors.transparent,
+                                    child: InkWell(
+                                      borderRadius: BorderRadius.circular(
+                                        Sizes.size28,
+                                      ),
+                                      onTap: form.isSubmitting
+                                          ? null
+                                          : () {
+                                              ref
+                                                  .read(
+                                                    moodEntryFormProvider
+                                                        .notifier,
+                                                  )
+                                                  .updateEmotion(type);
+                                            },
+                                      child: AnimatedContainer(
+                                        duration:
+                                            const Duration(milliseconds: 200),
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: Sizes.size12,
+                                          vertical: Sizes.size8,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: backgroundColor,
+                                          borderRadius: BorderRadius.circular(
+                                            Sizes.size28,
+                                          ),
+                                          boxShadow: isSelected
+                                              ? [
+                                                  BoxShadow(
+                                                    color: snapshot.color
+                                                        .withOpacity(0.2),
+                                                    blurRadius: 12,
+                                                    offset: const Offset(0, 4),
+                                                  ),
+                                                ]
+                                              : null,
+                                        ),
+                                        child: Text(
+                                          '${type.emoji} ${type.displayNameKo}',
+                                          style: textTheme.bodySmall?.copyWith(
+                                            fontFamily: AppFonts.playfair,
+                                            fontWeight: isSelected
+                                                ? FontWeight.w700
+                                                : FontWeight.w500,
+                                            color: isSelected
+                                                ? colorScheme.onSurface
+                                                : colorScheme.onSurfaceVariant,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                            ),
                           ),
-                          dropdownColor: colorScheme.surface,
-                          onChanged: form.isSubmitting
-                              ? null
-                              : (value) {
-                                  if (value == null) return;
-                                  ref
-                                      .read(
-                                        moodEntryFormProvider.notifier,
-                                      )
-                                      .updateEmotion(value);
-                                },
-                          items: EmotionType.values
-                              .map(
-                                (type) => DropdownMenuItem<EmotionType>(
-                                  value: type,
-                                  child: Text(type.displayNameKo),
-                                ),
-                              )
-                              .toList(),
-                        ),
+                        ],
                       ),
                     ),
                   ),
@@ -224,14 +283,14 @@ class _PostEditScreenState extends ConsumerState<PostEditScreen> {
               Text(
                 '기록 시각',
                 style: textTheme.titleMedium?.copyWith(
-                  fontFamily: AppFonts.pretendard,
+                  fontFamily: AppFonts.playfair,
                   fontWeight: FontWeight.w700,
                   color: colorScheme.onSurface,
                 ),
               ),
               Gaps.v12,
               Container(
-                height: 216,
+                height: Sizes.size150,
                 decoration: BoxDecoration(
                   color: colorScheme.surface,
                   borderRadius: BorderRadius.circular(Sizes.size16),
@@ -250,7 +309,7 @@ class _PostEditScreenState extends ConsumerState<PostEditScreen> {
                   data: CupertinoTheme.of(context).copyWith(
                     textTheme: CupertinoTextThemeData(
                       dateTimePickerTextStyle: textTheme.titleMedium?.copyWith(
-                        fontFamily: AppFonts.pretendard,
+                        fontFamily: AppFonts.playfair,
                         color: colorScheme.onSurface,
                       ),
                     ),
@@ -272,14 +331,22 @@ class _PostEditScreenState extends ConsumerState<PostEditScreen> {
               Text(
                 '기분 기록',
                 style: textTheme.titleMedium?.copyWith(
-                  fontFamily: AppFonts.pretendard,
+                  fontFamily: AppFonts.playfair,
                   fontWeight: FontWeight.w700,
                   color: colorScheme.onSurface,
                 ),
               ),
+              Gaps.v8,
+              Text(
+                '오늘의 생각을 적어보세요',
+                style: textTheme.bodySmall?.copyWith(
+                  fontFamily: AppFonts.playfair,
+                  color: colorScheme.onSurfaceVariant,
+                ),
+              ),
               Gaps.v12,
               ConstrainedBox(
-                constraints: const BoxConstraints(minHeight: 400),
+                constraints: BoxConstraints(minHeight: journalMinHeight),
                 child: TextField(
                   controller: _messageController,
                   maxLines: null,
@@ -292,8 +359,6 @@ class _PostEditScreenState extends ConsumerState<PostEditScreen> {
                       .read(moodEntryFormProvider.notifier)
                       .updateMessage(value),
                   decoration: InputDecoration(
-                    labelText: '오늘의 생각을 적어보세요',
-                    alignLabelWithHint: true,
                     hintText: '기분을 기록해보세요',
                     filled: true,
                     fillColor: colorScheme.surfaceContainerHighest,
@@ -313,7 +378,7 @@ class _PostEditScreenState extends ConsumerState<PostEditScreen> {
                     contentPadding: const EdgeInsets.all(Sizes.size20),
                   ),
                   style: textTheme.bodyMedium?.copyWith(
-                    fontFamily: AppFonts.pretendard,
+                    fontFamily: AppFonts.playfair,
                     color: colorScheme.onSurface,
                     height: 1.4,
                   ),
@@ -332,7 +397,7 @@ class _PostEditScreenState extends ConsumerState<PostEditScreen> {
                               form.errorMessage!,
                               key: ValueKey(form.errorMessage),
                               style: textTheme.bodySmall?.copyWith(
-                                fontFamily: AppFonts.pretendard,
+                                fontFamily: AppFonts.playfair,
                                 color: Colors.redAccent,
                               ),
                             ),
@@ -341,7 +406,7 @@ class _PostEditScreenState extends ConsumerState<PostEditScreen> {
                   Text(
                     '${form.message.length}/500',
                     style: textTheme.bodySmall?.copyWith(
-                      fontFamily: AppFonts.pretendard,
+                      fontFamily: AppFonts.playfair,
                       color: colorScheme.onSurfaceVariant,
                     ),
                   ),

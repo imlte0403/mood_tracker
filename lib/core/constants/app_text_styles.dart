@@ -7,6 +7,7 @@ import 'package:mood_tracker/core/constants/sizes.dart';
 
 class AppFonts {
   static const pretendard = 'Pretendard';
+  static const playfair = 'PlayfairDisplay';
 }
 
 class AppTextStyles {
