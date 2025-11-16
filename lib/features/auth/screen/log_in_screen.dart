@@ -11,7 +11,6 @@ import 'package:mood_tracker/core/utils/auth_utils.dart';
 import 'package:mood_tracker/features/auth/widget/auth_btn.dart';
 import 'package:mood_tracker/features/auth/widget/auth_header.dart';
 import 'package:mood_tracker/features/auth/view_model/login_view_model.dart';
-import 'package:mood_tracker/features/home/home_screen.dart';
 import 'package:mood_tracker/features/auth/screen/sign_up_screen.dart';
 
 class LogInScreen extends ConsumerStatefulWidget {
@@ -56,7 +55,7 @@ class _LogInScreenState extends ConsumerState<LogInScreen>
       AuthUtils.handleAuthStateChange(
         context,
         next.status,
-        onSuccess: () => context.go(HomeScreen.routeURL),
+        onSuccess: () => context.go('/'),
         onUserNotFound: () => context.go(SignUpScreen.routeURL),
         fallbackErrorMessage: 'Sign-in failed.',
       );

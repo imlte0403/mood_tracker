@@ -1,0 +1,25 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // 사용자 문서 - 본인만 읽기/쓰기 가능
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+
+      // 사용자의 감정 기록 - 본인만 읽기/쓰기 가능
+      match /moods/{moodId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+
+      // 사용자의 타임라인 항목 - 본인만 읽기/쓰기 가능
+      match /timeline/{entryId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+
+    // 개발/테스트용: 임시 컬렉션은 인증된 사용자 누구나 접근 가능
+    match /dev_test/{document=**} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}

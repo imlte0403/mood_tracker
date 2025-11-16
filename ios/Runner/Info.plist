@@ -56,5 +56,14 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<!-- 사진 라이브러리 접근 권한 설명 -->
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>프로필 사진 업로드 및 감정 기록에 사진을 첨부하기 위해 사진 라이브러리 접근이 필요합니다.</string>
+	<!-- 카메라 접근 권한 설명 -->
+	<key>NSCameraUsageDescription</key>
+	<string>프로필 사진 촬영 및 감정 기록에 사진을 첨부하기 위해 카메라 접근이 필요합니다.</string>
+	<!-- Face ID 사용 설명 (향후 추가될 경우 대비) -->
+	<key>NSFaceIDUsageDescription</key>
+	<string>앱 보안을 위해 Face ID 인증이 필요합니다.</string>
 </dict>
 </plist>

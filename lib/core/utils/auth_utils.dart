@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mood_tracker/features/auth/screen/sign_up_screen.dart';
-import 'package:mood_tracker/features/home/home_screen.dart';
 
 class AuthUtils {
   const AuthUtils._();
@@ -22,7 +21,7 @@ class AuthUtils {
           if (onSuccess != null) {
             onSuccess();
           } else {
-            context.go(HomeScreen.routeURL);
+            context.go('/');
           }
         }
       },

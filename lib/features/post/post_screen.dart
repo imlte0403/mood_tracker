@@ -7,7 +7,6 @@ import 'package:mood_tracker/core/constants/gaps.dart';
 import 'package:mood_tracker/core/constants/sizes.dart';
 import 'package:mood_tracker/core/models/timeline_entry.dart';
 
-import 'package:mood_tracker/features/home/home_screen.dart';
 import 'package:mood_tracker/features/post/model/mood_shape.dart';
 import 'package:mood_tracker/features/post/post_viewmodel.dart';
 import 'package:mood_tracker/features/post/widget/mood_shape_display.dart';
@@ -65,7 +64,7 @@ class _PostScreenState extends ConsumerState<PostScreen> {
         if (context.canPop()) {
           context.pop();
         } else {
-          context.go(HomeScreen.routeURL);
+          context.go('/');
         }
         return;
       }
