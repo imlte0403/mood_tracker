@@ -1,7 +1,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:mood_tracker/features/auth/screen/log_in_screen.dart';
 import 'package:mood_tracker/features/auth/screen/sign_up_screen.dart';
-import 'package:mood_tracker/features/home/home_screen.dart';
+import 'package:mood_tracker/features/main/main_tab_view.dart';
 import 'package:mood_tracker/core/models/timeline_entry.dart';
 import 'package:mood_tracker/features/post/post_edit.dart';
 import 'package:mood_tracker/features/post/post_screen.dart';
@@ -27,9 +27,9 @@ final router = GoRouter(
       builder: (context, state) => const SignUpScreen(),
     ),
     GoRoute(
-      path: HomeScreen.routeURL,
-      name: HomeScreen.routeName,
-      builder: (context, state) => const HomeScreen(),
+      path: MainTabView.routeURL,
+      name: MainTabView.routeName,
+      builder: (context, state) => const MainTabView(),
     ),
     GoRoute(
       path: SettingsScreen.routeURL,
