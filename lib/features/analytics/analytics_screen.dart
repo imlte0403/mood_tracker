@@ -7,6 +7,7 @@ import 'package:mood_tracker/features/analytics/models/analytics_period.dart';
 import 'package:mood_tracker/features/analytics/widgets/daily_bar_chart.dart';
 import 'package:mood_tracker/features/analytics/widgets/emotion_pie_chart.dart';
 import 'package:mood_tracker/features/analytics/widgets/empty_analytics.dart';
+import 'package:mood_tracker/features/analytics/widgets/mood_analysis_card.dart';
 import 'package:mood_tracker/features/analytics/widgets/statistics_card.dart';
 
 /// 감정 통계 화면
@@ -82,6 +83,12 @@ class AnalyticsScreen extends ConsumerWidget {
 
                             // 통계 요약 카드
                             StatisticsCard(statistics: state.statistics!),
+                            Gaps.v32,
+
+                            // 감정 분석 카드
+                            MoodAnalysisCard(
+                              analysis: state.statistics!.analysis,
+                            ),
                             Gaps.v32,
 
                             // 감정 분포 파이 차트
