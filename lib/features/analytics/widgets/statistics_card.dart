@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mood_tracker/core/constants/gaps.dart';
 import 'package:mood_tracker/core/constants/sizes.dart';
+import 'package:mood_tracker/core/models/emotion_type.dart';
 import 'package:mood_tracker/features/analytics/models/mood_statistics.dart';
 
 /// 주요 통계 카드 위젯
