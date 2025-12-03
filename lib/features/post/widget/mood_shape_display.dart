@@ -153,6 +153,7 @@ class _MoodColorIndicator extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final colorScheme = Theme.of(context).colorScheme;
     final activeEmotion = ref.watch(currentMoodDataProvider).displayEmotion;
 
     // 색상 인디케이터
@@ -171,13 +172,13 @@ class _MoodColorIndicator extends ConsumerWidget {
                 color: MoodShapeEngine.colorForEmotion(emotion),
                 shape: BoxShape.circle,
                 border: emotion == activeEmotion
-                    ? Border.all(color: Colors.white, width: Sizes.size2)
+                    ? Border.all(color: colorScheme.surface, width: Sizes.size2)
                     : null,
                 boxShadow: emotion == activeEmotion
-                    ? const [
+                    ? [
                         BoxShadow(
-                          color: Colors.black26,
-                          offset: Offset(0, Sizes.size2),
+                          color: colorScheme.shadow.withValues(alpha: 0.2),
+                          offset: const Offset(0, Sizes.size2),
                           blurRadius: Sizes.size4,
                         ),
                       ]

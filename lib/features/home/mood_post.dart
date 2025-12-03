@@ -387,7 +387,7 @@ class _TimelineEntryTile extends StatelessWidget {
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.04),
+                color: colorScheme.shadow.withValues(alpha: 0.05),
                 blurRadius: 20,
                 offset: const Offset(0, 4),
                 spreadRadius: 0,
@@ -499,19 +499,19 @@ class _TimelineEntryTile extends StatelessWidget {
                         value: _EntryAction.delete,
                         child: Row(
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.delete_outline,
                               size: 14,
-                              color: Colors.redAccent,
+                              color: colorScheme.error,
                             ),
                             Gaps.h12,
-                            const Text(
+                            Text(
                               'Delete',
                               style: TextStyle(
                                 fontFamily: 'Pretendard',
                                 fontWeight: FontWeight.w600,
                                 fontSize: 12,
-                                color: Colors.redAccent,
+                                color: colorScheme.error,
                               ),
                             ),
                           ],
@@ -579,7 +579,9 @@ Future<void> confirmDelete(
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            style: TextButton.styleFrom(foregroundColor: Colors.redAccent),
+            style: TextButton.styleFrom(
+              foregroundColor: Theme.of(context).colorScheme.error,
+            ),
             child: const Text('Delete'),
           ),
         ],
@@ -592,16 +594,16 @@ Future<void> confirmDelete(
   try {
     await ref.read(homeViewModelProvider.notifier).deleteEntry(entry.id);
     if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('기록을 지웠어요.')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('기록을 지웠어요.')));
     }
   } catch (error, _) {
     final message = FirebaseErrorHandler.getErrorMessage(error);
     if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(message)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(message)));
     }
   }
 }

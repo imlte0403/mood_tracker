@@ -5,10 +5,7 @@ import 'package:mood_tracker/features/analytics/models/mood_statistics.dart';
 
 /// 감정 분포 파이 차트
 class EmotionPieChart extends StatefulWidget {
-  const EmotionPieChart({
-    super.key,
-    required this.statistics,
-  });
+  const EmotionPieChart({super.key, required this.statistics});
 
   final MoodStatistics statistics;
 
@@ -81,11 +78,11 @@ class _EmotionPieChartState extends State<EmotionPieChart> {
             ? '${emotion.displayNameKo}\n${percentage.toStringAsFixed(1)}%'
             : emotion.emoji,
         radius: radius,
-        titleStyle: TextStyle(
-          fontSize: fontSize,
+        titleStyle: const TextStyle(
+          fontSize: null, // fontSize는 아래에서 동적으로 설정됨
           fontWeight: FontWeight.bold,
-          color: Colors.white,
-        ),
+          color: Colors.white, // 감정 색상 위에 표시되므로 흰색 유지
+        ).copyWith(fontSize: fontSize),
       );
     });
   }

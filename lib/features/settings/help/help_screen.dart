@@ -68,10 +68,10 @@ class HelpScreen extends StatelessWidget {
                         color: AppColors.point,
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.help_outline,
                         size: 30,
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.onPrimary,
                       ),
                     ),
                     Gaps.v16,
@@ -132,8 +132,9 @@ class HelpScreen extends StatelessWidget {
                                 _launchEmail(HelpContent.contactInfo.email),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.point,
-                              foregroundColor:
-                                  Theme.of(context).colorScheme.onPrimary,
+                              foregroundColor: Theme.of(
+                                context,
+                              ).colorScheme.onPrimary,
                               padding: const EdgeInsets.symmetric(vertical: 12),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),

@@ -232,8 +232,9 @@ class _PostEditScreenState extends ConsumerState<PostEditScreen> {
                                                   .updateEmotion(type);
                                             },
                                       child: AnimatedContainer(
-                                        duration:
-                                            const Duration(milliseconds: 200),
+                                        duration: const Duration(
+                                          milliseconds: 200,
+                                        ),
                                         padding: const EdgeInsets.symmetric(
                                           horizontal: Sizes.size12,
                                           vertical: Sizes.size8,
@@ -294,17 +295,15 @@ class _PostEditScreenState extends ConsumerState<PostEditScreen> {
                 decoration: BoxDecoration(
                   color: colorScheme.surface,
                   borderRadius: BorderRadius.circular(Sizes.size16),
-                  boxShadow: const [
+                  boxShadow: [
                     BoxShadow(
-                      color: Colors.black12,
+                      color: colorScheme.shadow.withValues(alpha: 0.1),
                       blurRadius: Sizes.size8,
-                      offset: Offset(0, Sizes.size4),
+                      offset: const Offset(0, Sizes.size4),
                     ),
                   ],
                 ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: Sizes.size12,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: Sizes.size12),
                 child: CupertinoTheme(
                   data: CupertinoTheme.of(context).copyWith(
                     textTheme: CupertinoTextThemeData(
@@ -398,7 +397,7 @@ class _PostEditScreenState extends ConsumerState<PostEditScreen> {
                               key: ValueKey(form.errorMessage),
                               style: textTheme.bodySmall?.copyWith(
                                 fontFamily: AppFonts.playfair,
-                                color: Colors.redAccent,
+                                color: colorScheme.error,
                               ),
                             ),
                     ),

@@ -184,9 +184,9 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
     final confirm = _confirmPasswordController.text;
 
     if (next != confirm) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('새 비밀번호가 서로 다르게 입력되었어요.')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('새 비밀번호가 서로 다르게 입력되었어요.')));
       return;
     }
 
@@ -202,9 +202,7 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
       builder: (context) {
         return AlertDialog(
           title: const Text('계정을 삭제할까요?'),
-          content: const Text(
-            '삭제하면 모든 데이터가 사라져요. 계속 진행할까요?',
-          ),
+          content: const Text('삭제하면 모든 데이터가 사라져요. 계속 진행할까요?'),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
@@ -345,10 +343,7 @@ class _AccountContent extends StatelessWidget {
               value: state.email.isEmpty ? '-' : state.email,
             ),
             Gaps.v8,
-            _InfoRow(
-              label: '가입일',
-              value: _formatDate(state.createdAt),
-            ),
+            _InfoRow(label: '가입일', value: _formatDate(state.createdAt)),
           ],
         ),
       ),
@@ -452,17 +447,13 @@ class _AccountContent extends StatelessWidget {
                   color: theme.colorScheme.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Text(
-                  '소셜 로그인 계정은 비밀번호를 변경할 수 없어요.',
-                ),
+                child: const Text('소셜 로그인 계정은 비밀번호를 변경할 수 없어요.'),
               )
             else ...[
               TextField(
                 controller: currentPasswordController,
                 obscureText: true,
-                decoration: const InputDecoration(
-                  labelText: '현재 비밀번호',
-                ),
+                decoration: const InputDecoration(labelText: '현재 비밀번호'),
               ),
               Gaps.v12,
               TextField(
@@ -474,9 +465,7 @@ class _AccountContent extends StatelessWidget {
               TextField(
                 controller: confirmPasswordController,
                 obscureText: true,
-                decoration: const InputDecoration(
-                  labelText: '새 비밀번호 확인',
-                ),
+                decoration: const InputDecoration(labelText: '새 비밀번호 확인'),
               ),
               Gaps.v16,
               SizedBox(
@@ -525,12 +514,12 @@ class _AccountContent extends StatelessWidget {
                       await onDeleteAccount();
                     },
               child: state.deleteStatus.isLoading
-                  ? const SizedBox(
+                  ? SizedBox(
                       height: 16,
                       width: 16,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        color: Colors.white,
+                        color: theme.colorScheme.onPrimary,
                       ),
                     )
                   : const Text('Delete account'),

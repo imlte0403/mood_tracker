@@ -33,6 +33,7 @@ class _MoodTextFieldState extends ConsumerState<MoodTextField> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final form = ref.watch(moodEntryFormProvider);
     final mood = ref.watch(currentMoodDataProvider);
 
@@ -50,13 +51,13 @@ class _MoodTextFieldState extends ConsumerState<MoodTextField> {
       children: [
         Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: colorScheme.surface,
             borderRadius: BorderRadius.circular(Sizes.size20),
-            boxShadow: const [
+            boxShadow: [
               BoxShadow(
-                color: Colors.black12,
+                color: colorScheme.shadow.withValues(alpha: 0.1),
                 blurRadius: Sizes.size8,
-                offset: Offset(0, Sizes.size4),
+                offset: const Offset(0, Sizes.size4),
               ),
             ],
           ),
