@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:mood_tracker/core/constants/app_color.dart';
+import 'package:mood_tracker/core/constants/app_text_styles.dart';
 import 'package:mood_tracker/core/constants/gaps.dart';
 
 import 'package:mood_tracker/core/models/emotion_type.dart';
@@ -435,7 +436,7 @@ class _TimelineEntryTile extends StatelessWidget {
                             Text(
                               entry.emotion.displayNameKo,
                               style: TextStyle(
-                                fontFamily: 'Pretendard',
+                                fontFamily: AppFonts.pretendard,
                                 fontWeight: FontWeight.w700,
                                 fontSize: 13,
                                 color: colorScheme.onSurface,
@@ -486,7 +487,7 @@ class _TimelineEntryTile extends StatelessWidget {
                             Text(
                               'Edit',
                               style: TextStyle(
-                                fontFamily: 'Pretendard',
+                                fontFamily: AppFonts.pretendard,
                                 fontWeight: FontWeight.w600,
                                 fontSize: 12,
                                 color: colorScheme.onSurface,
@@ -508,7 +509,7 @@ class _TimelineEntryTile extends StatelessWidget {
                             Text(
                               'Delete',
                               style: TextStyle(
-                                fontFamily: 'Pretendard',
+                                fontFamily: AppFonts.pretendard,
                                 fontWeight: FontWeight.w600,
                                 fontSize: 12,
                                 color: colorScheme.error,

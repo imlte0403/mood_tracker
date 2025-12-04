@@ -6,10 +6,7 @@ import 'package:mood_tracker/features/analytics/models/mood_statistics.dart';
 
 /// 주요 통계 카드 위젯
 class StatisticsCard extends StatelessWidget {
-  const StatisticsCard({
-    super.key,
-    required this.statistics,
-  });
+  const StatisticsCard({super.key, required this.statistics});
 
   final MoodStatistics statistics;
 
@@ -84,19 +81,16 @@ class _StatItem extends StatelessWidget {
       children: [
         Text(
           label,
-          style: TextStyle(
-            fontSize: 12,
-            color: colorScheme.onSurfaceVariant,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.labelSmall?.copyWith(color: colorScheme.onSurfaceVariant),
         ),
         Gaps.v4,
         Text(
           value,
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: colorScheme.onSurface,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
         ),
       ],
     );
@@ -119,10 +113,7 @@ class _EmptyCard extends StatelessWidget {
       child: Center(
         child: Text(
           '아직 충분한 기록이 없어요',
-          style: TextStyle(
-            fontSize: 14,
-            color: colorScheme.onSurfaceVariant,
-          ),
+          style: TextStyle(fontSize: 14, color: colorScheme.onSurfaceVariant),
         ),
       ),
     );

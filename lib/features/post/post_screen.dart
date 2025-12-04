@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:mood_tracker/core/constants/app_color.dart';
+import 'package:mood_tracker/core/constants/app_text_styles.dart';
 import 'package:mood_tracker/core/constants/gaps.dart';
 import 'package:mood_tracker/core/constants/sizes.dart';
 import 'package:mood_tracker/core/models/timeline_entry.dart';
@@ -129,12 +130,7 @@ class _PostScreenState extends ConsumerState<PostScreen> {
             children: [
               Text(
                 isEditing ? '생각을 같이 정리해볼까요?' : '지금 어떤 기분인가요?',
-                style: TextStyle(
-                  fontFamily: 'Pretendard',
-                  fontSize: Sizes.size24,
-                  fontWeight: FontWeight.w600,
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
+                style: AppTextStyles.authTitle(Theme.of(context).textTheme),
               ),
               Gaps.v32,
               Align(

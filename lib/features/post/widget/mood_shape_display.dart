@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:mood_tracker/core/constants/app_text_styles.dart';
 import 'package:mood_tracker/core/constants/gaps.dart';
 import 'package:mood_tracker/core/constants/sizes.dart';
 import 'package:mood_tracker/core/models/emotion_type.dart';
@@ -96,7 +97,7 @@ class _MoodShapeDisplayState extends ConsumerState<MoodShapeDisplay>
         Text(
           _emotionMessage(mood.displayEmotion),
           style: theme.textTheme.headlineSmall?.copyWith(
-            fontFamily: 'Pretendard',
+            fontFamily: AppFonts.pretendard,
             fontWeight: FontWeight.w600,
           ),
           textAlign: TextAlign.center,
