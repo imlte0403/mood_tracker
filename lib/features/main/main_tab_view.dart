@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
+
 import 'package:mood_tracker/features/analytics/analytics_screen.dart';
 import 'package:mood_tracker/features/home/home_screen.dart';
+import 'package:mood_tracker/features/post/post_screen.dart';
+import 'package:mood_tracker/features/search/search_screen.dart';
 
-/// 메인 탭 뷰 (PageView로 홈과 통계를 스와이프로 전환)
+/// 메인 탭 뷰 (PageView + BottomNavigationBar)
 ///
 /// 구조:
-/// - 중앙 (index 0): HomeScreen (초기 화면)
-/// - 오른쪽 스와이프 (index 1): AnalyticsScreen
-/// - 왼쪽 스와이프 (index -1): SearchScreen (향후 추가)
+/// - index 0: SearchScreen (검색)
+/// - index 1: HomeScreen (홈, 초기 화면)
+/// - index 2: PostScreen (작성)
+/// - index 3: AnalyticsScreen (통계)
 class MainTabView extends StatefulWidget {
   const MainTabView({super.key});
 
@@ -20,10 +24,10 @@ class MainTabView extends StatefulWidget {
 
 class _MainTabViewState extends State<MainTabView> {
   final PageController _pageController = PageController(
-    initialPage: 0, // 홈 화면을 초기 페이지로
+    initialPage: 1, // 홈 화면을 초기 페이지로 (index 1)
   );
 
-  int _currentPage = 0;
+  int _currentPage = 1;
 
   @override
   void dispose() {
@@ -37,16 +41,51 @@ class _MainTabViewState extends State<MainTabView> {
     });
   }
 
+  void _onBottomNavTapped(int index) {
+    _pageController.jumpToPage(index);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return PageView(
-      controller: _pageController,
-      onPageChanged: _onPageChanged,
-      children: const [
-        HomeScreen(), // 중앙: 홈 화면
-        AnalyticsScreen(), // 오른쪽: 통계 화면
-        // SearchScreen(), // 왼쪽: 검색 화면 (향후 추가)
-      ],
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Scaffold(
+      body: PageView(
+        controller: _pageController,
+        onPageChanged: _onPageChanged,
+        children: const [
+          SearchScreen(), // index 0: 검색
+          HomeScreen(), // index 1: 홈
+          PostScreen(), // index 2: 작성
+          AnalyticsScreen(), // index 3: 통계
+        ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentPage,
+        onTap: _onBottomNavTapped,
+        type: BottomNavigationBarType.fixed,
+        backgroundColor: colorScheme.surface,
+        selectedItemColor: colorScheme.primary,
+        unselectedItemColor: colorScheme.onSurfaceVariant,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search),
+            label: '검색',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: '홈',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.add_circle_outline),
+            label: '작성',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.bar_chart),
+            label: '통계',
+          ),
+        ],
+      ),
     );
   }
 }
