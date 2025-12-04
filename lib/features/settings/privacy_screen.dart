@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:mood_tracker/core/constants/app_text_styles.dart';
 import 'package:mood_tracker/core/constants/gaps.dart';
 import 'package:mood_tracker/core/constants/sizes.dart';
+import 'package:mood_tracker/core/widgets/settings_app_bar.dart';
 
 class PrivacyScreen extends StatelessWidget {
   static const routeName = 'privacy';
@@ -13,39 +13,7 @@ class PrivacyScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "개인 정보",
-          style: AppTextStyles.authAppBar(
-            Theme.of(context).textTheme,
-          )?.copyWith(fontSize: 20),
-        ),
-        centerTitle: true,
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        leadingWidth: 100,
-        leading: GestureDetector(
-          onTap: () => context.pop(),
-          child: Container(
-            padding: const EdgeInsets.only(left: 16),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  Icons.arrow_back_ios,
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
-              ],
-            ),
-          ),
-        ),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1.0),
-          child: Container(
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-            height: 1.0,
-          ),
-        ),
-      ),
+      appBar: const SettingsAppBar(title: "개인 정보"),
       body: Container(
         color: Theme.of(context).colorScheme.surface,
         child: SingleChildScrollView(

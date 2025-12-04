@@ -14,6 +14,7 @@ class MoodSlider extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final colorScheme = Theme.of(context).colorScheme;
     final sliderValue = ref.watch(moodSliderValueProvider);
     final moodData = ref.watch(currentMoodDataProvider);
 
@@ -30,7 +31,7 @@ class MoodSlider extends ConsumerWidget {
             thumbColor: activeColor,
             overlayColor: activeColor.withValues(alpha: 0.25),
             valueIndicatorColor: activeColor,
-            valueIndicatorTextStyle: const TextStyle(color: Colors.white),
+            valueIndicatorTextStyle: TextStyle(color: colorScheme.onPrimary),
             trackShape: const RoundedRectSliderTrackShape(),
             thumbShape: const RoundSliderThumbShape(
               enabledThumbRadius: Sizes.size14,

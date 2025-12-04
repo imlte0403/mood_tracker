@@ -99,7 +99,7 @@ class AnalyticsViewModel extends StateNotifier<AnalyticsState> {
 final analyticsViewModelProvider =
     StateNotifierProvider<AnalyticsViewModel, AnalyticsState>((ref) {
   final repository = ref.watch(analyticsRepositoryProvider);
-  final userId = ref.watch(authStateProvider).value?.uid ?? '';
+  final userId = ref.watch(authStateChangesProvider).value?.uid ?? '';
 
   return AnalyticsViewModel(repository, userId);
 });

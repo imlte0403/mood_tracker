@@ -1,11 +1,9 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:mood_tracker/core/constants/gaps.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:mood_tracker/core/constants/app_color.dart';
 import 'package:mood_tracker/core/constants/app_text_styles.dart';
+import 'package:mood_tracker/core/widgets/settings_app_bar.dart';
 import 'package:mood_tracker/features/settings/help/help_content.dart';
 
 class HelpScreen extends StatelessWidget {
@@ -17,39 +15,7 @@ class HelpScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "도움말",
-          style: AppTextStyles.authAppBar(
-            Theme.of(context).textTheme,
-          )?.copyWith(fontSize: 20),
-        ),
-        centerTitle: true,
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        leadingWidth: 100,
-        leading: GestureDetector(
-          onTap: () => context.pop(),
-          child: Container(
-            padding: const EdgeInsets.only(left: 16),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  Icons.arrow_back_ios,
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
-              ],
-            ),
-          ),
-        ),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1.0),
-          child: Container(
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-            height: 1.0,
-          ),
-        ),
-      ),
+      appBar: const SettingsAppBar(title: "도움말"),
       body: Container(
         color: Theme.of(context).colorScheme.surface,
         child: SingleChildScrollView(
@@ -68,10 +34,10 @@ class HelpScreen extends StatelessWidget {
                         color: AppColors.point,
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.help_outline,
                         size: 30,
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.onPrimary,
                       ),
                     ),
                     Gaps.v16,
@@ -132,8 +98,9 @@ class HelpScreen extends StatelessWidget {
                                 _launchEmail(HelpContent.contactInfo.email),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.point,
-                              foregroundColor:
-                                  Theme.of(context).colorScheme.onPrimary,
+                              foregroundColor: Theme.of(
+                                context,
+                              ).colorScheme.onPrimary,
                               padding: const EdgeInsets.symmetric(vertical: 12),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),

@@ -1,5 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:mood_tracker/core/models/emotion_type.dart';
 import 'package:mood_tracker/features/analytics/models/daily_mood_distribution.dart';
 
 /// 일별 감정 분포 막대 차트

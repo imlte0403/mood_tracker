@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mood_tracker/core/constants/app_text_styles.dart';
 import 'package:mood_tracker/core/constants/gaps.dart';
 import 'package:mood_tracker/core/constants/sizes.dart';
 import 'package:mood_tracker/features/analytics/analytics_viewmodel.dart';
@@ -26,13 +27,9 @@ class AnalyticsScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           '감정 분석',
-          style: TextStyle(
-            fontFamily: 'Pretendard',
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-          ),
+          style: AppTextStyles.authAppBar(Theme.of(context).textTheme),
         ),
         centerTitle: true,
         backgroundColor: colorScheme.surface,
@@ -48,42 +45,42 @@ class AnalyticsScreen extends ConsumerWidget {
       body: state.isLoading
           ? const Center(child: CircularProgressIndicator())
           : state.error != null
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        state.error!,
-                        style: TextStyle(color: colorScheme.error),
-                      ),
-                      Gaps.v16,
-                      FilledButton(
-                        onPressed: () => notifier.refresh(),
-                        child: const Text('다시 시도'),
-                      ),
-                    ],
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    state.error!,
+                    style: TextStyle(color: colorScheme.error),
                   ),
-                )
-              : state.statistics == null || !state.statistics!.hasData
-                  ? const EmptyAnalytics()
-                  : RefreshIndicator(
-                      onRefresh: () => notifier.refresh(),
-                      child: SingleChildScrollView(
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        padding: const EdgeInsets.all(Sizes.size24),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            // 기간 선택 탭
-                            _PeriodSelector(
-                              currentPeriod: state.period,
-                              onPeriodChanged: notifier.changePeriod,
-                            ),
-                            Gaps.v24,
+                  Gaps.v16,
+                  FilledButton(
+                    onPressed: () => notifier.refresh(),
+                    child: const Text('다시 시도'),
+                  ),
+                ],
+              ),
+            )
+          : state.statistics == null || !state.statistics!.hasData
+          ? const EmptyAnalytics()
+          : RefreshIndicator(
+              onRefresh: () => notifier.refresh(),
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.all(Sizes.size24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // 기간 선택 탭
+                    _PeriodSelector(
+                      currentPeriod: state.period,
+                      onPeriodChanged: notifier.changePeriod,
+                    ),
+                    Gaps.v24,
 
-                            // 통계 요약 카드
-                            StatisticsCard(statistics: state.statistics!),
-                            Gaps.v32,
+                    // 통계 요약 카드
+                    StatisticsCard(statistics: state.statistics!),
+                    Gaps.v32,
 
                             // 감정 분석 카드
                             MoodAnalysisCard(
@@ -104,23 +101,22 @@ class AnalyticsScreen extends ConsumerWidget {
                             EmotionPieChart(statistics: state.statistics!),
                             Gaps.v32,
 
-                            // 일별 추세 차트
-                            Text(
-                              '일별 추세',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: colorScheme.onSurface,
-                              ),
-                            ),
-                            Gaps.v16,
-                            DailyBarChart(
-                                distributions: state.dailyDistributions),
-                            Gaps.v32,
-                          ],
-                        ),
+                    // 일별 추세 차트
+                    Text(
+                      '일별 추세',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: colorScheme.onSurface,
                       ),
                     ),
+                    Gaps.v16,
+                    DailyBarChart(distributions: state.dailyDistributions),
+                    Gaps.v32,
+                  ],
+                ),
+              ),
+            ),
     );
   }
 }

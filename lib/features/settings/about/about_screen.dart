@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:mood_tracker/core/constants/app_color.dart';
 import 'package:mood_tracker/core/constants/app_text_styles.dart';
 import 'package:mood_tracker/core/constants/gaps.dart';
+import 'package:mood_tracker/core/widgets/settings_app_bar.dart';
 import 'package:mood_tracker/features/settings/about/about_content.dart';
 
 class AboutScreen extends StatelessWidget {
@@ -14,31 +14,7 @@ class AboutScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "앱 소개",
-          style: AppTextStyles.authAppBar(
-            Theme.of(context).textTheme,
-          )?.copyWith(fontSize: 20),
-        ),
-        centerTitle: true,
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        leadingWidth: 100,
-        leading: GestureDetector(
-          onTap: () => context.pop(),
-          child: Container(
-            padding: const EdgeInsets.only(left: 16),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [Icon(Icons.arrow_back_ios, color: Theme.of(context).colorScheme.onSurface)],
-            ),
-          ),
-        ),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1.0),
-          child: Container(color: Theme.of(context).colorScheme.onSurfaceVariant, height: 1.0),
-        ),
-      ),
+      appBar: const SettingsAppBar(title: "앱 소개"),
       body: Container(
         color: Theme.of(context).colorScheme.surface,
         child: SingleChildScrollView(
@@ -56,10 +32,10 @@ class AboutScreen extends StatelessWidget {
                         color: AppColors.point,
                         borderRadius: BorderRadius.circular(16),
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.mood,
                         size: 40,
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.onPrimary,
                       ),
                     ),
                     Gaps.v16,
@@ -140,31 +116,35 @@ class AboutScreen extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
                       borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            license.name,
-                            style: AppTextStyles.settings(
-                              context,
-                            ).copyWith(fontWeight: FontWeight.bold),
-                          ),
-                          Gaps.v4,
-                          Text(
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          license.name,
+                          style: AppTextStyles.settings(
+                            context,
+                          ).copyWith(fontWeight: FontWeight.bold),
+                        ),
+                        Gaps.v4,
+                        Text(
                           '버전: ${license.version}',
-                            style: AppTextStyles.settings(context).copyWith(
-                              color: Theme.of(context).colorScheme.onSurfaceVariant,
-                              fontSize: 14,
-                            ),
+                          style: AppTextStyles.settings(context).copyWith(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
+                            fontSize: 14,
                           ),
-                          Text(
+                        ),
+                        Text(
                           '라이선스: ${license.license}',
-                            style: AppTextStyles.settings(context).copyWith(
-                              color: Theme.of(context).colorScheme.onSurfaceVariant,
-                              fontSize: 14,
-                            ),
+                          style: AppTextStyles.settings(context).copyWith(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
+                            fontSize: 14,
                           ),
+                        ),
                       ],
                     ),
                   ),
