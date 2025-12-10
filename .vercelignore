@@ -1,0 +1,44 @@
+# Vercel 배포 시 제외할 파일들
+# .gitignore와 별개로 Vercel 전용 ignore 설정
+
+# Flutter/Dart 관련 (build/web 제외 - 배포에 필요)
+.dart_tool/
+.dart-tool/
+.packages
+.pub/
+
+# 플랫폼별 빌드 (웹 제외)
+build/ios/
+build/android/
+build/macos/
+build/linux/
+build/windows/
+
+# 불필요한 빌드 캐시
+build/*.cache.dill*
+build/native_assets/
+
+# 개발 도구
+.idea/
+.vscode/
+*.iml
+
+# 테스트
+test/
+coverage/
+
+# 문서
+docs/
+
+# Firebase 관련 (민감 정보)
+**/lib/firebase_options.dart
+**/android/app/google-services.json
+**/ios/Runner/GoogleService-Info.plist
+
+# Git
+.git/
+
+# 기타
+*.log
+*.lock
+.DS_Store

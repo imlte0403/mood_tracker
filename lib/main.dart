@@ -26,6 +26,18 @@ class MyApp extends ConsumerWidget {
       darkTheme: AppTheme.darkTheme,
       themeMode: themeMode,
       routerConfig: router,
+      builder: (context, child) {
+        // 웹에서 앱을 모바일처럼 고정 너비(420px)로 중앙 표시
+        return Container(
+          color: Theme.of(context).colorScheme.surfaceContainerLowest,
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 420),
+              child: child,
+            ),
+          ),
+        );
+      },
     );
   }
 }
